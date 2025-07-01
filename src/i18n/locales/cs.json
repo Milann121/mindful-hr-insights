@@ -1,0 +1,76 @@
+
+{
+  "dashboard": {
+    "title": "Dashboard zdraví pohybového aparátu",
+    "subtitle": "Monitorujte a spravujte zdraví pohybového aparátu vašeho týmu",
+    "overview": {
+      "title": "Přehled",
+      "totalEmployees": "Celkový počet zaměstnanců",
+      "activePrograms": "Aktivní programy",
+      "completionRate": "Průměrná míra dokončení",
+      "riskLevel": "Zaměstnanci s vysokým rizikem"
+    },
+    "painLevels": {
+      "title": "Rozdělení úrovní bolesti",
+      "low": "Nízká (1-3)",
+      "moderate": "Střední (4-6)",
+      "high": "Vysoká (7-10)",
+      "noData": "Žádná data"
+    },
+    "trends": {
+      "title": "Měsíční trendy",
+      "painReduction": "Snížení bolesti",
+      "programCompletion": "Dokončení programu",
+      "exerciseCompliance": "Dodržování cvičení"
+    },
+    "riskAnalysis": {
+      "title": "Analýza rizika podle oddělení",
+      "department": "Oddělení",
+      "employees": "Zaměstnanci",
+      "avgPainLevel": "Prům. úroveň bolesti",
+      "riskLevel": "Úroveň rizika"
+    },
+    "topIssues": {
+      "title": "Nejčastější problémy",
+      "backPain": "Bolest zad",
+      "neckPain": "Bolest krku",
+      "shoulderPain": "Bolest ramen",
+      "wristPain": "Bolest zápěstí",
+      "other": "Ostatní"
+    },
+    "exerciseEngagement": {
+      "title": "Zapojení do cvičení",
+      "completedExercises": "Dokončená cvičení",
+      "favoriteExercises": "Oblíbená cvičení",
+      "weeklyGoals": "Týdenní cíle splněny"
+    },
+    "filters": {
+      "allDepartments": "Všechna oddělení",
+      "last30Days": "Posledních 30 dní",
+      "last90Days": "Posledních 90 dní",
+      "lastYear": "Poslední rok"
+    },
+    "actions": {
+      "exportReport": "Exportovat zprávu",
+      "viewDetails": "Zobrazit podrobnosti",
+      "sendReminder": "Poslat připomínku",
+      "scheduleCheck": "Naplánovat kontrolu"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "employees": "Zaměstnanci",
+    "programs": "Programy",
+    "reports": "Zprávy",
+    "settings": "Nastavení"
+  },
+  "common": {
+    "loading": "Načítá se...",
+    "error": "Došlo k chybě",
+    "noData": "Žádná data nejsou k dispozici",
+    "refresh": "Obnovit",
+    "close": "Zavřít",
+    "save": "Uložit",
+    "cancel": "Zrušit"
+  }
+}

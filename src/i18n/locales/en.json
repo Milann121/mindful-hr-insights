@@ -1,0 +1,76 @@
+
+{
+  "dashboard": {
+    "title": "Workforce MSK Health Dashboard",
+    "subtitle": "Monitor and manage your team's musculoskeletal health",
+    "overview": {
+      "title": "Overview",
+      "totalEmployees": "Total Employees",
+      "activePrograms": "Active Programs",
+      "completionRate": "Average Completion Rate",
+      "riskLevel": "High Risk Employees"
+    },
+    "painLevels": {
+      "title": "Pain Level Distribution",
+      "low": "Low (1-3)",
+      "moderate": "Moderate (4-6)",
+      "high": "High (7-10)",
+      "noData": "No Data"
+    },
+    "trends": {
+      "title": "Monthly Trends",
+      "painReduction": "Pain Reduction",
+      "programCompletion": "Program Completion",
+      "exerciseCompliance": "Exercise Compliance"
+    },
+    "riskAnalysis": {
+      "title": "Risk Analysis by Department",
+      "department": "Department",
+      "employees": "Employees",
+      "avgPainLevel": "Avg Pain Level",
+      "riskLevel": "Risk Level"
+    },
+    "topIssues": {
+      "title": "Most Common Issues",
+      "backPain": "Back Pain",
+      "neckPain": "Neck Pain",
+      "shoulderPain": "Shoulder Pain",
+      "wristPain": "Wrist Pain",
+      "other": "Other"
+    },
+    "exerciseEngagement": {
+      "title": "Exercise Engagement",
+      "completedExercises": "Completed Exercises",
+      "favoriteExercises": "Favorite Exercises",
+      "weeklyGoals": "Weekly Goals Met"
+    },
+    "filters": {
+      "allDepartments": "All Departments",
+      "last30Days": "Last 30 Days",
+      "last90Days": "Last 90 Days",
+      "lastYear": "Last Year"
+    },
+    "actions": {
+      "exportReport": "Export Report",
+      "viewDetails": "View Details",
+      "sendReminder": "Send Reminder",
+      "scheduleCheck": "Schedule Check-in"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "employees": "Employees",
+    "programs": "Programs",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error occurred",
+    "noData": "No data available",
+    "refresh": "Refresh",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}

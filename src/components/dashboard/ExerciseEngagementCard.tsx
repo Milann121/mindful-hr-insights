@@ -1,0 +1,48 @@
+
+import { useTranslation } from 'react-i18next';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+
+const ExerciseEngagementCard = () => {
+  const { t } = useTranslation();
+
+  const engagementData = [
+    { label: t('dashboard.exerciseEngagement.completedExercises'), value: 1247, total: 1500, percentage: 83 },
+    { label: t('dashboard.exerciseEngagement.favoriteExercises'), value: 89, total: 100, percentage: 89 },
+    { label: t('dashboard.exerciseEngagement.weeklyGoals'), value: 156, total: 200, percentage: 78 },
+  ];
+
+  return (
+    <Card className="col-span-1">
+      <CardHeader>
+        <CardTitle>{t('dashboard.exerciseEngagement.title')}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {engagementData.map((item, index) => (
+          <div key={index} className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-gray-600">{item.label}</span>
+              <span className="text-sm text-gray-500">{item.value}/{item.total}</span>
+            </div>
+            <Progress value={item.percentage} className="h-2" />
+            <div className="text-right">
+              <span className="text-xs text-gray-400">{item.percentage}%</span>
+            </div>
+          </div>
+        ))}
+        
+        <div className="pt-4 space-y-2">
+          <Button variant="outline" size="sm" className="w-full">
+            {t('dashboard.actions.sendReminder')}
+          </Button>
+          <Button variant="outline" size="sm" className="w-full">
+            {t('dashboard.actions.scheduleCheck')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ExerciseEngagementCard;

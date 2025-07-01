@@ -1,0 +1,76 @@
+
+{
+  "dashboard": {
+    "title": "Dashboard zdravia pohybového aparátu",
+    "subtitle": "Monitorujte a spravujte zdravie pohybového aparátu vášho tímu",
+    "overview": {
+      "title": "Prehľad",
+      "totalEmployees": "Celkový počet zamestnancov",
+      "activePrograms": "Aktívne programy",
+      "completionRate": "Priemerná miera dokončenia",
+      "riskLevel": "Zamestnanci s vysokým rizikom"
+    },
+    "painLevels": {
+      "title": "Rozdelenie úrovní bolesti",
+      "low": "Nízka (1-3)",
+      "moderate": "Stredná (4-6)",
+      "high": "Vysoká (7-10)",
+      "noData": "Žiadne údaje"
+    },
+    "trends": {
+      "title": "Mesačné trendy",
+      "painReduction": "Zníženie bolesti",
+      "programCompletion": "Dokončenie programu",
+      "exerciseCompliance": "Dodržiavanie cvičení"
+    },
+    "riskAnalysis": {
+      "title": "Analýza rizika podľa oddelení",
+      "department": "Oddelenie",
+      "employees": "Zamestnanci",
+      "avgPainLevel": "Priem. úroveň bolesti",
+      "riskLevel": "Úroveň rizika"
+    },
+    "topIssues": {
+      "title": "Najčastejšie problémy",
+      "backPain": "Bolesť chrbta",
+      "neckPain": "Bolesť krku",
+      "shoulderPain": "Bolesť ramien",
+      "wristPain": "Bolesť zápästia",
+      "other": "Ostatné"
+    },
+    "exerciseEngagement": {
+      "title": "Zapojenie do cvičení",
+      "completedExercises": "Dokončené cvičenia",
+      "favoriteExercises": "Obľúbené cvičenia",
+      "weeklyGoals": "Týždenné ciele splnené"
+    },
+    "filters": {
+      "allDepartments": "Všetky oddelenia",
+      "last30Days": "Posledných 30 dní",
+      "last90Days": "Posledných 90 dní",
+      "lastYear": "Posledný rok"
+    },
+    "actions": {
+      "exportReport": "Exportovať správu",
+      "viewDetails": "Zobraziť podrobnosti",
+      "sendReminder": "Poslať pripomienku",
+      "scheduleCheck": "Naplánovať kontrolu"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "employees": "Zamestnanci",
+    "programs": "Programy",
+    "reports": "Správy",
+    "settings": "Nastavenia"
+  },
+  "common": {
+    "loading": "Načítava sa...",
+    "error": "Vyskytla sa chyba",
+    "noData": "Žiadne údaje nie sú k dispozícii",
+    "refresh": "Obnoviť",
+    "close": "Zavrieť",
+    "save": "Uložiť",
+    "cancel": "Zrušiť"
+  }
+}
