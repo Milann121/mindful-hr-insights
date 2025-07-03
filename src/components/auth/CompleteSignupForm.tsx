@@ -103,7 +103,7 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
       if (signUpError) {
         setVerificationStatus('error');
         if (signUpError.message.includes('already registered')) {
-          setErrorMessage(t('auth.errors.userExists'));
+          setErrorMessage('Account already exists. Please check your email for a confirmation link or try signing in. If you need a new confirmation email, click the resend button below.');
           setShowResend(true);
         } else {
           setErrorMessage(signUpError.message);

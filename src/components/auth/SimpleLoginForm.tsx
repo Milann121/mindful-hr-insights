@@ -43,7 +43,8 @@ export const SimpleLoginForm = ({ onLoginSuccess, onSwitchToSignup }: SimpleLogi
         if (error.message.includes('Email not confirmed')) {
           setErrorMessage(t('auth.errors.unconfirmedEmail'));
         } else if (error.message.includes('Invalid login credentials')) {
-          setErrorMessage(t('auth.errors.invalidCredentials'));
+          // Check if this might be an unconfirmed email issue
+          setErrorMessage('Invalid email or password. If you just signed up, please check your email to confirm your account first.');
         } else {
           setErrorMessage(error.message);
         }
