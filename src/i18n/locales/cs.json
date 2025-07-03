@@ -12,6 +12,8 @@
       "emailPlaceholder": "Zadejte vaši e-mailovou adresu",
       "b2bPartner": "Společnost",
       "b2bPartnerPlaceholder": "Zadejte ID společnosti (číslo)",
+      "password": "Heslo",
+      "passwordPlaceholder": "Vytvořte heslo (min 6 znaků)",
       "verify": "Ověřit údaje",
       "next": "Další",
       "verifying": "Ověřuji...",

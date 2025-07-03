@@ -16,15 +16,22 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    b2bPartner: ''
+    b2bPartner: '',
+    password: ''
   });
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleVerify = async () => {
-    if (!formData.fullName || !formData.email || !formData.b2bPartner) {
+    if (!formData.fullName || !formData.email || !formData.b2bPartner || !formData.password) {
       setErrorMessage(t('auth.signup.fillAllFields'));
+      setVerificationStatus('error');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setErrorMessage(t('auth.errors.weakPassword'));
       setVerificationStatus('error');
       return;
     }
@@ -33,7 +40,8 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
     setVerificationStatus('idle');
 
     try {
-      const { data, error } = await supabase
+      // First verify HR manager exists
+      const { data: hrManager, error: verifyError } = await supabase
         .from('hr_managers')
         .select('*')
         .eq('email', formData.email)
@@ -41,13 +49,52 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
         .eq('b2b_partner', parseInt(formData.b2bPartner))
         .single();
 
-      if (error || !data) {
+      if (verifyError || !hrManager) {
         setVerificationStatus('error');
         setErrorMessage(t('auth.signup.notVerified'));
-      } else {
-        setVerificationStatus('success');
-        onVerified(data);
+        return;
       }
+
+      // Create user account with Supabase Auth
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: formData.fullName,
+            user_type: 'hr_manager'
+          }
+        }
+      });
+
+      if (signUpError) {
+        setVerificationStatus('error');
+        if (signUpError.message.includes('already registered')) {
+          setErrorMessage(t('auth.errors.userExists'));
+        } else {
+          setErrorMessage(signUpError.message);
+        }
+        return;
+      }
+
+      if (authData.user) {
+        // Create user record linking to hr_manager
+        const { error: userError } = await supabase
+          .from('users')
+          .insert({
+            id: authData.user.id,
+            hr_manager_id: hrManager.id,
+            user_type: 'hr_manager'
+          });
+
+        if (userError) {
+          console.error('Error creating user record:', userError);
+        }
+      }
+
+      setVerificationStatus('success');
+      onVerified({ ...hrManager, user: authData.user });
     } catch (error) {
       setVerificationStatus('error');
       setErrorMessage(t('auth.errors.verificationFailed'));
@@ -88,6 +135,17 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
           placeholder={t('auth.signup.b2bPartnerPlaceholder')}
           value={formData.b2bPartner}
           onChange={(e) => setFormData({ ...formData, b2bPartner: e.target.value })}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="password">{t('auth.signup.password')}</Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder={t('auth.signup.passwordPlaceholder')}
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
       </div>
 

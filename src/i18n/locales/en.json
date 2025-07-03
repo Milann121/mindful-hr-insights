@@ -12,6 +12,8 @@
       "emailPlaceholder": "Enter your email address",
       "b2bPartner": "Company",
       "b2bPartnerPlaceholder": "Enter company ID (number)",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password (min 6 characters)",
       "verify": "Verify Credentials",
       "next": "Next",
       "verifying": "Verifying...",
