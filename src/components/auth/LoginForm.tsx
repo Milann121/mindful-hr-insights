@@ -107,12 +107,20 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
       });
 
       if (error) {
-        setErrorMessage(t('auth.errors.invalidCredentials'));
+        if (error.message.includes('Email not confirmed')) {
+          setErrorMessage(t('auth.errors.unconfirmedEmail'));
+        } else {
+          setErrorMessage(t('auth.errors.invalidCredentials'));
+        }
       } else {
         onLoginSuccess();
       }
     } catch (error: any) {
-      setErrorMessage(t('auth.errors.signinFailed'));
+      if (error.message && error.message.includes('Email not confirmed')) {
+        setErrorMessage(t('auth.errors.unconfirmedEmail'));
+      } else {
+        setErrorMessage(t('auth.errors.signinFailed'));
+      }
     } finally {
       setIsSigningIn(false);
     }

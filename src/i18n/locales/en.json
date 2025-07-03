@@ -44,7 +44,8 @@
       "signinFailed": "Sign in failed. Please check your credentials.",
       "invalidCredentials": "Invalid email or password",
       "userExists": "An account with this email already exists",
-      "weakPassword": "Password should be at least 6 characters"
+      "weakPassword": "Password should be at least 6 characters",
+      "unconfirmedEmail": "Please confirm your email before signing in"
     },
     "language": {
       "switch": "Language",
