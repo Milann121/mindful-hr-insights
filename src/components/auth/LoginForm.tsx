@@ -146,7 +146,11 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
         onLoginSuccess();
       }
     } catch (error: any) {
-      setErrorMessage(t('auth.errors.signinFailed'));
+      if (error.message && error.message.includes('Email not confirmed')) {
+        setErrorMessage(t('auth.errors.unconfirmedEmail'));
+      } else {
+        setErrorMessage(t('auth.errors.signinFailed'));
+      }
     } finally {
       setIsSigningIn(false);
     }

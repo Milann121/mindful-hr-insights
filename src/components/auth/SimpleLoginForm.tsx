@@ -40,7 +40,9 @@ export const SimpleLoginForm = ({ onLoginSuccess, onSwitchToSignup }: SimpleLogi
       });
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
+        if (error.message.includes('Email not confirmed')) {
+          setErrorMessage(t('auth.errors.unconfirmedEmail'));
+        } else if (error.message.includes('Invalid login credentials')) {
           setErrorMessage(t('auth.errors.invalidCredentials'));
         } else {
           setErrorMessage(error.message);
@@ -49,7 +51,11 @@ export const SimpleLoginForm = ({ onLoginSuccess, onSwitchToSignup }: SimpleLogi
         onLoginSuccess();
       }
     } catch (error: any) {
-      setErrorMessage(t('auth.errors.signinFailed'));
+      if (error.message && error.message.includes('Email not confirmed')) {
+        setErrorMessage(t('auth.errors.unconfirmedEmail'));
+      } else {
+        setErrorMessage(t('auth.errors.signinFailed'));
+      }
     } finally {
       setIsSigningIn(false);
     }
