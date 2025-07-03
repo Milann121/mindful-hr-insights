@@ -58,9 +58,8 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
         return;
       }
 
-      // If user was created and confirmed, sign them in and create user record
-      if (data.user && data.user.email_confirmed_at) {
-        // User is automatically signed in, now create user record
+      // Create user record immediately after signup
+      if (data.user) {
         const { error: userError } = await supabase
           .from('users')
           .insert({
@@ -71,7 +70,6 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
 
         if (userError) {
           console.error('Error creating user record:', userError);
-          // Sign them out if user record creation failed
           await supabase.auth.signOut();
           setErrorMessage('Account created but profile setup failed. Please try again.');
           return;
@@ -82,11 +80,6 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
           description: t('auth.login.accountCreated'),
         });
         onLoginSuccess();
-      } else {
-        toast({
-          title: 'Account created',
-          description: 'Please check your email to confirm your account, then try signing in.',
-        });
       }
     } catch (error: any) {
       console.error('Signup error:', error);

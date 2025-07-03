@@ -82,8 +82,8 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
         return;
       }
 
-      // If user was created and confirmed, create user record
-      if (authData.user && authData.user.email_confirmed_at) {
+      // Create user record immediately after signup
+      if (authData.user) {
         const { error: userError } = await supabase
           .from('users')
           .insert({
@@ -105,13 +105,6 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
           description: 'You are now signed in!',
         });
         onSignupSuccess();
-      } else {
-        // Account created but needs email confirmation
-        setVerificationStatus('success');
-        toast({
-          title: 'Account created',
-          description: 'Please check your email to confirm your account, then you can sign in.',
-        });
       }
     } catch (error) {
       console.error('Signup error:', error);
