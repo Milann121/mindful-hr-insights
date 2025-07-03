@@ -11,7 +11,7 @@
       "email": "E-mailová adresa",
       "emailPlaceholder": "Zadejte vaši e-mailovou adresu",
       "b2bPartner": "Společnost",
-      "b2bPartnerPlaceholder": "Vyberte vaši společnost",
+      "b2bPartnerPlaceholder": "Zadejte ID společnosti (číslo)",
       "verify": "Ověřit údaje",
       "next": "Další",
       "verifying": "Ověřuji...",

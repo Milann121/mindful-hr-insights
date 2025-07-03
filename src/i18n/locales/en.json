@@ -11,7 +11,7 @@
       "email": "Email Address",
       "emailPlaceholder": "Enter your email address",
       "b2bPartner": "Company",
-      "b2bPartnerPlaceholder": "Select your company",
+      "b2bPartnerPlaceholder": "Enter company ID (number)",
       "verify": "Verify Credentials",
       "next": "Next",
       "verifying": "Verifying...",

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
@@ -22,19 +21,6 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [b2bPartners, setB2bPartners] = useState<Array<{ id: number; name: string }>>([]);
-
-  // Load B2B partners when component mounts
-  useState(() => {
-    const loadPartners = async () => {
-      const { data } = await supabase
-        .from('B2B_partners')
-        .select('id, name')
-        .order('name');
-      if (data) setB2bPartners(data);
-    };
-    loadPartners();
-  });
 
   const handleVerify = async () => {
     if (!formData.fullName || !formData.email || !formData.b2bPartner) {
@@ -96,18 +82,13 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
 
       <div className="space-y-2">
         <Label htmlFor="b2bPartner">{t('auth.signup.b2bPartner')}</Label>
-        <Select value={formData.b2bPartner} onValueChange={(value) => setFormData({ ...formData, b2bPartner: value })}>
-          <SelectTrigger>
-            <SelectValue placeholder={t('auth.signup.b2bPartnerPlaceholder')} />
-          </SelectTrigger>
-          <SelectContent>
-            {b2bPartners.map((partner) => (
-              <SelectItem key={partner.id} value={partner.id.toString()}>
-                {partner.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Input
+          id="b2bPartner"
+          type="number"
+          placeholder={t('auth.signup.b2bPartnerPlaceholder')}
+          value={formData.b2bPartner}
+          onChange={(e) => setFormData({ ...formData, b2bPartner: e.target.value })}
+        />
       </div>
 
       {verificationStatus === 'error' && (
