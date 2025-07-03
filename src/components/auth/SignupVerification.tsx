@@ -55,46 +55,11 @@ export const SignupVerification = ({ onVerified }: SignupVerificationProps) => {
         return;
       }
 
-      // Create user account with Supabase Auth
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: formData.fullName,
-            user_type: 'hr_manager'
-          }
-        }
-      });
-
-      if (signUpError) {
-        setVerificationStatus('error');
-        if (signUpError.message.includes('already registered')) {
-          setErrorMessage(t('auth.errors.userExists'));
-        } else {
-          setErrorMessage(signUpError.message);
-        }
-        return;
-      }
-
-      if (authData.user) {
-        // Create user record linking to hr_manager
-        const { error: userError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            hr_manager_id: hrManager.id,
-            user_type: 'hr_manager'
-          });
-
-        if (userError) {
-          console.error('Error creating user record:', userError);
-        }
-      }
-
       setVerificationStatus('success');
-      onVerified({ ...hrManager, user: authData.user });
+      onVerified({ 
+        ...hrManager, 
+        password: formData.password // Pass password to login form
+      });
     } catch (error) {
       setVerificationStatus('error');
       setErrorMessage(t('auth.errors.verificationFailed'));

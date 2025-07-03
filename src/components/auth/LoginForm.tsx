@@ -20,7 +20,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: hrManagerData.email,
-    password: ''
+    password: hrManagerData.password || ''
   });
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
@@ -36,6 +36,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
     setErrorMessage('');
 
     try {
+      // Create user account with Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -43,7 +44,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: hrManagerData['full name'],
-            hr_manager_id: hrManagerData.id
+            user_type: 'hr_manager'
           }
         }
       });
@@ -54,23 +55,41 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
         } else {
           setErrorMessage(error.message);
         }
-      } else {
-        // Create user record in users table
-        await supabase
+        return;
+      }
+
+      // If user was created and confirmed, sign them in and create user record
+      if (data.user && data.user.email_confirmed_at) {
+        // User is automatically signed in, now create user record
+        const { error: userError } = await supabase
           .from('users')
           .insert({
-            id: data.user?.id,
+            id: data.user.id,
             hr_manager_id: hrManagerData.id,
             user_type: 'hr_manager'
           });
+
+        if (userError) {
+          console.error('Error creating user record:', userError);
+          // Sign them out if user record creation failed
+          await supabase.auth.signOut();
+          setErrorMessage('Account created but profile setup failed. Please try again.');
+          return;
+        }
 
         toast({
           title: t('auth.login.accountCreated'),
           description: t('auth.login.accountCreated'),
         });
         onLoginSuccess();
+      } else {
+        toast({
+          title: 'Account created',
+          description: 'Please check your email to confirm your account, then try signing in.',
+        });
       }
     } catch (error: any) {
+      console.error('Signup error:', error);
       setErrorMessage(t('auth.errors.signupFailed'));
     } finally {
       setIsCreatingAccount(false);
