@@ -40,8 +40,11 @@ export const SimpleLoginForm = ({ onLoginSuccess, onSwitchToSignup }: SimpleLogi
       });
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setErrorMessage(t('auth.errors.invalidCredentials'));
+        if (error.message.includes('Email not confirmed')) {
+          setErrorMessage(t('auth.errors.unconfirmedEmail'));
+        } else if (error.message.includes('Invalid login credentials')) {
+          // Check if this might be an unconfirmed email issue
+          setErrorMessage('Invalid email or password. If you just signed up, please check your email to confirm your account first.');
         } else {
           setErrorMessage(error.message);
         }
@@ -49,7 +52,11 @@ export const SimpleLoginForm = ({ onLoginSuccess, onSwitchToSignup }: SimpleLogi
         onLoginSuccess();
       }
     } catch (error: any) {
-      setErrorMessage(t('auth.errors.signinFailed'));
+      if (error.message && error.message.includes('Email not confirmed')) {
+        setErrorMessage(t('auth.errors.unconfirmedEmail'));
+      } else {
+        setErrorMessage(t('auth.errors.signinFailed'));
+      }
     } finally {
       setIsSigningIn(false);
     }
