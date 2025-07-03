@@ -25,8 +25,34 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showResend, setShowResend] = useState(false);
+
+  const handleResendEmail = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: formData.email
+      });
+
+      if (error) {
+        toast({
+          title: t('auth.login.resendError'),
+          description: error.message,
+          variant: 'destructive'
+        });
+      } else {
+        toast({ title: t('auth.login.resendSuccess') });
+      }
+    } catch (e) {
+      toast({
+        title: t('auth.login.resendError'),
+        variant: 'destructive'
+      });
+    }
+  };
 
   const handleCreateAccount = async () => {
+    setShowResend(false);
     if (!formData.password || formData.password.length < 6) {
       setErrorMessage(t('auth.errors.weakPassword'));
       return;
@@ -52,6 +78,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
       if (error) {
         if (error.message.includes('already registered')) {
           setErrorMessage(t('auth.errors.userExists'));
+          setShowResend(true);
         } else {
           setErrorMessage(error.message);
         }
@@ -83,6 +110,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
         });
         onLoginSuccess();
       } else {
+        setShowResend(true);
         toast({
           title: 'Account created',
           description: 'Please check your email to confirm your account, then try signing in.',
@@ -97,6 +125,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
   };
 
   const handleSignIn = async () => {
+    setShowResend(false);
     setIsSigningIn(true);
     setErrorMessage('');
 
@@ -107,7 +136,12 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
       });
 
       if (error) {
-        setErrorMessage(t('auth.errors.invalidCredentials'));
+        if (error.message.includes('Email not confirmed')) {
+          setErrorMessage(error.message);
+          setShowResend(true);
+        } else {
+          setErrorMessage(t('auth.errors.invalidCredentials'));
+        }
       } else {
         onLoginSuccess();
       }
@@ -174,7 +208,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
       )}
 
       <div className="space-y-3">
-        <Button 
+        <Button
           onClick={handleCreateAccount}
           disabled={isCreatingAccount || isSigningIn}
           className="w-full"
@@ -190,7 +224,7 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
           )}
         </Button>
 
-        <Button 
+        <Button
           onClick={handleSignIn}
           disabled={isSigningIn || isCreatingAccount}
           className="w-full"
@@ -205,6 +239,12 @@ export const LoginForm = ({ hrManagerData, onBackToVerification, onLoginSuccess 
             t('auth.login.signIn')
           )}
         </Button>
+
+        {showResend && (
+          <Button onClick={handleResendEmail} variant="link" className="w-full">
+            {t('auth.login.resend')}
+          </Button>
+        )}
       </div>
 
       <div className="relative">

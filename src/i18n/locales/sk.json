@@ -35,6 +35,9 @@
       "createAccount": "Vytvoriť váš účet",
       "noAccount": "Nemáte účet? Zaregistrujte sa",
       "accountCreated": "Účet úspešne vytvorený! Prosím prihláste sa.",
+      "resend": "Znovu odoslať potvrdzovací e-mail",
+      "resendSuccess": "Potvrdzovací e-mail bol odoslaný.",
+      "resendError": "Nepodarilo sa odoslať potvrdzovací e-mail.",
       "or": "alebo"
     },
     "errors": {

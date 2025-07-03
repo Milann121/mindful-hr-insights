@@ -36,6 +36,9 @@
       "createAccount": "Create your account",
       "noAccount": "Don't have an account? Sign up",
       "accountCreated": "Account created successfully! Please sign in.",
+      "resend": "Resend confirmation email",
+      "resendSuccess": "Confirmation email resent. Please check your inbox.",
+      "resendError": "Failed to resend confirmation email.",
       "or": "or"
     },
     "errors": {
