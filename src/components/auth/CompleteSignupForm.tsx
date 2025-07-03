@@ -25,8 +25,36 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
   const [isProcessing, setIsProcessing] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showResend, setShowResend] = useState(false);
+
+  const handleResendEmail = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: formData.email
+      });
+
+      if (error) {
+        toast({
+          title: t('auth.login.resendError'),
+          description: error.message,
+          variant: 'destructive'
+        });
+      } else {
+        toast({
+          title: t('auth.login.resendSuccess')
+        });
+      }
+    } catch (e) {
+      toast({
+        title: t('auth.login.resendError'),
+        variant: 'destructive'
+      });
+    }
+  };
 
   const handleCompleteSignup = async () => {
+    setShowResend(false);
     if (!formData.fullName || !formData.email || !formData.b2bPartner || !formData.password) {
       setErrorMessage(t('auth.signup.fillAllFields'));
       setVerificationStatus('error');
@@ -76,6 +104,7 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
         setVerificationStatus('error');
         if (signUpError.message.includes('already registered')) {
           setErrorMessage(t('auth.errors.userExists'));
+          setShowResend(true);
         } else {
           setErrorMessage(signUpError.message);
         }
@@ -107,6 +136,7 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
         onSignupSuccess();
       } else {
         // Account created but needs email confirmation
+        setShowResend(true);
         setVerificationStatus('success');
         toast({
           title: 'Account created',
@@ -193,8 +223,8 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
         </Alert>
       )}
 
-      <Button 
-        onClick={handleCompleteSignup} 
+      <Button
+        onClick={handleCompleteSignup}
         disabled={isProcessing}
         className="w-full"
       >
@@ -207,6 +237,12 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
           t('auth.signup.createAccount')
         )}
       </Button>
+
+      {showResend && (
+        <Button onClick={handleResendEmail} variant="link" className="w-full">
+          {t('auth.login.resend')}
+        </Button>
+      )}
     </div>
   );
 };
