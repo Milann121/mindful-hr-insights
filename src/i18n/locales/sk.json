@@ -43,7 +43,8 @@
       "signinFailed": "Prihlásenie zlyhalo. Skontrolujte vaše údaje.",
       "invalidCredentials": "Neplatný e-mail alebo heslo",
       "userExists": "Účet s týmto e-mailom už existuje",
-      "weakPassword": "Heslo by malo mať aspoň 6 znakov"
+      "weakPassword": "Heslo by malo mať aspoň 6 znakov",
+      "unconfirmedEmail": "Pred prihlásením potvrďte svoj e-mail"
     },
     "language": {
       "switch": "Jazyk",
