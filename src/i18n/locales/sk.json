@@ -1,5 +1,53 @@
 
 {
+  "auth": {
+    "title": "HR Manager Portál",
+    "subtitle": "Prístup k vášmu dashboard zdravia zamestnancov",
+    "signup": {
+      "title": "Overenie registrácie",
+      "subtitle": "Overte vaše HR manager oprávnenia",
+      "fullName": "Celé meno",
+      "fullNamePlaceholder": "Zadajte vaše celé meno",
+      "email": "E-mailová adresa",
+      "emailPlaceholder": "Zadajte vašu e-mailovú adresu",
+      "b2bPartner": "Spoločnosť",
+      "b2bPartnerPlaceholder": "Vyberte vašu spoločnosť",
+      "verify": "Overiť údaje",
+      "next": "Ďalej",
+      "verifying": "Overujem...",
+      "verified": "Údaje overené! Môžete pokračovať.",
+      "notVerified": "Údaje neboli nájdené. Skontrolujte vaše informácie.",
+      "fillAllFields": "Prosím vyplňte všetky polia"
+    },
+    "login": {
+      "title": "Prihlásiť sa",
+      "subtitle": "Pokračovať na váš dashboard",
+      "email": "E-mailová adresa",
+      "password": "Heslo",
+      "signIn": "Prihlásiť sa",
+      "signInWithGoogle": "Prihlásiť sa cez Google",
+      "forgotPassword": "Zabudli ste heslo?",
+      "backToVerification": "Späť na overenie",
+      "signingIn": "Prihlasuje sa...",
+      "createAccount": "Vytvoriť váš účet",
+      "accountCreated": "Účet úspešne vytvorený! Prosím prihláste sa.",
+      "or": "alebo"
+    },
+    "errors": {
+      "verificationFailed": "Overenie zlyhalo. Skúste znovu.",
+      "signupFailed": "Vytvorenie účtu zlyhalo. Skúste znovu.",
+      "signinFailed": "Prihlásenie zlyhalo. Skontrolujte vaše údaje.",
+      "invalidCredentials": "Neplatný e-mail alebo heslo",
+      "userExists": "Účet s týmto e-mailom už existuje",
+      "weakPassword": "Heslo by malo mať aspoň 6 znakov"
+    },
+    "language": {
+      "switch": "Jazyk",
+      "en": "English",
+      "sk": "Slovenčina",
+      "cs": "Čeština"
+    }
+  },
   "dashboard": {
     "title": "Dashboard zdravia pohybového aparátu",
     "subtitle": "Monitorujte a spravujte zdravie pohybového aparátu vášho tímu",
@@ -71,6 +119,7 @@
     "refresh": "Obnoviť",
     "close": "Zavrieť",
     "save": "Uložiť",
-    "cancel": "Zrušiť"
+    "cancel": "Zrušiť",
+    "signOut": "Odhlásiť sa"
   }
 }

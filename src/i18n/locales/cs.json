@@ -1,5 +1,53 @@
 
 {
+  "auth": {
+    "title": "HR Manager Portál",
+    "subtitle": "Přístup k vašemu dashboard zdraví zaměstnanců",
+    "signup": {
+      "title": "Ověření registrace",
+      "subtitle": "Ověřte vaše HR manager oprávnění",
+      "fullName": "Celé jméno",
+      "fullNamePlaceholder": "Zadejte vaše celé jméno",
+      "email": "E-mailová adresa",
+      "emailPlaceholder": "Zadejte vaši e-mailovou adresu",
+      "b2bPartner": "Společnost",
+      "b2bPartnerPlaceholder": "Vyberte vaši společnost",
+      "verify": "Ověřit údaje",
+      "next": "Další",
+      "verifying": "Ověřuji...",
+      "verified": "Údaje ověřeny! Můžete pokračovat.",
+      "notVerified": "Údaje nebyly nalezeny. Zkontrolujte vaše informace.",
+      "fillAllFields": "Prosím vyplňte všechna pole"
+    },
+    "login": {
+      "title": "Přihlásit se",
+      "subtitle": "Pokračovat na váš dashboard",
+      "email": "E-mailová adresa",
+      "password": "Heslo",
+      "signIn": "Přihlásit se",
+      "signInWithGoogle": "Přihlásit se přes Google",
+      "forgotPassword": "Zapomněli jste heslo?",
+      "backToVerification": "Zpět na ověření",
+      "signingIn": "Přihlašuje se...",
+      "createAccount": "Vytvořit váš účet",
+      "accountCreated": "Účet úspěšně vytvořen! Prosím přihlaste se.",
+      "or": "nebo"
+    },
+    "errors": {
+      "verificationFailed": "Ověření selhalo. Zkuste znovu.",
+      "signupFailed": "Vytvoření účtu selhalo. Zkuste znovu.",
+      "signinFailed": "Přihlášení selhalo. Zkontrolujte vaše údaje.",
+      "invalidCredentials": "Neplatný e-mail nebo heslo",
+      "userExists": "Účet s tímto e-mailem již existuje",
+      "weakPassword": "Heslo by mělo mít alespoň 6 znaků"
+    },
+    "language": {
+      "switch": "Jazyk",
+      "en": "English",
+      "sk": "Slovenčina",
+      "cs": "Čeština"
+    }
+  },
   "dashboard": {
     "title": "Dashboard zdraví pohybového aparátu",
     "subtitle": "Monitorujte a spravujte zdraví pohybového aparátu vašeho týmu",
@@ -71,6 +119,7 @@
     "refresh": "Obnovit",
     "close": "Zavřít",
     "save": "Uložit",
-    "cancel": "Zrušit"
+    "cancel": "Zrušit",
+    "signOut": "Odhlásit se"
   }
 }

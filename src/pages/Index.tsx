@@ -1,6 +1,9 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { supabase } from "@/integrations/supabase/client";
+import { User } from '@supabase/supabase-js';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import OverviewCards from '@/components/dashboard/OverviewCards';
 import PainLevelChart from '@/components/dashboard/PainLevelChart';
@@ -8,18 +11,64 @@ import TrendsChart from '@/components/dashboard/TrendsChart';
 import RiskAnalysisTable from '@/components/dashboard/RiskAnalysisTable';
 import TopIssuesChart from '@/components/dashboard/TopIssuesChart';
 import ExerciseEngagementCard from '@/components/dashboard/ExerciseEngagementCard';
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const Index = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = t('dashboard.title');
-  }, [t]);
+    
+    // Check if user is logged in
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+      
+      if (!user) {
+        navigate('/auth');
+      }
+    };
+
+    checkUser();
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (!session?.user) {
+        navigate('/auth');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [t, navigate]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!user) {
+    return null; // Will redirect to auth
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-6 py-8">
+      <div className="flex justify-between items-center p-4 border-b bg-white">
         <DashboardHeader />
+        <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
+          <LogOut className="h-4 w-4" />
+          {t('common.signOut', 'Sign Out')}
+        </Button>
+      </div>
+      <div className="container mx-auto px-6 py-8">
         
         <OverviewCards />
         

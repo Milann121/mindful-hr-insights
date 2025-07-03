@@ -1,5 +1,53 @@
 
 {
+  "auth": {
+    "title": "HR Manager Portal",
+    "subtitle": "Access your workforce health dashboard",
+    "signup": {
+      "title": "Sign Up Verification",
+      "subtitle": "Verify your HR manager credentials",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "b2bPartner": "Company",
+      "b2bPartnerPlaceholder": "Select your company",
+      "verify": "Verify Credentials",
+      "next": "Next",
+      "verifying": "Verifying...",
+      "verified": "Credentials verified! You can proceed.",
+      "notVerified": "Credentials not found. Please check your information.",
+      "fillAllFields": "Please fill in all fields"
+    },
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Continue to your dashboard",
+      "email": "Email Address",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signInWithGoogle": "Sign in with Google",
+      "forgotPassword": "Forgot your password?",
+      "backToVerification": "Back to Verification",
+      "signingIn": "Signing in...",
+      "createAccount": "Create your account",
+      "accountCreated": "Account created successfully! Please sign in.",
+      "or": "or"
+    },
+    "errors": {
+      "verificationFailed": "Verification failed. Please try again.",
+      "signupFailed": "Account creation failed. Please try again.",
+      "signinFailed": "Sign in failed. Please check your credentials.",
+      "invalidCredentials": "Invalid email or password",
+      "userExists": "An account with this email already exists",
+      "weakPassword": "Password should be at least 6 characters"
+    },
+    "language": {
+      "switch": "Language",
+      "en": "English",
+      "sk": "Slovenčina",
+      "cs": "Čeština"
+    }
+  },
   "dashboard": {
     "title": "Workforce MSK Health Dashboard",
     "subtitle": "Monitor and manage your team's musculoskeletal health",
@@ -71,6 +119,7 @@
     "refresh": "Refresh",
     "close": "Close",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "signOut": "Sign Out"
   }
 }
