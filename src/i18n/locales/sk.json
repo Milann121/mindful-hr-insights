@@ -30,8 +30,10 @@
       "signInWithGoogle": "Prihlásiť sa cez Google",
       "forgotPassword": "Zabudli ste heslo?",
       "backToVerification": "Späť na overenie",
+      "backToLogin": "Späť na prihlásenie",
       "signingIn": "Prihlasuje sa...",
       "createAccount": "Vytvoriť váš účet",
+      "noAccount": "Nemáte účet? Zaregistrujte sa",
       "accountCreated": "Účet úspešne vytvorený! Prosím prihláste sa.",
       "or": "alebo"
     },

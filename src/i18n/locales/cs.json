@@ -30,8 +30,10 @@
       "signInWithGoogle": "Přihlásit se přes Google",
       "forgotPassword": "Zapomněli jste heslo?",
       "backToVerification": "Zpět na ověření",
+      "backToLogin": "Zpět na přihlášení",
       "signingIn": "Přihlašuje se...",
       "createAccount": "Vytvořit váš účet",
+      "noAccount": "Nemáte účet? Zaregistrujte se",
       "accountCreated": "Účet úspěšně vytvořen! Prosím přihlaste se.",
       "or": "nebo"
     },

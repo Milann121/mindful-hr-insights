@@ -18,6 +18,7 @@
       "next": "Next",
       "verifying": "Verifying...",
       "verified": "Credentials verified! You can proceed.",
+      "createAccount": "Create Account",
       "notVerified": "Credentials not found. Please check your information.",
       "fillAllFields": "Please fill in all fields"
     },
@@ -30,8 +31,10 @@
       "signInWithGoogle": "Sign in with Google",
       "forgotPassword": "Forgot your password?",
       "backToVerification": "Back to Verification",
+      "backToLogin": "Back to Login",
       "signingIn": "Signing in...",
       "createAccount": "Create your account",
+      "noAccount": "Don't have an account? Sign up",
       "accountCreated": "Account created successfully! Please sign in.",
       "or": "or"
     },

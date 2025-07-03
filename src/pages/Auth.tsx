@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SignupVerification } from "@/components/auth/SignupVerification";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { SimpleLoginForm } from "@/components/auth/SimpleLoginForm";
+import { CompleteSignupForm } from "@/components/auth/CompleteSignupForm";
 import { LanguageSwitcher } from "@/components/auth/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
@@ -12,8 +12,7 @@ import { User } from '@supabase/supabase-js';
 export default function Auth() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState<'verification' | 'login'>('verification');
-  const [hrManagerData, setHrManagerData] = useState<any>(null);
+  const [currentStep, setCurrentStep] = useState<'login' | 'signup'>('login');
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -41,17 +40,19 @@ export default function Auth() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleVerified = (data: any) => {
-    setHrManagerData(data);
+  const handleSwitchToSignup = () => {
+    setCurrentStep('signup');
+  };
+
+  const handleBackToLogin = () => {
     setCurrentStep('login');
   };
 
-  const handleBackToVerification = () => {
-    setCurrentStep('verification');
-    setHrManagerData(null);
+  const handleLoginSuccess = () => {
+    navigate('/');
   };
 
-  const handleLoginSuccess = () => {
+  const handleSignupSuccess = () => {
     navigate('/');
   };
 
@@ -95,34 +96,28 @@ export default function Auth() {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            {currentStep === 'verification' && (
-              <div className="space-y-4">
-                <div className="text-center space-y-2">
-                  <h3 className="text-lg font-semibold">{t('auth.signup.title')}</h3>
-                  <p className="text-sm text-muted-foreground">{t('auth.signup.subtitle')}</p>
-                </div>
-                <SignupVerification onVerified={handleVerified} />
-                {hrManagerData && (
-                  <Button 
-                    onClick={() => setCurrentStep('login')}
-                    className="w-full"
-                  >
-                    {t('auth.signup.next')}
-                  </Button>
-                )}
-              </div>
-            )}
-            
             {currentStep === 'login' && (
               <div className="space-y-4">
                 <div className="text-center space-y-2">
                   <h3 className="text-lg font-semibold">{t('auth.login.title')}</h3>
                   <p className="text-sm text-muted-foreground">{t('auth.login.subtitle')}</p>
                 </div>
-                <LoginForm 
-                  hrManagerData={hrManagerData}
-                  onBackToVerification={handleBackToVerification}
+                <SimpleLoginForm 
                   onLoginSuccess={handleLoginSuccess}
+                  onSwitchToSignup={handleSwitchToSignup}
+                />
+              </div>
+            )}
+            
+            {currentStep === 'signup' && (
+              <div className="space-y-4">
+                <div className="text-center space-y-2">
+                  <h3 className="text-lg font-semibold">{t('auth.signup.title')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('auth.signup.subtitle')}</p>
+                </div>
+                <CompleteSignupForm 
+                  onSignupSuccess={handleSignupSuccess}
+                  onBackToLogin={handleBackToLogin}
                 />
               </div>
             )}
