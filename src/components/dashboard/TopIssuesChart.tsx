@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 
 const TopIssuesChart = () => {
@@ -98,12 +98,16 @@ const TopIssuesChart = () => {
           </div>
         ) : data.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data} layout="horizontal">
+            <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={80} />
+              <XAxis dataKey="name" />
+              <YAxis />
               <Tooltip />
-              <Bar dataKey="value" fill="#3B82F6" />
+              <Bar dataKey="value">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         ) : (
