@@ -106,16 +106,15 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
       if (signUpError) {
         setVerificationStatus('error');
         if (signUpError.message.includes('already registered')) {
-          setErrorMessage('Account already exists. Please check your email for a confirmation link or try signing in. If you need a new confirmation email, click the resend button below.');
-          setShowResend(true);
+          setErrorMessage('Account already exists with this email. Please try signing in instead.');
         } else {
           setErrorMessage(signUpError.message);
         }
         return;
       }
 
-      // If user was created and confirmed, create user record
-      if (authData.user && authData.user.email_confirmed_at) {
+      // If user was created, create user record (email confirmations disabled)
+      if (authData.user) {
         const { error: userError } = await supabase
           .from('users')
           .insert({
@@ -137,14 +136,6 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
           description: 'You are now signed in!',
         });
         onSignupSuccess();
-      } else {
-        // Account created but needs email confirmation
-        setShowResend(true);
-        setVerificationStatus('success');
-        toast({
-          title: 'Account created',
-          description: 'Please check your email to confirm your account, then you can sign in.',
-        });
       }
     } catch (error) {
       console.error('Signup error:', error);
