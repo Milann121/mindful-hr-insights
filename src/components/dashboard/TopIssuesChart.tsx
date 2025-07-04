@@ -15,17 +15,15 @@ const TopIssuesChart = () => {
       try {
         setLoading(true);
         
-        // Query b2b_employees for Test s.r.o. (b2b_partner_id: 10010) and join with user_profiles for pain area data
-        const { data: employees, error } = await supabase
-          .from('b2b_employees')
+        // Query user_profiles directly and join with b2b_employees via employee_id
+        const { data: profiles, error } = await supabase
+          .from('user_profiles')
           .select(`
-            id,
-            employee_id,
-            user_id,
-            user_profiles!inner(pain_area)
+            pain_area,
+            b2b_employees!inner(id, state, b2b_partner_id)
           `)
-          .eq('b2b_partner_id', 10010)
-          .eq('state', 'active');
+          .eq('b2b_employees.b2b_partner_id', 10010)
+          .eq('b2b_employees.state', 'active');
 
         if (error) {
           console.error('Error fetching employee pain area data:', error);
@@ -34,9 +32,9 @@ const TopIssuesChart = () => {
 
         // Count pain areas
         const painAreaCounts: Record<string, number> = {};
-        employees?.forEach((employee: any) => {
-          if (employee.user_profiles?.pain_area) {
-            const area = employee.user_profiles.pain_area.toLowerCase();
+        profiles?.forEach((profile: any) => {
+          if (profile.pain_area) {
+            const area = profile.pain_area.toLowerCase();
             painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
           }
         });
