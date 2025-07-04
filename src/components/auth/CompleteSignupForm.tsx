@@ -31,7 +31,10 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email: formData.email
+        email: formData.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`
+        }
       });
 
       if (error) {
