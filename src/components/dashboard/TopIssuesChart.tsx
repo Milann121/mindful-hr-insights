@@ -15,29 +15,57 @@ const TopIssuesChart = () => {
       try {
         setLoading(true);
         
-        // Query user_profiles directly and join with b2b_employees via employee_id
-        const { data: profiles, error } = await supabase
-          .from('user_profiles')
-          .select(`
-            pain_area,
-            b2b_employees!inner(id, state, b2b_partner_id)
-          `)
-          .eq('b2b_employees.b2b_partner_id', 10010)
-          .eq('b2b_employees.state', 'active');
+        // First get all active b2b_employees for partner_id 10010
+        const { data: employees, error: employeesError } = await supabase
+          .from('b2b_employees')
+          .select('employee_id')
+          .eq('b2b_partner_id', 10010)
+          .eq('state', 'active');
 
-        if (error) {
-          console.error('Error fetching employee pain area data:', error);
+        if (employeesError) {
+          console.error('Error fetching b2b_employees:', employeesError);
           return;
         }
 
-        // Count pain areas
+        if (!employees || employees.length === 0) {
+          console.log('No active employees found for partner_id 10010');
+          setData([]);
+          return;
+        }
+
+        // Get employee_ids to query user_profiles
+        const employeeIds = employees.map(emp => emp.employee_id);
+        console.log('Found employee IDs:', employeeIds);
+
+        // Query user_profiles for these employees
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('pain_area, employee_id')
+          .in('employee_id', employeeIds)
+          .not('pain_area', 'is', null);
+
+        if (profilesError) {
+          console.error('Error fetching user_profiles:', profilesError);
+          return;
+        }
+
+        console.log('Found profiles:', profiles);
+
+        // Count individual pain areas (split comma-separated values)
         const painAreaCounts: Record<string, number> = {};
         profiles?.forEach((profile: any) => {
           if (profile.pain_area) {
-            const area = profile.pain_area.toLowerCase();
-            painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
+            // Split comma-separated pain areas and count each individually
+            const areas = profile.pain_area.split(',').map((area: string) => area.trim().toLowerCase());
+            areas.forEach((area: string) => {
+              if (area) {
+                painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
+              }
+            });
           }
         });
+
+        console.log('Pain area counts:', painAreaCounts);
 
         // Map to chart data with colors
         const colors = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
