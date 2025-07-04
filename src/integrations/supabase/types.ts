@@ -21,6 +21,7 @@ export type Database = {
           last_name: string
           state: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           b2b_partner_id?: number | null
@@ -33,6 +34,7 @@ export type Database = {
           last_name: string
           state?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           b2b_partner_id?: number | null
@@ -45,6 +47,7 @@ export type Database = {
           last_name?: string
           state?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -516,26 +519,26 @@ export type Database = {
         Row: {
           created_at: string
           goal_type: string
-          goal_value: number
           id: string
           updated_at: string
           user_id: string
+          weekly_exercises_goal: number
         }
         Insert: {
           created_at?: string
           goal_type: string
-          goal_value: number
           id?: string
           updated_at?: string
           user_id: string
+          weekly_exercises_goal: number
         }
         Update: {
           created_at?: string
           goal_type?: string
-          goal_value?: number
           id?: string
           updated_at?: string
           user_id?: string
+          weekly_exercises_goal?: number
         }
         Relationships: []
       }

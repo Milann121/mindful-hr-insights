@@ -15,23 +15,28 @@ const TopIssuesChart = () => {
       try {
         setLoading(true);
         
-        // Query user profiles for Test s.r.o. employees (b2b_partner_id: 10010)
-        const { data: profiles, error } = await supabase
-          .from('user_profiles')
-          .select('pain_area')
+        // Query b2b_employees for Test s.r.o. (b2b_partner_id: 10010) and join with user_profiles for pain area data
+        const { data: employees, error } = await supabase
+          .from('b2b_employees')
+          .select(`
+            id,
+            employee_id,
+            user_id,
+            user_profiles!inner(pain_area)
+          `)
           .eq('b2b_partner_id', 10010)
-          .not('pain_area', 'is', null);
+          .eq('state', 'active');
 
         if (error) {
-          console.error('Error fetching pain area data:', error);
+          console.error('Error fetching employee pain area data:', error);
           return;
         }
 
         // Count pain areas
         const painAreaCounts: Record<string, number> = {};
-        profiles?.forEach(profile => {
-          if (profile.pain_area) {
-            const area = profile.pain_area.toLowerCase();
+        employees?.forEach((employee: any) => {
+          if (employee.user_profiles?.pain_area) {
+            const area = employee.user_profiles.pain_area.toLowerCase();
             painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
           }
         });
