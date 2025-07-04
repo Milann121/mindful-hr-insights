@@ -18,10 +18,9 @@ const TopIssuesChart = () => {
         // First get all active b2b_employees for partner_id 10010
         const { data: employees, error: employeesError } = await supabase
           .from('b2b_employees')
-          .select('user_id')
+          .select('employee_id')
           .eq('b2b_partner_id', 10010)
-          .eq('state', 'active')
-          .not('user_id', 'is', null);
+          .eq('state', 'active');
 
         if (employeesError) {
           console.error('Error fetching b2b_employees:', employeesError);
@@ -34,32 +33,35 @@ const TopIssuesChart = () => {
           return;
         }
 
-        // Get user_ids to query user_assessments
-        const userIds = employees.map(emp => emp.user_id);
-        console.log('Found user IDs:', userIds);
+        // Get employee_ids to query user_profiles
+        const employeeIds = employees.map(emp => emp.employee_id);
+        console.log('Found employee IDs:', employeeIds);
 
-        // Query user_assessments for these employees to get all pain areas
-        const { data: assessments, error: assessmentsError } = await supabase
-          .from('user_assessments')
-          .select('pain_area, user_id')
-          .in('user_id', userIds)
+        // Query user_profiles for these employees
+        const { data: profiles, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('pain_area, employee_id')
+          .in('employee_id', employeeIds)
           .not('pain_area', 'is', null);
 
-        if (assessmentsError) {
-          console.error('Error fetching user_assessments:', assessmentsError);
+        if (profilesError) {
+          console.error('Error fetching user_profiles:', profilesError);
           return;
         }
 
-        console.log('Found assessments:', assessments);
+        console.log('Found profiles:', profiles);
 
-        // Count individual pain areas from all assessments
+        // Count individual pain areas (split comma-separated values)
         const painAreaCounts: Record<string, number> = {};
-        assessments?.forEach((assessment: any) => {
-          if (assessment.pain_area) {
-            const area = assessment.pain_area.trim().toLowerCase();
-            if (area) {
-              painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
-            }
+        profiles?.forEach((profile: any) => {
+          if (profile.pain_area) {
+            // Split comma-separated pain areas and count each individually
+            const areas = profile.pain_area.split(',').map((area: string) => area.trim().toLowerCase());
+            areas.forEach((area: string) => {
+              if (area) {
+                painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
+              }
+            });
           }
         });
 
