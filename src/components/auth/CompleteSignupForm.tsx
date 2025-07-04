@@ -92,7 +92,7 @@ export const CompleteSignupForm = ({ onSignupSuccess, onBackToLogin }: CompleteS
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
+          emailRedirectTo: 'https://29a577af-ec8e-4498-97a4-5574a1ac041b.lovableproject.com/auth',
           data: {
             full_name: formData.fullName,
             user_type: 'hr_manager'
