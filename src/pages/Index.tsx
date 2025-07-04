@@ -61,14 +61,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex justify-between items-center p-4 border-b bg-white">
-        <DashboardHeader />
+      <div className="flex justify-end items-center p-4 border-b bg-white">
         <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
           <LogOut className="h-4 w-4" />
           {t('common.signOut', 'Sign Out')}
         </Button>
       </div>
       <div className="container mx-auto px-6 py-8">
+        <DashboardHeader />
         
         <OverviewCards />
         
