@@ -78,7 +78,10 @@
       "title": "Měsíční trendy",
       "painReduction": "Snížení bolesti",
       "programCompletion": "Dokončení programu",
-      "exerciseCompliance": "Dodržování cvičení"
+      "exerciseCompliance": "Dodržování cvičení",
+      "painReductionDesc": "Linie Snížení bolesti popisuje měsíční změnu z existujících aktivních programů prostřednictvím následných dotazníků a ukončených programů prostřednictvím závěrečných dotazníků. Čím vyšší je % změna oproti předchozímu měsíci, tím lepší jsou výsledky.",
+      "programCompletionDesc": "Linie Dokončení programu popisuje měsíční změnu v nově ukončených programech oproti předchozímu měsíci.",
+      "exerciseComplianceDesc": "Linie Dodržování cvičení popisuje, kolik % zaměstnanců splnilo své týdenní cíle v daném měsíci. Data se aktualizují každý týden v pondělí."
     },
     "riskAnalysis": {
       "title": "Analýza rizika podle oddělení",
