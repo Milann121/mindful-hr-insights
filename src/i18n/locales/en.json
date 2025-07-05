@@ -187,6 +187,7 @@
     "close": "Close",
     "save": "Save",
     "cancel": "Cancel",
+    "edit": "Edit",
     "signOut": "Sign Out"
   }
 }

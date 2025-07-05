@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Edit } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import FileUpload from './FileUpload';
@@ -34,6 +34,7 @@ const CompanyProfile = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [jobProperties, setJobProperties] = useState<JobProperty[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchCompanyData();
@@ -231,6 +232,7 @@ const CompanyProfile = () => {
         description: 'Company profile updated successfully',
       });
       
+      setIsEditing(false);
       fetchCompanyData(); // Refresh data
     } catch (error) {
       console.error('Error saving departments:', error);
@@ -272,8 +274,18 @@ const CompanyProfile = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('profile.companyProfile.title')}</CardTitle>
+        {!isEditing && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsEditing(true)}
+            className="h-8 w-8 p-0"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -295,6 +307,7 @@ const CompanyProfile = () => {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Enter company location"
+                disabled={!isEditing}
               />
             </div>
             
@@ -323,10 +336,12 @@ const CompanyProfile = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <Label className="text-lg font-semibold">{t('profile.companyProfile.departments')}</Label>
-            <Button onClick={addDepartment} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              {t('profile.companyProfile.addDepartment')}
-            </Button>
+            {isEditing && (
+              <Button onClick={addDepartment} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                {t('profile.companyProfile.addDepartment')}
+              </Button>
+            )}
           </div>
           
           <div className="space-y-4">
@@ -339,6 +354,7 @@ const CompanyProfile = () => {
                       value={dept.department_name}
                       onChange={(e) => updateDepartment(index, 'department_name', e.target.value)}
                       placeholder="Enter department name"
+                      disabled={!isEditing}
                     />
                   </div>
                   
@@ -348,6 +364,7 @@ const CompanyProfile = () => {
                       type="number"
                       value={dept.department_headcount}
                       onChange={(e) => updateDepartment(index, 'department_headcount', parseInt(e.target.value) || 0)}
+                      disabled={!isEditing}
                     />
                   </div>
                   
@@ -356,6 +373,7 @@ const CompanyProfile = () => {
                     <Select
                       value={dept.job_type}
                       onValueChange={(value) => updateDepartment(index, 'job_type', value)}
+                      disabled={!isEditing}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -377,6 +395,7 @@ const CompanyProfile = () => {
                           id={`${index}-${prop.property_name}`}
                           checked={dept.job_properties.includes(prop.property_name)}
                           onCheckedChange={() => toggleJobProperty(index, prop.property_name)}
+                          disabled={!isEditing}
                         />
                         <Label
                           htmlFor={`${index}-${prop.property_name}`}
@@ -389,22 +408,35 @@ const CompanyProfile = () => {
                   </div>
                 </div>
                 
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removeDepartment(index)}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Remove
-                </Button>
+                {isEditing && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => removeDepartment(index)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove
+                  </Button>
+                )}
               </Card>
             ))}
           </div>
         </div>
         
-        <Button onClick={saveDepartments} disabled={loading}>
-          {loading ? t('common.loading') : t('common.save')}
-        </Button>
+        {isEditing && (
+          <div className="flex gap-2">
+            <Button onClick={saveDepartments} disabled={loading}>
+              {loading ? t('common.loading') : t('common.save')}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditing(false)}
+              disabled={loading}
+            >
+              {t('common.cancel')}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

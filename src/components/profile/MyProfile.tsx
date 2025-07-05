@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Edit } from 'lucide-react';
 import FileUpload from './FileUpload';
 
 const MyProfile = () => {
@@ -16,6 +17,7 @@ const MyProfile = () => {
   const [position, setPosition] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -89,6 +91,8 @@ const MyProfile = () => {
         title: t('common.save'),
         description: 'Profile updated successfully',
       });
+      
+      setIsEditing(false);
     } catch (error) {
       console.error('Error saving profile:', error);
       toast({
@@ -144,8 +148,18 @@ const MyProfile = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t('profile.myProfile.title')}</CardTitle>
+        {!isEditing && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsEditing(true)}
+            className="h-8 w-8 p-0"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-start gap-6">
@@ -167,6 +181,7 @@ const MyProfile = () => {
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                disabled={!isEditing}
               />
             </div>
             
@@ -176,6 +191,7 @@ const MyProfile = () => {
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                disabled={!isEditing}
               />
             </div>
             
@@ -185,14 +201,26 @@ const MyProfile = () => {
                 id="position"
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
+                disabled={!isEditing}
               />
             </div>
           </div>
         </div>
         
-        <Button onClick={handleSave} disabled={loading}>
-          {loading ? t('common.loading') : t('common.save')}
-        </Button>
+        {isEditing && (
+          <div className="flex gap-2">
+            <Button onClick={handleSave} disabled={loading}>
+              {loading ? t('common.loading') : t('common.save')}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditing(false)}
+              disabled={loading}
+            >
+              {t('common.cancel')}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

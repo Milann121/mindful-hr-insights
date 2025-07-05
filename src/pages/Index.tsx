@@ -12,6 +12,7 @@ import TrendsChart from '@/components/dashboard/TrendsChart';
 import RiskAnalysisTable from '@/components/dashboard/RiskAnalysisTable';
 import TopIssuesChart from '@/components/dashboard/TopIssuesChart';
 import ExerciseEngagementCard from '@/components/dashboard/ExerciseEngagementCard';
+import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
@@ -63,7 +64,8 @@ const Index = () => {
   return (
     <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
-        <div className="flex justify-end items-center p-4 border-b bg-white">
+        <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
+          <LanguageSwitcher />
           <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
             <LogOut className="h-4 w-4" />
             {t('common.signOut', 'Sign Out')}

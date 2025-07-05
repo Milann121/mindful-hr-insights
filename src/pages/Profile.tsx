@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import PageHeader from '@/components/layout/PageHeader';
 import MyProfile from '@/components/profile/MyProfile';
 import CompanyProfile from '@/components/profile/CompanyProfile';
+import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { DateFilterProvider } from '@/contexts/DateFilterContext';
 
 const Profile = () => {
@@ -16,6 +17,9 @@ const Profile = () => {
     <DateFilterProvider>
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-7xl mx-auto">
+          <div className="flex justify-end mb-4">
+            <LanguageSwitcher />
+          </div>
           <PageHeader 
             title={t('profile.title')}
             subtitle=""
