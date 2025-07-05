@@ -2,14 +2,32 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Users, ChartBar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { useDateFilter, type DateFilterPeriod } from '@/contexts/DateFilterContext';
 
 const DashboardHeader = () => {
   const { t, i18n } = useTranslation();
+  const { selectedPeriod, setSelectedPeriod } = useDateFilter();
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
   };
+
+  const changePeriod = (period: string) => {
+    setSelectedPeriod(period as DateFilterPeriod);
+  };
+
+  const periodOptions: { value: DateFilterPeriod; label: string }[] = [
+    { value: 'today', label: t('dashboard.filters.periods.today') },
+    { value: 'yesterday', label: t('dashboard.filters.periods.yesterday') },
+    { value: 'week-to-date', label: t('dashboard.filters.periods.weekToDate') },
+    { value: 'last-week', label: t('dashboard.filters.periods.lastWeek') },
+    { value: 'month-to-date', label: t('dashboard.filters.periods.monthToDate') },
+    { value: 'last-month', label: t('dashboard.filters.periods.lastMonth') },
+    { value: 'last-30-days', label: t('dashboard.filters.periods.last30Days') },
+    { value: 'year-to-date', label: t('dashboard.filters.periods.yearToDate') },
+    { value: 'last-year', label: t('dashboard.filters.periods.lastYear') },
+  ];
 
   return (
     <div className="mb-8">
@@ -35,10 +53,19 @@ const DashboardHeader = () => {
             </SelectContent>
           </Select>
           
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            {t('dashboard.filters.last30Days')}
-          </Button>
+          <Select value={selectedPeriod} onValueChange={changePeriod}>
+            <SelectTrigger className="w-48">
+              <Calendar className="h-4 w-4 mr-2" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {periodOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           
           <Button>
             {t('dashboard.actions.exportReport')}
@@ -49,12 +76,6 @@ const DashboardHeader = () => {
       <div className="flex gap-4">
         <Button variant="outline" size="sm">
           {t('dashboard.filters.allDepartments')}
-        </Button>
-        <Button variant="outline" size="sm">
-          {t('dashboard.filters.last90Days')}
-        </Button>
-        <Button variant="outline" size="sm">
-          {t('dashboard.filters.lastYear')}
         </Button>
       </div>
     </div>

@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
+import { useDateFilter } from '@/contexts/DateFilterContext';
 
 const PainLevelChart = () => {
   const { t } = useTranslation();
+  const { getDateRange } = useDateFilter();
   const [data, setData] = useState([
     { name: t('dashboard.painLevels.low'), value: 0, color: '#10B981' },
     { name: t('dashboard.painLevels.moderate'), value: 0, color: '#F59E0B' },
@@ -29,6 +31,8 @@ const PainLevelChart = () => {
 
         if (!companyId) return;
 
+        const { start, end } = getDateRange();
+
         // Get employee IDs for this company
         const { data: employees } = await supabase
           .from('b2b_employees')
@@ -39,12 +43,14 @@ const PainLevelChart = () => {
         const employeeIds = employees?.map(emp => emp.id).filter(Boolean) || [];
 
         if (employeeIds.length > 0) {
-          // Get pain levels from active programs
+          // Get pain levels from active programs within date range
           const { data: programData } = await supabase
             .from('user_program_tracking')
             .select('initial_pain_level')
             .in('b2b_employee_id', employeeIds)
-            .eq('program_status', 'active');
+            .eq('program_status', 'active')
+            .gte('program_started_at', start.toISOString())
+            .lte('program_started_at', end.toISOString());
 
           // Calculate pain level distribution
           let lowCount = 0;
@@ -106,7 +112,7 @@ const PainLevelChart = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [t]);
+  }, [t, getDateRange]);
 
   const COLORS = data.map(item => item.color);
   

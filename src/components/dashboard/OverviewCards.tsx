@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, ChartBar, Calendar, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useDateFilter } from '@/contexts/DateFilterContext';
 
 const OverviewCards = () => {
   const { t } = useTranslation();
+  const { getDateRange } = useDateFilter();
   const [stats, setStats] = useState({
     totalEmployees: 0,
     activePrograms: 0,
@@ -29,6 +31,8 @@ const OverviewCards = () => {
 
         if (!companyId) return;
 
+        const { start, end } = getDateRange();
+
         // Get total employees count
         const { count: totalEmployees } = await supabase
           .from('b2b_employees')
@@ -47,34 +51,40 @@ const OverviewCards = () => {
         const employeeUserIds = employees?.map(emp => emp.user_id).filter(Boolean) || [];
 
         if (employeeIds.length > 0) {
-          // Get active programs count from user_program_tracking
+          // Get active programs count from user_program_tracking within date range
           const { count: activePrograms } = await supabase
             .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
             .in('b2b_employee_id', employeeIds)
-            .eq('program_status', 'active');
+            .eq('program_status', 'active')
+            .gte('program_started_at', start.toISOString())
+            .lte('program_started_at', end.toISOString());
 
-          // Get completed programs count from user_program_tracking
+          // Get completed programs count from user_program_tracking within date range
           const { count: completedPrograms } = await supabase
             .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
             .in('b2b_employee_id', employeeIds)
-            .eq('program_status', 'ended');
+            .eq('program_status', 'ended')
+            .gte('program_started_at', start.toISOString())
+            .lte('program_started_at', end.toISOString());
 
           // Calculate completion rate
           const totalPrograms = (activePrograms || 0) + (completedPrograms || 0);
           const completionRate = totalPrograms > 0 ? Math.round((completedPrograms || 0) / totalPrograms * 100) : 0;
 
-          // Get high risk employees (those with pain level > 6)
-          const { data: profiles } = await supabase
-            .from('user_profiles')
-            .select('pain_level_initial, pain_level_followup')
-            .in('user_id', employeeUserIds);
+          // Get high risk employees (those with pain level > 6) from active programs in date range
+          const { data: trackingData } = await supabase
+            .from('user_program_tracking')
+            .select('initial_pain_level')
+            .in('b2b_employee_id', employeeIds)
+            .eq('program_status', 'active')
+            .gte('program_started_at', start.toISOString())
+            .lte('program_started_at', end.toISOString());
 
-          const highRiskCount = profiles?.filter(profile => {
-            const currentPainLevel = profile.pain_level_followup || profile.pain_level_initial || 0;
-            return currentPainLevel > 6;
-          }).length || 0;
+          const highRiskCount = trackingData?.filter(program => 
+            program.initial_pain_level && program.initial_pain_level > 6
+          ).length || 0;
 
           setStats({
             totalEmployees: totalEmployees || 0,
@@ -98,7 +108,7 @@ const OverviewCards = () => {
     };
 
     fetchOverviewData();
-  }, []);
+  }, [getDateRange]);
 
   const statsConfig = [
     {

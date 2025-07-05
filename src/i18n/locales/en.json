@@ -105,9 +105,17 @@
     },
     "filters": {
       "allDepartments": "All Departments",
-      "last30Days": "Last 30 Days",
-      "last90Days": "Last 90 Days",
-      "lastYear": "Last Year"
+      "periods": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "weekToDate": "Week to Date",
+        "lastWeek": "Last Week",
+        "monthToDate": "Month to Date",
+        "lastMonth": "Last Month",
+        "last30Days": "Last 30 Days",
+        "yearToDate": "Year to Date",
+        "lastYear": "Last Year"
+      }
     },
     "actions": {
       "exportReport": "Export Report",

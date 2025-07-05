@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from "@/integrations/supabase/client";
 import { User } from '@supabase/supabase-js';
+import { DateFilterProvider } from '@/contexts/DateFilterContext';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import OverviewCards from '@/components/dashboard/OverviewCards';
 import PainLevelChart from '@/components/dashboard/PainLevelChart';
@@ -60,39 +61,41 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex justify-end items-center p-4 border-b bg-white">
-        <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          {t('common.signOut', 'Sign Out')}
-        </Button>
-      </div>
-      <div className="container mx-auto px-6 py-8">
-        <DashboardHeader />
-        
-        <OverviewCards />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <PainLevelChart />
-          <TrendsChart />
+    <DateFilterProvider>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex justify-end items-center p-4 border-b bg-white">
+          <Button variant="outline" onClick={handleSignOut} className="flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            {t('common.signOut', 'Sign Out')}
+          </Button>
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <RiskAnalysisTable />
-          <TopIssuesChart />
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <ExerciseEngagementCard />
-          <div className="col-span-2">
-            {/* Placeholder for additional content */}
-            <div className="h-64 bg-white rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center">
-              <p className="text-gray-500">{t('common.noData')}</p>
+        <div className="container mx-auto px-6 py-8">
+          <DashboardHeader />
+          
+          <OverviewCards />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <PainLevelChart />
+            <TrendsChart />
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <RiskAnalysisTable />
+            <TopIssuesChart />
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <ExerciseEngagementCard />
+            <div className="col-span-2">
+              {/* Placeholder for additional content */}
+              <div className="h-64 bg-white rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center">
+                <p className="text-gray-500">{t('common.noData')}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DateFilterProvider>
   );
 };
 

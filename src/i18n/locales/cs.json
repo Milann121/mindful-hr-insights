@@ -104,9 +104,17 @@
     },
     "filters": {
       "allDepartments": "Všechna oddělení",
-      "last30Days": "Posledních 30 dní",
-      "last90Days": "Posledních 90 dní",
-      "lastYear": "Poslední rok"
+      "periods": {
+        "today": "Dnes",
+        "yesterday": "Včera",
+        "weekToDate": "Týden do dnes",
+        "lastWeek": "Minulý týden",
+        "monthToDate": "Měsíc do dnes",
+        "lastMonth": "Minulý měsíc",
+        "last30Days": "Posledních 30 dní",
+        "yearToDate": "Rok do dnes",
+        "lastYear": "Minulý rok"
+      }
     },
     "actions": {
       "exportReport": "Exportovat zprávu",
