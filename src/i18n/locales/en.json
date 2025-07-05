@@ -63,8 +63,8 @@
     "overview": {
       "title": "Overview",
       "totalEmployees": "Total Employees",
-      "activePrograms": "Active Programs",
-      "completionRate": "Average Completion Rate",
+      "activePrograms": "Active Programs", 
+      "completionRate": "Program Completion Rate",
       "riskLevel": "High Risk Employees"
     },
     "painLevels": {

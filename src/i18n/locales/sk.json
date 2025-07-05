@@ -63,7 +63,7 @@
       "title": "Prehľad",
       "totalEmployees": "Celkový počet zamestnancov",
       "activePrograms": "Aktívne programy",
-      "completionRate": "Priemerná miera dokončenia",
+      "completionRate": "Miera dokončenia programov",
       "riskLevel": "Zamestnanci s vysokým rizikom"
     },
     "painLevels": {
