@@ -162,14 +162,14 @@ const MyProfile = () => {
         )}
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-6">
+        <div className="flex items-start gap-8">
           <div className="flex-shrink-0">
             <Label>{t('profile.myProfile.profilePicture')}</Label>
             <FileUpload
               onFileSelect={handleFileUpload}
               currentImageUrl={profilePictureUrl}
               placeholder={t('profile.myProfile.uploadPicture')}
-              className="w-24 h-24"
+              className="w-32 h-32"
               circular
             />
           </div>

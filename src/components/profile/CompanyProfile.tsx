@@ -409,24 +409,36 @@ const CompanyProfile = () => {
                 
                 <div className="mb-4">
                   <Label className="mb-2 block">{t('profile.companyProfile.jobProperties')}</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {jobProperties.map((prop) => (
-                      <div key={prop.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`${index}-${prop.property_name}`}
-                          checked={dept.job_properties.includes(prop.property_name)}
-                          onCheckedChange={() => toggleJobProperty(index, prop.property_name)}
-                          disabled={!isEditing}
-                        />
-                        <Label
-                          htmlFor={`${index}-${prop.property_name}`}
-                          className="text-sm"
+                  {isEditing ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {jobProperties.map((prop) => (
+                        <div key={prop.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`${index}-${prop.property_name}`}
+                            checked={dept.job_properties.includes(prop.property_name)}
+                            onCheckedChange={() => toggleJobProperty(index, prop.property_name)}
+                          />
+                          <Label
+                            htmlFor={`${index}-${prop.property_name}`}
+                            className="text-sm"
+                          >
+                            {t(`profile.jobProperties.${prop.property_name}`)}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {dept.job_properties.map((propName, propIndex) => (
+                        <span
+                          key={propIndex}
+                          className="inline-block px-2 py-1 bg-primary/10 text-primary text-sm rounded-md"
                         >
-                          {t(`profile.jobProperties.${prop.property_name}`)}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
+                          {t(`profile.jobProperties.${propName}`)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
                 {isEditing && (
