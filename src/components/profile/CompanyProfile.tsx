@@ -181,7 +181,28 @@ const CompanyProfile = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const partnerId = 1; // Assuming Test s.r.o. has ID 1
+      // Get the actual partner ID for the current HR manager
+      const { data: userData } = await supabase
+        .from('users')
+        .select('hr_manager_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!userData?.hr_manager_id) {
+        throw new Error('User is not associated with an HR manager');
+      }
+
+      const { data: hrManager } = await supabase
+        .from('hr_managers')
+        .select('b2b_partner')
+        .eq('id', userData.hr_manager_id)
+        .single();
+
+      if (!hrManager?.b2b_partner) {
+        throw new Error('HR manager is not associated with a B2B partner');
+      }
+
+      const partnerId = hrManager.b2b_partner;
 
       for (const dept of departments) {
         if (dept.department_name) {
@@ -238,7 +259,7 @@ const CompanyProfile = () => {
       console.error('Error saving departments:', error);
       toast({
         title: t('common.error'),
-        description: 'Failed to update company profile',
+        description: error.message || 'Failed to update company profile',
         variant: 'destructive',
       });
     } finally {
