@@ -36,32 +36,30 @@ const OverviewCards = () => {
           .eq('b2b_partner_id', companyId)
           .eq('state', 'active');
 
-        // Get employee user IDs for this company
+        // Get employee IDs for this company
         const { data: employees } = await supabase
           .from('b2b_employees')
-          .select('user_id')
+          .select('id, user_id')
           .eq('b2b_partner_id', companyId)
-          .eq('state', 'active')
-          .not('user_id', 'is', null);
+          .eq('state', 'active');
 
+        const employeeIds = employees?.map(emp => emp.id).filter(Boolean) || [];
         const employeeUserIds = employees?.map(emp => emp.user_id).filter(Boolean) || [];
 
-        if (employeeUserIds.length > 0) {
-          // Get active programs count (programs with start date but no end date)
+        if (employeeIds.length > 0) {
+          // Get active programs count from user_program_tracking
           const { count: activePrograms } = await supabase
-            .from('user_assessments')
+            .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
-            .in('user_id', employeeUserIds)
-            .not('program_start_date', 'is', null)
-            .is('program_ended_at', null);
+            .in('b2b_employee_id', employeeIds)
+            .eq('program_status', 'active');
 
-          // Get completed programs count
+          // Get completed programs count from user_program_tracking
           const { count: completedPrograms } = await supabase
-            .from('user_assessments')
+            .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
-            .in('user_id', employeeUserIds)
-            .not('program_start_date', 'is', null)
-            .not('program_ended_at', 'is', null);
+            .in('b2b_employee_id', employeeIds)
+            .eq('program_status', 'ended');
 
           // Calculate completion rate
           const totalPrograms = (activePrograms || 0) + (completedPrograms || 0);

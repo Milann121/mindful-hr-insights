@@ -617,6 +617,60 @@ export type Database = {
           },
         ]
       }
+      user_program_tracking: {
+        Row: {
+          assessment_id: string
+          b2b_employee_id: string | null
+          created_at: string
+          id: string
+          initial_pain_level: number | null
+          pain_area: string
+          primary_differential: string
+          primary_mechanism: string
+          program_deleted_at: string | null
+          program_ended_at: string | null
+          program_started_at: string
+          program_status: Database["public"]["Enums"]["program_status"]
+          sin_group: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id: string
+          b2b_employee_id?: string | null
+          created_at?: string
+          id?: string
+          initial_pain_level?: number | null
+          pain_area: string
+          primary_differential: string
+          primary_mechanism: string
+          program_deleted_at?: string | null
+          program_ended_at?: string | null
+          program_started_at?: string
+          program_status?: Database["public"]["Enums"]["program_status"]
+          sin_group: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string
+          b2b_employee_id?: string | null
+          created_at?: string
+          id?: string
+          initial_pain_level?: number | null
+          pain_area?: string
+          primary_differential?: string
+          primary_mechanism?: string
+          program_deleted_at?: string | null
+          program_ended_at?: string | null
+          program_started_at?: string
+          program_status?: Database["public"]["Enums"]["program_status"]
+          sin_group?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           b2b_employee_id: string | null
@@ -675,13 +729,24 @@ export type Database = {
         Args: { user_id: string }
         Returns: number
       }
+      get_user_program_stats: {
+        Args: { target_user_id?: string }
+        Returns: {
+          user_id: string
+          b2b_employee_id: string
+          active_programs: number
+          ended_programs: number
+          deleted_programs: number
+          total_programs: number
+        }[]
+      }
       is_hr_manager: {
         Args: { user_id: string }
         Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      program_status: "active" | "ended" | "deleted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -796,6 +861,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      program_status: ["active", "ended", "deleted"],
+    },
   },
 } as const
