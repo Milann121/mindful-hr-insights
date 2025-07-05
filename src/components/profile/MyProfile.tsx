@@ -35,6 +35,7 @@ const MyProfile = () => {
       if (profile) {
         setFirstName(profile.first_name || '');
         setLastName(profile.last_name || '');
+        setProfilePictureUrl(profile.profile_picture_url || '');
       }
 
       // Try to get user profile with position
@@ -65,6 +66,7 @@ const MyProfile = () => {
           id: user.id,
           first_name: firstName,
           last_name: lastName,
+          profile_picture_url: profilePictureUrl,
           updated_at: new Date().toISOString()
         });
 
@@ -118,6 +120,18 @@ const MyProfile = () => {
         .getPublicUrl(fileName);
 
       setProfilePictureUrl(data.publicUrl);
+
+      // Immediately save the profile picture URL to the database
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          profile_picture_url: data.publicUrl,
+          updated_at: new Date().toISOString()
+        });
+
+      if (profileError) throw profileError;
+
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
