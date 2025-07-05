@@ -98,8 +98,8 @@ const TrendsChart = () => {
                itemDate.getMonth() === current.getMonth();
       });
 
-      // Pain Reduction: % change in pain improvement
-      const painReduction = calculatePainReduction(monthData, months.length > 0 ? months[months.length - 1].painReduction : 0);
+      // Pain Reduction: average pain improvement percentage
+      const painReduction = calculatePainReduction(monthData);
       
       // Program Completion: % of ended programs
       const programCompletion = calculateProgramCompletion(monthData);
@@ -120,14 +120,14 @@ const TrendsChart = () => {
     return months;
   };
 
-  const calculatePainReduction = (monthData: any[], previousMonthValue: number) => {
+  const calculatePainReduction = (monthData: any[]) => {
     if (monthData.length === 0) return 0;
     
     const validPainData = monthData.filter(item => 
       item.initial_pain_level && (item.pain_level_followup || item.pain_level_ended)
     );
     
-    if (validPainData.length === 0) return previousMonthValue;
+    if (validPainData.length === 0) return 0;
     
     const totalReduction = validPainData.reduce((sum, item) => {
       const initial = item.initial_pain_level;
@@ -136,10 +136,7 @@ const TrendsChart = () => {
       return sum + reduction;
     }, 0);
     
-    const avgReduction = totalReduction / validPainData.length;
-    const changeFromPrevious = previousMonthValue ? ((avgReduction - previousMonthValue) / Math.abs(previousMonthValue)) * 100 : avgReduction;
-    
-    return Math.max(0, Math.min(100, avgReduction + changeFromPrevious));
+    return totalReduction / validPainData.length;
   };
 
   const calculateProgramCompletion = (monthData: any[]) => {
