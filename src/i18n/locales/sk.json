@@ -134,6 +134,7 @@
     "loading": "Načítava sa...",
     "error": "Vyskytla sa chyba",
     "noData": "Žiadne údaje nie sú k dispozícii",
+    "noDataAvailable": "Žiadne údaje nie sú k dispozícii",
     "refresh": "Obnoviť",
     "close": "Zavrieť",
     "save": "Uložiť",

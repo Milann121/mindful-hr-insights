@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
+import { useDateFilter } from '@/contexts/DateFilterContext';
 
 const TopIssuesChart = () => {
   const { t } = useTranslation();
+  const { getDateRange } = useDateFilter();
   const [data, setData] = useState<Array<{ name: string; value: number; color: string }>>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,11 +16,34 @@ const TopIssuesChart = () => {
     const fetchPainAreaData = async () => {
       try {
         setLoading(true);
+        const { start, end } = getDateRange();
         
-        // First get all active b2b_employees for partner_id 10010
+        // Get user_program_tracking data filtered by date and partner
+        const { data: programData, error: programError } = await supabase
+          .from('user_program_tracking')
+          .select(`
+            pain_area,
+            b2b_employee_id,
+            program_started_at
+          `)
+          .gte('program_started_at', start.toISOString())
+          .lte('program_started_at', end.toISOString());
+
+        if (programError) {
+          console.error('Error fetching program tracking data:', programError);
+          return;
+        }
+
+        if (!programData || programData.length === 0) {
+          console.log('No program data found for selected period');
+          setData([]);
+          return;
+        }
+
+        // Get b2b_employees to filter by partner_id 10010
         const { data: employees, error: employeesError } = await supabase
           .from('b2b_employees')
-          .select('employee_id')
+          .select('id, employee_id')
           .eq('b2b_partner_id', 10010)
           .eq('state', 'active');
 
@@ -33,30 +58,20 @@ const TopIssuesChart = () => {
           return;
         }
 
-        // Get employee_ids to query user_profiles
-        const employeeIds = employees.map(emp => emp.employee_id);
-        console.log('Found employee IDs:', employeeIds);
+        // Filter program data by company employees
+        const employeeIds = employees.map(emp => emp.id);
+        const filteredProgramData = programData.filter(program => 
+          program.b2b_employee_id && employeeIds.includes(program.b2b_employee_id)
+        );
 
-        // Query user_profiles for these employees
-        const { data: profiles, error: profilesError } = await supabase
-          .from('user_profiles')
-          .select('pain_area, employee_id')
-          .in('employee_id', employeeIds)
-          .not('pain_area', 'is', null);
-
-        if (profilesError) {
-          console.error('Error fetching user_profiles:', profilesError);
-          return;
-        }
-
-        console.log('Found profiles:', profiles);
+        console.log('Filtered program data:', filteredProgramData);
 
         // Count individual pain areas (split comma-separated values)
         const painAreaCounts: Record<string, number> = {};
-        profiles?.forEach((profile: any) => {
-          if (profile.pain_area) {
+        filteredProgramData.forEach((program: any) => {
+          if (program.pain_area) {
             // Split comma-separated pain areas and count each individually
-            const areas = profile.pain_area.split(',').map((area: string) => area.trim().toLowerCase());
+            const areas = program.pain_area.split(',').map((area: string) => area.trim().toLowerCase());
             areas.forEach((area: string) => {
               if (area) {
                 painAreaCounts[area] = (painAreaCounts[area] || 0) + 1;
@@ -84,7 +99,7 @@ const TopIssuesChart = () => {
     };
 
     fetchPainAreaData();
-  }, []);
+  }, [getDateRange]);
 
   return (
     <Card className="col-span-1">
@@ -94,7 +109,7 @@ const TopIssuesChart = () => {
       <CardContent>
         {loading ? (
           <div className="h-[300px] flex items-center justify-center">
-            <p className="text-gray-500">Loading...</p>
+            <p className="text-gray-500">{t('common.loading')}</p>
           </div>
         ) : data.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
@@ -112,7 +127,7 @@ const TopIssuesChart = () => {
           </ResponsiveContainer>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
-            <p className="text-gray-500">No data available</p>
+            <p className="text-gray-500">{t('common.noDataAvailable')}</p>
           </div>
         )}
       </CardContent>

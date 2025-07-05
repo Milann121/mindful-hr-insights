@@ -135,6 +135,7 @@
     "loading": "Loading...",
     "error": "Error occurred",
     "noData": "No data available",
+    "noDataAvailable": "No Data Available",
     "refresh": "Refresh",
     "close": "Close",
     "save": "Save",
