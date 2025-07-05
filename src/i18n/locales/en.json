@@ -92,6 +92,7 @@
       "title": "Areas of most common pain",
       "backPain": "Back Pain",
       "neckPain": "Neck Pain",
+      "middleBackPain": "Middle Back Pain",
       "shoulderPain": "Shoulder Pain",
       "wristPain": "Wrist Pain",
       "other": "Other"
