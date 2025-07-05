@@ -68,6 +68,7 @@
     },
     "painLevels": {
       "title": "Rozdělení úrovní bolesti",
+      "legend": "Kategorie úrovní bolesti",
       "low": "Nízká (1-3)",
       "moderate": "Střední (4-6)",
       "high": "Vysoká (7-10)",

@@ -69,6 +69,7 @@
     },
     "painLevels": {
       "title": "Pain Level Distribution",
+      "legend": "Pain Level Categories",
       "low": "Low (1-3)",
       "moderate": "Moderate (4-6)",
       "high": "High (7-10)",

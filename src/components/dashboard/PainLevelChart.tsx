@@ -2,7 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 
 const PainLevelChart = () => {
@@ -141,6 +141,11 @@ const PainLevelChart = () => {
                 ))}
               </Pie>
               <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
+              />
             </PieChart>
           </ResponsiveContainer>
         )}
