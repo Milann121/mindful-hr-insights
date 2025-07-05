@@ -2,12 +2,14 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from 'lucide-react';
+import { Calendar, Home, Users, Settings } from 'lucide-react';
 import { useDateFilter, type DateFilterPeriod } from '@/contexts/DateFilterContext';
+import { Link, useLocation } from 'react-router-dom';
 
 const DashboardHeader = () => {
   const { t, i18n } = useTranslation();
   const { selectedPeriod, setSelectedPeriod } = useDateFilter();
+  const location = useLocation();
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
@@ -29,6 +31,14 @@ const DashboardHeader = () => {
     { value: 'last-year', label: t('dashboard.filters.periods.lastYear') },
   ];
 
+  const navigationItems = [
+    { path: '/', label: t('navigation.dashboard'), icon: Home },
+    { path: '/action-room', label: t('navigation.actionRoom'), icon: Settings },
+    { path: '/profile', label: t('navigation.profile'), icon: Users },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <div className="mb-8">
       <div className="flex justify-between items-start mb-6">
@@ -40,6 +50,32 @@ const DashboardHeader = () => {
             {t('dashboard.subtitle')}
           </p>
         </div>
+        
+        <nav className="flex items-center gap-8">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-2 text-lg font-medium transition-colors hover:text-primary ${
+                  isActive(item.path) 
+                    ? 'text-primary border-b-2 border-primary pb-1' 
+                    : 'text-gray-600'
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+      
+      <div className="flex justify-between items-center">
+        <Button variant="outline" size="sm">
+          {t('dashboard.filters.allDepartments')}
+        </Button>
         
         <div className="flex gap-4">
           <Select defaultValue="en" onValueChange={changeLanguage}>
@@ -71,12 +107,6 @@ const DashboardHeader = () => {
             {t('dashboard.actions.exportReport')}
           </Button>
         </div>
-      </div>
-      
-      <div className="flex gap-4">
-        <Button variant="outline" size="sm">
-          {t('dashboard.filters.allDepartments')}
-        </Button>
       </div>
     </div>
   );

@@ -128,10 +128,54 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "actionRoom": "Akčná miestnosť",
+    "profile": "Profil",
     "employees": "Zamestnanci",
     "programs": "Programy",
     "reports": "Správy",
     "settings": "Nastavenia"
+  },
+  "profile": {
+    "title": "Profil",
+    "myProfile": {
+      "title": "Môj profil",
+      "firstName": "Krstné meno",
+      "lastName": "Priezvisko",
+      "position": "Pozícia",
+      "profilePicture": "Profilový obrázok",
+      "uploadPicture": "Nahrať obrázok alebo pretiahnuť"
+    },
+    "companyProfile": {
+      "title": "Firemný profil",
+      "companyName": "Názov spoločnosti",
+      "companyLogo": "Logo spoločnosti",
+      "location": "Umiestnenie",
+      "employeeHeadcount": "Počet zamestnancov",
+      "departments": "Oddelenia",
+      "addDepartment": "Pridať oddelenie",
+      "departmentName": "Názov oddelenia",
+      "departmentHeadcount": "Počet zamestnancov oddelenia",
+      "jobType": "Typ práce",
+      "jobProperties": "Vlastnosti práce",
+      "officeWork": "Kancelárska práca",
+      "manualWork": "Manuálna práca",
+      "uploadLogo": "Nahrať logo alebo pretiahnuť"
+    },
+    "jobProperties": {
+      "sitting_positions": "Sedenie",
+      "heavy_objects_lifting": "Zdvíhanie ťažkých predmetov",
+      "repetitive_movements": "Opakované pohyby",
+      "driving": "Riadenie",
+      "cold_environment": "Chladné prostredie",
+      "hot_environment": "Horúce prostredie",
+      "vibrations": "Vibrácie",
+      "specific_tools": "Špecifické nástroje",
+      "prolonged_standing": "Dlhodobé státie"
+    }
+  },
+  "actionRoom": {
+    "title": "Akčná miestnosť",
+    "subtitle": "Správa akcií a intervencií"
   },
   "common": {
     "loading": "Načítava sa...",

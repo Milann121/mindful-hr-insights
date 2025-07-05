@@ -128,10 +128,54 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "actionRoom": "Akční místnost",
+    "profile": "Profil",
     "employees": "Zaměstnanci",
     "programs": "Programy",
     "reports": "Zprávy",
     "settings": "Nastavení"
+  },
+  "profile": {
+    "title": "Profil",
+    "myProfile": {
+      "title": "Můj profil",
+      "firstName": "Křestní jméno",
+      "lastName": "Příjmení",
+      "position": "Pozice",
+      "profilePicture": "Profilový obrázek",
+      "uploadPicture": "Nahrát obrázek nebo přetáhnout"
+    },
+    "companyProfile": {
+      "title": "Firemní profil",
+      "companyName": "Název společnosti",
+      "companyLogo": "Logo společnosti",
+      "location": "Umístění",
+      "employeeHeadcount": "Počet zaměstnanců",
+      "departments": "Oddělení",
+      "addDepartment": "Přidat oddělení",
+      "departmentName": "Název oddělení",
+      "departmentHeadcount": "Počet zaměstnanců oddělení",
+      "jobType": "Typ práce",
+      "jobProperties": "Vlastnosti práce",
+      "officeWork": "Kancelářská práce",
+      "manualWork": "Manuální práce",
+      "uploadLogo": "Nahrát logo nebo přetáhnout"
+    },
+    "jobProperties": {
+      "sitting_positions": "Sezení",
+      "heavy_objects_lifting": "Zvedání těžkých předmětů",
+      "repetitive_movements": "Opakované pohyby",
+      "driving": "Řízení",
+      "cold_environment": "Chladné prostředí",
+      "hot_environment": "Horké prostředí",
+      "vibrations": "Vibrace",
+      "specific_tools": "Specifické nástroje",
+      "prolonged_standing": "Dlouhodobé stání"
+    }
+  },
+  "actionRoom": {
+    "title": "Akční místnost",
+    "subtitle": "Správa akcí a intervencí"
   },
   "common": {
     "loading": "Načítá se...",

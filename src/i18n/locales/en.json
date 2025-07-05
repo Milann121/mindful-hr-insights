@@ -129,10 +129,54 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "actionRoom": "Action Room",
+    "profile": "Profile",
     "employees": "Employees",
     "programs": "Programs",
     "reports": "Reports",
     "settings": "Settings"
+  },
+  "profile": {
+    "title": "Profile",
+    "myProfile": {
+      "title": "My Profile",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "position": "Position",
+      "profilePicture": "Profile Picture",
+      "uploadPicture": "Upload picture or drag and drop"
+    },
+    "companyProfile": {
+      "title": "Company Profile",
+      "companyName": "Company Name",
+      "companyLogo": "Company Logo",
+      "location": "Location",
+      "employeeHeadcount": "Employee Headcount",
+      "departments": "Departments",
+      "addDepartment": "Add Department",
+      "departmentName": "Department Name",
+      "departmentHeadcount": "Department Headcount",
+      "jobType": "Job Type",
+      "jobProperties": "Job Properties",
+      "officeWork": "Office Work",
+      "manualWork": "Manual Work",
+      "uploadLogo": "Upload logo or drag and drop"
+    },
+    "jobProperties": {
+      "sitting_positions": "Sitting Positions",
+      "heavy_objects_lifting": "Heavy Objects Lifting",
+      "repetitive_movements": "Repetitive Movements",
+      "driving": "Driving",
+      "cold_environment": "Cold Environment",
+      "hot_environment": "Hot Environment",
+      "vibrations": "Vibrations",
+      "specific_tools": "Specific Tools",
+      "prolonged_standing": "Prolonged Standing"
+    }
+  },
+  "actionRoom": {
+    "title": "Action Room",
+    "subtitle": "Manage actions and interventions"
   },
   "common": {
     "loading": "Loading...",

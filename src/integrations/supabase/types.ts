@@ -114,6 +114,44 @@ export type Database = {
         }
         Relationships: []
       }
+      company_departments: {
+        Row: {
+          b2b_partner_id: number
+          created_at: string
+          department_headcount: number
+          department_name: string
+          id: string
+          job_type: string
+          updated_at: string
+        }
+        Insert: {
+          b2b_partner_id: number
+          created_at?: string
+          department_headcount?: number
+          department_name: string
+          id?: string
+          job_type: string
+          updated_at?: string
+        }
+        Update: {
+          b2b_partner_id?: number
+          created_at?: string
+          department_headcount?: number
+          department_name?: string
+          id?: string
+          job_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_departments_b2b_partner_id_fkey"
+            columns: ["b2b_partner_id"]
+            isOneToOne: false
+            referencedRelation: "B2B_partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       completed_exercises: {
         Row: {
           assessment_id: string
@@ -142,6 +180,42 @@ export type Database = {
             columns: ["assessment_id"]
             isOneToOne: false
             referencedRelation: "user_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      department_job_properties: {
+        Row: {
+          created_at: string
+          department_id: string
+          id: string
+          job_property_id: string
+        }
+        Insert: {
+          created_at?: string
+          department_id: string
+          id?: string
+          job_property_id: string
+        }
+        Update: {
+          created_at?: string
+          department_id?: string
+          id?: string
+          job_property_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "department_job_properties_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "company_departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "department_job_properties_job_property_id_fkey"
+            columns: ["job_property_id"]
+            isOneToOne: false
+            referencedRelation: "job_properties"
             referencedColumns: ["id"]
           },
         ]
@@ -332,6 +406,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      job_properties: {
+        Row: {
+          created_at: string
+          id: string
+          property_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_name?: string
+        }
+        Relationships: []
       }
       mood_entries: {
         Row: {
