@@ -101,8 +101,29 @@ const TopIssuesChart = () => {
     fetchPainAreaData();
   }, [getDateRange]);
 
+  const CustomLegend = () => {
+    if (!data || data.length === 0) return null;
+
+    return (
+      <div className="mt-4 block sm:hidden">
+        <div className="grid grid-cols-1 gap-2">
+          {data.map((entry, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div 
+                className="w-4 h-4 rounded" 
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-sm text-gray-600">{entry.name}</span>
+              <span className="text-sm text-gray-500 ml-auto">{entry.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 lg:col-span-1">
       <CardHeader>
         <CardTitle>{t('dashboard.topIssues.title')}</CardTitle>
       </CardHeader>
@@ -112,19 +133,29 @@ const TopIssuesChart = () => {
             <p className="text-gray-500">{t('common.loading')}</p>
           </div>
         ) : data.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value">
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data} barCategoryGap="20%">
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="name" 
+                  className="hidden sm:block"
+                  fontSize={12}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" maxBarSize={60}>
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <CustomLegend />
+          </>
         ) : (
           <div className="h-[300px] flex items-center justify-center">
             <p className="text-gray-500">{t('common.noDataAvailable')}</p>

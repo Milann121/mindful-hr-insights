@@ -171,7 +171,7 @@ const TrendsChart = () => {
 
     return (
       <TooltipProvider>
-        <div className="flex justify-center items-center gap-6 mt-4">
+        <div className="flex flex-col sm:flex-row justify-center items-start sm:items-center gap-2 sm:gap-6 mt-4">
           {payload.map((entry: any, index: number) => (
             <div key={index} className="flex items-center gap-2">
               <div 
@@ -199,7 +199,7 @@ const TrendsChart = () => {
   };
 
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-1 lg:col-span-2">
       <CardHeader>
         <CardTitle>{t('dashboard.trends.title')}</CardTitle>
       </CardHeader>
