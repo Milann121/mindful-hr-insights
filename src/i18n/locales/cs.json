@@ -89,7 +89,10 @@
       "employees": "Zaměstnanci",
       "avgPainLevel": "Prům. úroveň bolesti",
       "riskLevel": "Úroveň rizika",
-      "notAvailable": "Není k dispozici"
+      "notAvailable": "Není k dispozici",
+      "departmentTooltip": "Aktualizace v reálném čase.",
+      "employeesTooltip": "Data zobrazují aktivní uživatele a aktualizují se v reálném čase.",
+      "avgPainLevelTooltip": "Data se aktualizují každý den o půlnoci."
     },
     "topIssues": {
       "title": "Oblasti nejčastějších bolestí",

@@ -918,6 +918,10 @@ export type Database = {
         Args: { target_month?: string }
         Returns: undefined
       }
+      update_department_pain_trends: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       update_exercise_goal_completion: {
         Args: { target_user_id: string; target_month?: string }
         Returns: undefined

@@ -90,7 +90,10 @@
       "employees": "Employees",
       "avgPainLevel": "Avg Pain Level",
       "riskLevel": "Risk Level",
-      "notAvailable": "Not available"
+      "notAvailable": "Not available",
+      "departmentTooltip": "Real time updates.",
+      "employeesTooltip": "The data displays Active users and updates in real time.",
+      "avgPainLevelTooltip": "The data updates every day at midnight."
     },
     "topIssues": {
       "title": "Areas of most common pain",
