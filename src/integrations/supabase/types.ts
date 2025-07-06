@@ -220,6 +220,36 @@ export type Database = {
           },
         ]
       }
+      department_pain_trends: {
+        Row: {
+          avg_pain_level: number | null
+          b2b_partner_id: number
+          calculated_date: string
+          created_at: string
+          department_id: string
+          id: string
+          trend_direction: string | null
+        }
+        Insert: {
+          avg_pain_level?: number | null
+          b2b_partner_id: number
+          calculated_date?: string
+          created_at?: string
+          department_id: string
+          id?: string
+          trend_direction?: string | null
+        }
+        Update: {
+          avg_pain_level?: number | null
+          b2b_partner_id?: number
+          calculated_date?: string
+          created_at?: string
+          department_id?: string
+          id?: string
+          trend_direction?: string | null
+        }
+        Relationships: []
+      }
       exercise_completion_clicks: {
         Row: {
           assessment_id: string
