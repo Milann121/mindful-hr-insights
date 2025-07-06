@@ -845,6 +845,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_department_avg_pain_level: {
+        Args: { target_b2b_partner_id: number }
+        Returns: {
+          department_id: string
+          department_name: string
+          avg_pain_level: number
+          employee_count: number
+        }[]
+      }
       calculate_exercise_goal_completion: {
         Args: { target_user_id: string; target_month: string }
         Returns: number[]
