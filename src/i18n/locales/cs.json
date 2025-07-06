@@ -88,7 +88,8 @@
       "department": "Oddělení",
       "employees": "Zaměstnanci",
       "avgPainLevel": "Prům. úroveň bolesti",
-      "riskLevel": "Úroveň rizika"
+      "riskLevel": "Úroveň rizika",
+      "notAvailable": "Není k dispozici"
     },
     "topIssues": {
       "title": "Oblasti nejčastějších bolestí",
@@ -123,7 +124,8 @@
       "exportReport": "Exportovat zprávu",
       "viewDetails": "Zobrazit podrobnosti",
       "sendReminder": "Poslat připomínku",
-      "scheduleCheck": "Naplánovat kontrolu"
+      "scheduleCheck": "Naplánovat kontrolu",
+      "takeAction": "Konat"
     }
   },
   "navigation": {

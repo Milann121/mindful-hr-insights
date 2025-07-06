@@ -643,13 +643,16 @@ export type Database = {
           b2b_partner_id: number | null
           b2b_partner_name: string | null
           created_at: string | null
+          department_id: string | null
           email: string | null
           employee_id: string | null
           first_name: string | null
           gender: string | null
           id: string
           job: string | null
+          job_properties: string[] | null
           job_subtype: string | null
+          job_type: string | null
           last_name: string | null
           pain_area: string | null
           pain_level_followup: number | null
@@ -662,13 +665,16 @@ export type Database = {
           b2b_partner_id?: number | null
           b2b_partner_name?: string | null
           created_at?: string | null
+          department_id?: string | null
           email?: string | null
           employee_id?: string | null
           first_name?: string | null
           gender?: string | null
           id?: string
           job?: string | null
+          job_properties?: string[] | null
           job_subtype?: string | null
+          job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
           pain_level_followup?: number | null
@@ -681,13 +687,16 @@ export type Database = {
           b2b_partner_id?: number | null
           b2b_partner_name?: string | null
           created_at?: string | null
+          department_id?: string | null
           email?: string | null
           employee_id?: string | null
           first_name?: string | null
           gender?: string | null
           id?: string
           job?: string | null
+          job_properties?: string[] | null
           job_subtype?: string | null
+          job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
           pain_level_followup?: number | null
@@ -701,6 +710,20 @@ export type Database = {
             columns: ["b2b_partner_id"]
             isOneToOne: false
             referencedRelation: "B2B_partners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_profiles_b2b_partner_name_fkey"
+            columns: ["b2b_partner_name"]
+            isOneToOne: false
+            referencedRelation: "B2B_partners"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "user_profiles_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "company_departments"
             referencedColumns: ["id"]
           },
           {

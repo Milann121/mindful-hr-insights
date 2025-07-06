@@ -89,7 +89,8 @@
       "department": "Department",
       "employees": "Employees",
       "avgPainLevel": "Avg Pain Level",
-      "riskLevel": "Risk Level"
+      "riskLevel": "Risk Level",
+      "notAvailable": "Not available"
     },
     "topIssues": {
       "title": "Areas of most common pain",
@@ -124,7 +125,8 @@
       "exportReport": "Export Report",
       "viewDetails": "View Details",
       "sendReminder": "Send Reminder",
-      "scheduleCheck": "Schedule Check-in"
+      "scheduleCheck": "Schedule Check-in",
+      "takeAction": "Take Action"
     }
   },
   "navigation": {
