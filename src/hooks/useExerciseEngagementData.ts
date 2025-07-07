@@ -55,14 +55,21 @@ export const useExerciseEngagementData = () => {
         // Get employee IDs for this company
         const { data: employees } = await supabase
           .from('b2b_employees')
-          .select('id, user_id')
+          .select('id, user_id, employee_id')
           .eq('b2b_partner_id', companyId)
           .eq('state', 'active');
+
+        console.log('Employees found for company:', employees?.length);
+        console.log('Employee details:', employees);
 
         const employeeIds = employees?.map(emp => emp.id).filter(Boolean) || [];
         const userIds = employees?.map(emp => emp.user_id).filter(Boolean) || [];
 
+        console.log('Employee IDs:', employeeIds);
+        console.log('User IDs:', userIds);
+
         if (employeeIds.length === 0) {
+          console.log('No employees found for company', companyId);
           setData({
             completedExercises: { completed: 0, total: 0, percentage: 0 },
             favoriteExercises: { count: 0, total: 0, percentage: 0 },
