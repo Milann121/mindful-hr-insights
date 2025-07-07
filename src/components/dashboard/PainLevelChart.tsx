@@ -135,7 +135,7 @@ const PainLevelChart = () => {
               <Pie
                 data={filteredData}
                 cx="50%"
-                cy="45%"
+                cy="40%"
                 labelLine={false}
                 outerRadius={110}
                 fill="#8884d8"
@@ -149,10 +149,10 @@ const PainLevelChart = () => {
               <Tooltip formatter={(value) => [`${value}%`, 'Percentage']} />
               <Legend 
                 verticalAlign="bottom" 
-                height={36}
+                height={24}
                 layout="horizontal"
                 align="center"
-                wrapperStyle={{ paddingTop: '20px' }}
+                wrapperStyle={{ paddingTop: '16px' }}
                 formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
               />
             </PieChart>
