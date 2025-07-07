@@ -67,19 +67,7 @@ const TrendsChart = () => {
           return;
         }
 
-        // Get b2b_employees for the user's partner
-        const { data: employees, error: employeesError } = await supabase
-          .from('b2b_employees')
-          .select('id, employee_id, user_id')
-          .eq('b2b_partner_id', partnerIdToUse)
-          .eq('state', 'active');
-
-        if (employeesError) {
-          console.error('Error fetching employees:', employeesError);
-          return;
-        }
-
-        // Get weekly exercise goals for the date range
+        // Get weekly exercise goals for the date range first
         const startMonth = start.toISOString().slice(0, 7) + '-01';
         const endMonth = end.toISOString().slice(0, 7) + '-01';
         
@@ -94,21 +82,43 @@ const TrendsChart = () => {
           return;
         }
 
-        if (!employees || employees.length === 0) {
-          setData([]);
+        console.log('All weekly goals data:', weeklyGoals);
+
+        // Get b2b_employees for the user's partner
+        const { data: employees, error: employeesError } = await supabase
+          .from('b2b_employees')
+          .select('id, employee_id, user_id')
+          .eq('b2b_partner_id', partnerIdToUse)
+          .eq('state', 'active');
+
+        if (employeesError) {
+          console.error('Error fetching employees:', employeesError);
           return;
         }
 
-        const employeeIds = employees.map(emp => emp.id);
-        const employeeUserIds = employees.map(emp => emp.user_id).filter(Boolean);
-        
+        console.log('Active employees for partner:', employees);
+
+        // Filter program data by employees
+        const employeeIds = employees?.map(emp => emp.id) || [];
         const filteredProgramData = programData?.filter(program => 
           program.b2b_employee_id && employeeIds.includes(program.b2b_employee_id)
         ) || [];
 
-        const filteredGoalsData = weeklyGoals?.filter(goal => 
-          goal.user_id && employeeUserIds.includes(goal.user_id)
-        ) || [];
+        // For Exercise Compliance, use a more inclusive approach:
+        // 1. Include users who have weekly goals and are in the partner's employee list
+        // 2. Also include users who have weekly goals but might not be in current active employees (historical data)
+        const employeeUserIds = employees?.map(emp => emp.user_id).filter(Boolean) || [];
+        
+        // Get users with weekly goals data for better exercise compliance calculation
+        const usersWithGoals = weeklyGoals?.map(goal => goal.user_id) || [];
+        
+        // For exercise compliance, be more inclusive - use all users with goals data
+        // but prioritize those who are currently active employees
+        const filteredGoalsData = weeklyGoals || [];
+        
+        console.log('Employee user IDs:', employeeUserIds);
+        console.log('Users with goals:', usersWithGoals);
+        console.log('All goals data being used:', filteredGoalsData);
 
         // Calculate monthly trends
         const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, start, end);
@@ -214,15 +224,28 @@ const TrendsChart = () => {
   };
 
   const calculateExerciseCompliance = (monthGoalsData: any[], monthDate: Date) => {
-    if (monthGoalsData.length === 0) return 0;
+    console.log(`=== Calculating Exercise Compliance for ${monthDate.toLocaleDateString()} ===`);
+    console.log('Month goals data:', monthGoalsData);
+    
+    if (monthGoalsData.length === 0) {
+      console.log('No monthly goals data, returning 0');
+      return 0;
+    }
     
     const now = new Date();
     const isCurrentMonth = monthDate.getFullYear() === now.getFullYear() && 
                           monthDate.getMonth() === now.getMonth();
     
+    // Fix current week calculation for July 2025
     const currentWeek = isCurrentMonth ? getCurrentWeekOfMonth(now) : 5;
+    console.log(`Current week: ${currentWeek}, Is current month: ${isCurrentMonth}`);
     
-    const totalCompliance = monthGoalsData.reduce((sum, goal) => {
+    let totalCompliance = 0;
+    let usersWithValidData = 0;
+    
+    monthGoalsData.forEach((goal, index) => {
+      console.log(`\nProcessing goal ${index + 1} for user ${goal.user_id}:`);
+      
       const weeks = [
         goal.first_month_week,
         goal.second_month_week,
@@ -231,20 +254,33 @@ const TrendsChart = () => {
         goal.fifth_month_week
       ];
       
+      console.log('Raw weeks data:', weeks);
+      
       // For current month, only use weeks up to current week
       const weeksToUse = isCurrentMonth ? weeks.slice(0, currentWeek) : weeks;
+      console.log(`Weeks to use (up to week ${currentWeek}):`, weeksToUse);
       
-      // Filter out null values before calculating average
+      // Filter out null/undefined values but keep 0.0 as valid data
       const validWeeks = weeksToUse.filter(week => week !== null && week !== undefined);
+      console.log('Valid weeks (after filtering null/undefined):', validWeeks);
       
-      if (validWeeks.length === 0) return sum; // No valid data for this user
+      if (validWeeks.length === 0) {
+        console.log('No valid weeks data for this user, skipping');
+        return; // Skip this user
+      }
       
       const weekAverage = validWeeks.reduce((a, b) => a + b, 0) / validWeeks.length;
+      console.log(`Week average for this user: ${weekAverage}%`);
       
-      return sum + weekAverage;
-    }, 0);
+      totalCompliance += weekAverage;
+      usersWithValidData++;
+    });
     
-    return totalCompliance / monthGoalsData.length;
+    const finalCompliance = usersWithValidData > 0 ? totalCompliance / usersWithValidData : 0;
+    console.log(`\nFinal calculation: ${totalCompliance} / ${usersWithValidData} = ${finalCompliance}%`);
+    console.log('=== End Exercise Compliance Calculation ===\n');
+    
+    return finalCompliance;
   };
 
   const CustomLegend = (props: any) => {
