@@ -147,18 +147,17 @@ export const useExerciseEngagementData = () => {
         const completedProgramsPercentage = totalPrograms > 0 ? 
           Math.round((endedPrograms / totalPrograms) * 100) : 0;
 
-        // Get weekly goals data - query user_goals for active goals in the period
-        const { data: activeGoals } = await supabase
+        // Get weekly goals data - count users with weekly goals (regardless of when they were created)
+        const { data: usersWithGoals } = await supabase
           .from('user_goals')
-          .select('*')
+          .select('user_id')
           .in('user_id', userIds)
-          .eq('goal_type', 'weekly_exercise')
-          .lte('created_at', end.toISOString());
+          .eq('goal_type', 'weekly_exercise');
 
-        console.log('Active weekly goals found:', activeGoals?.length);
-        console.log('Active goals data:', activeGoals);
+        console.log('Users with weekly goals found:', usersWithGoals?.length);
+        console.log('Users with goals data:', usersWithGoals);
 
-        // Get weekly exercise completion data to determine met goals
+        // Get weekly exercise completion data to determine met goals for the period
         const { data: weeklyCompletionData } = await supabase
           .from('user_weekly_exercise_goals')
           .select('*')
@@ -167,13 +166,13 @@ export const useExerciseEngagementData = () => {
 
         console.log('Weekly completion data:', weeklyCompletionData?.length);
 
-        // Calculate goals met vs active for the period
-        let totalGoalsMet = 0;
-        let totalActiveGoals = activeGoals?.length || 0;
+        // Calculate users who met their goals vs users who have goals
+        let usersWithMetGoals = 0;
+        const totalUsersWithGoals = usersWithGoals?.length || 0;
 
-        // For each active goal, check if it was met during the period
-        activeGoals?.forEach(goal => {
-          const userCompletionData = weeklyCompletionData?.find(wc => wc.user_id === goal.user_id);
+        // For each user with goals, check if they met their goal in any week during the period
+        usersWithGoals?.forEach(userGoal => {
+          const userCompletionData = weeklyCompletionData?.find(wc => wc.user_id === userGoal.user_id);
           
           if (userCompletionData) {
             // Check weeks within the period and count those that met the goal (>=100%)
@@ -185,15 +184,15 @@ export const useExerciseEngagementData = () => {
               userCompletionData.fifth_month_week
             ].filter(week => week !== null && week >= 100);
             
-            // If any week in the period had 100%+ completion, count as met
+            // If any week in the period had 100%+ completion, count this user as having met their goal
             if (weeks.length > 0) {
-              totalGoalsMet += 1;
+              usersWithMetGoals += 1;
             }
           }
         });
 
-        const weeklyGoalsPercentage = totalActiveGoals > 0 ? 
-          Math.round((totalGoalsMet / totalActiveGoals) * 100) : 0;
+        const weeklyGoalsPercentage = totalUsersWithGoals > 0 ? 
+          Math.round((usersWithMetGoals / totalUsersWithGoals) * 100) : 0;
 
         setData({
           completedExercises: {
@@ -207,8 +206,8 @@ export const useExerciseEngagementData = () => {
             percentage: completedProgramsPercentage
           },
           weeklyGoals: {
-            met: totalGoalsMet,
-            total: totalActiveGoals,
+            met: usersWithMetGoals,
+            total: totalUsersWithGoals,
             percentage: weeklyGoalsPercentage
           }
         });
