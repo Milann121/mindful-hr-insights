@@ -125,17 +125,6 @@ const MyProfile = () => {
 
       setProfilePictureUrl(data.publicUrl);
 
-      // Immediately save the profile picture URL to the database
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          profile_picture_url: data.publicUrl,
-          updated_at: new Date().toISOString()
-        });
-
-      if (profileError) throw profileError;
-
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -171,6 +160,7 @@ const MyProfile = () => {
               placeholder={t('profile.myProfile.uploadPicture')}
               className="w-32 h-32"
               circular
+              disabled={!isEditing}
             />
           </div>
           

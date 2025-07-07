@@ -9,9 +9,10 @@ interface FileUploadProps {
   placeholder: string;
   className?: string;
   circular?: boolean;
+  disabled?: boolean;
 }
 
-const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = "", circular = false }: FileUploadProps) => {
+const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = "", circular = false, disabled = false }: FileUploadProps) => {
   const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -28,7 +29,8 @@ const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = ""
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif']
     },
-    maxFiles: 1
+    maxFiles: 1,
+    disabled,
   });
 
   const removeImage = () => {
@@ -43,15 +45,16 @@ const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = ""
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed border-gray-300 hover:border-gray-400 
-          transition-colors cursor-pointer bg-gray-50 hover:bg-gray-100
+          border-2 border-dashed border-gray-300 hover:border-gray-400
+          transition-colors bg-gray-50 hover:bg-gray-100
+          ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
           ${circular ? 'rounded-full aspect-square' : 'rounded-lg'}
           ${isDragActive ? 'border-primary bg-primary/10' : ''}
           ${preview ? 'p-2' : 'p-6'}
           flex items-center justify-center
         `}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} disabled={disabled} />
         
         {preview ? (
           <div className={`relative ${circular ? 'rounded-full overflow-hidden' : 'rounded'} w-full h-full`}>
@@ -65,9 +68,12 @@ const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = ""
               variant="destructive"
               size="sm"
               className="absolute top-2 right-2 h-6 w-6 p-0"
+              disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation();
-                removeImage();
+                if (!disabled) {
+                  removeImage();
+                }
               }}
             >
               <X className="h-3 w-3" />
