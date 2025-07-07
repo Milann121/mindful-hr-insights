@@ -7,18 +7,22 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
   console.log('Getting weekly goals for userIds:', userIds);
   console.log('Date range:', startDate.toISOString().split('T')[0], 'to', endDate.toISOString().split('T')[0]);
 
-  // Get users with weekly goals - only filter by user_id if we have company employees
-  let usersWithGoalsQuery = supabase
-    .from('user_goals')
-    .select('user_id')
-    .eq('goal_type', 'weekly_exercise');
-
-  // Only filter by userIds if we have employee data (for HR managers)
-  if (userIds.length > 0) {
-    usersWithGoalsQuery = usersWithGoalsQuery.in('user_id', userIds);
+  // Always filter by company employee user IDs - this is an HR manager dashboard
+  if (userIds.length === 0) {
+    console.log('No company employees found, returning 0/0');
+    return {
+      met: 0,
+      total: 0,
+      percentage: 0
+    };
   }
 
-  const { data: usersWithGoals, error: goalsError } = await usersWithGoalsQuery;
+  // Get users with weekly goals from company employees only
+  const { data: usersWithGoals, error: goalsError } = await supabase
+    .from('user_goals')
+    .select('user_id')
+    .in('user_id', userIds)
+    .eq('goal_type', 'weekly_exercise');
 
   console.log('Users with weekly goals found:', usersWithGoals?.length);
   console.log('Users with goals data:', usersWithGoals);
