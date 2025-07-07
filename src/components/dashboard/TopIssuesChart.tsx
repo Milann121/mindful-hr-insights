@@ -28,17 +28,20 @@ const TopIssuesChart = () => {
           return;
         }
         
-        // Get user_program_tracking data filtered by date and company employees
+        // Get user_program_tracking data for programs active during the selected period
         const { data: programData, error: programError } = await supabase
           .from('user_program_tracking')
           .select(`
             pain_area,
             b2b_employee_id,
-            program_started_at
+            program_started_at,
+            program_ended_at,
+            program_status
           `)
-          .gte('program_started_at', start.toISOString())
+          .in('b2b_employee_id', employeeIds)
           .lte('program_started_at', end.toISOString())
-          .in('b2b_employee_id', employeeIds);
+          .or(`program_ended_at.is.null,program_ended_at.gte.${start.toISOString()}`)
+          .eq('program_status', 'active');
 
         if (programError) {
           console.error('Error fetching program tracking data:', programError);
