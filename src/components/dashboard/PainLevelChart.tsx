@@ -135,9 +135,9 @@ const PainLevelChart = () => {
               <Pie
                 data={filteredData}
                 cx="50%"
-                cy="50%"
+                cy="45%"
                 labelLine={false}
-                outerRadius={80}
+                outerRadius={110}
                 fill="#8884d8"
                 dataKey="value"
                 label={({ value }) => `${value}%`}
@@ -150,6 +150,9 @@ const PainLevelChart = () => {
               <Legend 
                 verticalAlign="bottom" 
                 height={36}
+                layout="horizontal"
+                align="center"
+                wrapperStyle={{ paddingTop: '20px' }}
                 formatter={(value) => <span className="text-sm text-muted-foreground">{value}</span>}
               />
             </PieChart>
