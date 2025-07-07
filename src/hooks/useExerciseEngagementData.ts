@@ -74,24 +74,31 @@ export const useExerciseEngagementData = () => {
           .gte('program_started_at', start.toISOString())
           .lte('program_started_at', end.toISOString());
 
-        // Get current month's completed exercises from exercise_completion_clicks
-        const currentMonth = new Date();
-        const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-        const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
-
+        // Get exercise completion clicks from the selected date range
         const { data: exerciseClicks } = await supabase
           .from('exercise_completion_clicks')
-          .select('id, user_id')
+          .select('id, user_id, clicked_at')
           .in('user_id', userIds)
           .eq('is_active', true)
-          .gte('clicked_at', startOfMonth.toISOString())
-          .lte('clicked_at', endOfMonth.toISOString());
+          .gte('clicked_at', start.toISOString())
+          .lte('clicked_at', end.toISOString());
+
+        console.log('Exercise clicks found:', exerciseClicks?.length);
+        console.log('User IDs being queried:', userIds);
+        console.log('Date range:', { start: start.toISOString(), end: end.toISOString() });
 
         const completedCount = exerciseClicks?.length || 0;
         
-        // Calculate total possible exercises based on active programs
+        // Get all active programs for these employees (not date-filtered for total count)
+        const { data: allActivePrograms } = await supabase
+          .from('user_program_tracking')
+          .select('*')
+          .in('b2b_employee_id', employeeIds)
+          .eq('program_status', 'active');
+        
+        // Calculate total possible exercises based on all active programs
         // Each active program typically has exercises assigned, we'll estimate based on program count
-        const totalEstimatedExercises = (activePrograms?.length || 0) * 15; // More realistic estimate
+        const totalEstimatedExercises = (allActivePrograms?.length || 0) * 15;
         
         const completedPercentage = totalEstimatedExercises > 0 ? 
           Math.round((completedCount / totalEstimatedExercises) * 100) : 0;
@@ -163,7 +170,7 @@ export const useExerciseEngagementData = () => {
 
     fetchEngagementData();
 
-    // Set up real-time subscription
+    // Set up real-time subscription for exercise clicks
     const channel = supabase
       .channel('exercise-engagement-changes')
       .on(
@@ -173,7 +180,8 @@ export const useExerciseEngagementData = () => {
           schema: 'public',
           table: 'exercise_completion_clicks'
         },
-        () => {
+        (payload) => {
+          console.log('Exercise completion click change detected:', payload);
           fetchEngagementData();
         }
       )
@@ -194,6 +202,17 @@ export const useExerciseEngagementData = () => {
           event: '*',
           schema: 'public',
           table: 'user_weekly_exercise_goals'
+        },
+        () => {
+          fetchEngagementData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_program_tracking'
         },
         () => {
           fetchEngagementData();
