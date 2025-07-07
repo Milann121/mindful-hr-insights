@@ -93,7 +93,7 @@
       "notAvailable": "Not available",
       "departmentTooltip": "Real time updates.",
       "employeesTooltip": "The data displays Active users and updates in real time.",
-      "avgPainLevelTooltip": "The data updates every day at midnight."
+      "avgPainLevelTooltip": "The maximum pain level is 10 (worst), the minimum pain level is 0 (best). The data updates every day at midnight."
     },
     "topIssues": {
       "title": "Areas of most common pain",

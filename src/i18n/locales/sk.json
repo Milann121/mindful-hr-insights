@@ -92,7 +92,7 @@
       "notAvailable": "Nie je k dispozícii",
       "departmentTooltip": "Aktualizácie v reálnom čase.",
       "employeesTooltip": "Údaje zobrazujú aktívnych používateľov a aktualizujú sa v reálnom čase.",
-      "avgPainLevelTooltip": "Údaje sa aktualizujú každý deň o polnoci."
+      "avgPainLevelTooltip": "Maximálna úroveň bolesti je 10 (najhoršia), minimálna úroveň bolesti je 0 (najlepšia). Údaje sa aktualizujú každý deň o polnoci."
     },
     "topIssues": {
       "title": "Oblasti najčastejších bolestí",
