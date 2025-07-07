@@ -169,14 +169,7 @@ export const useExerciseEngagementData = () => {
 
         // Calculate goals met vs active for the period
         let totalGoalsMet = 0;
-        let totalWeeklyGoalsSum = 0;
-
-        // Sum up all weekly exercise goals (e.g., if 3 users have goals of 5, 7, 3 exercises per week = 15 total)
-        activeGoals?.forEach(goal => {
-          totalWeeklyGoalsSum += goal.weekly_exercises_goal || 0;
-        });
-
-        console.log('Total weekly goals sum (denominator):', totalWeeklyGoalsSum);
+        let totalActiveGoals = activeGoals?.length || 0;
 
         // For each active goal, check if it was met during the period
         activeGoals?.forEach(goal => {
@@ -192,15 +185,15 @@ export const useExerciseEngagementData = () => {
               userCompletionData.fifth_month_week
             ].filter(week => week !== null && week >= 100);
             
-            // If any week in the period had 100%+ completion, add the user's weekly goal to met goals
+            // If any week in the period had 100%+ completion, count as met
             if (weeks.length > 0) {
-              totalGoalsMet += goal.weekly_exercises_goal || 0;
+              totalGoalsMet += 1;
             }
           }
         });
 
-        const weeklyGoalsPercentage = totalWeeklyGoalsSum > 0 ? 
-          Math.round((totalGoalsMet / totalWeeklyGoalsSum) * 100) : 0;
+        const weeklyGoalsPercentage = totalActiveGoals > 0 ? 
+          Math.round((totalGoalsMet / totalActiveGoals) * 100) : 0;
 
         setData({
           completedExercises: {
@@ -215,7 +208,7 @@ export const useExerciseEngagementData = () => {
           },
           weeklyGoals: {
             met: totalGoalsMet,
-            total: totalWeeklyGoalsSum,
+            total: totalActiveGoals,
             percentage: weeklyGoalsPercentage
           }
         });
