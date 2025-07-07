@@ -345,12 +345,13 @@ const CompanyProfile = () => {
           
           <div>
             <Label>{t('profile.companyProfile.companyLogo')}</Label>
-            <FileUpload
-              onFileSelect={handleLogoUpload}
-              currentImageUrl={companyLogoUrl}
-              placeholder={t('profile.companyProfile.uploadLogo')}
-              className="w-full h-32"
-            />
+          <FileUpload
+            onFileSelect={handleLogoUpload}
+            currentImageUrl={companyLogoUrl}
+            placeholder={t('profile.companyProfile.uploadLogo')}
+            className="w-full h-32"
+            disabled={!isEditing}
+          />
           </div>
         </div>
 
