@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useDateFilter } from '@/contexts/DateFilterContext';
+import { getCompanyEmployees } from '@/services/exerciseEngagement/employeeService';
 
 const TopIssuesChart = () => {
   const { t } = useTranslation();
@@ -18,7 +19,16 @@ const TopIssuesChart = () => {
         setLoading(true);
         const { start, end } = getDateRange();
         
-        // Get user_program_tracking data filtered by date and partner
+        // Get company employees for current user
+        const { employeeIds } = await getCompanyEmployees();
+        
+        if (employeeIds.length === 0) {
+          console.log('No company employees found');
+          setData([]);
+          return;
+        }
+        
+        // Get user_program_tracking data filtered by date and company employees
         const { data: programData, error: programError } = await supabase
           .from('user_program_tracking')
           .select(`
@@ -27,48 +37,26 @@ const TopIssuesChart = () => {
             program_started_at
           `)
           .gte('program_started_at', start.toISOString())
-          .lte('program_started_at', end.toISOString());
+          .lte('program_started_at', end.toISOString())
+          .in('b2b_employee_id', employeeIds);
 
         if (programError) {
           console.error('Error fetching program tracking data:', programError);
           return;
         }
 
+        console.log('Program data found for pain areas:', programData?.length);
+        console.log('Program data:', programData);
+
         if (!programData || programData.length === 0) {
-          console.log('No program data found for selected period');
+          console.log('No program data found for selected period and company');
           setData([]);
           return;
         }
-
-        // Get b2b_employees to filter by partner_id 10010
-        const { data: employees, error: employeesError } = await supabase
-          .from('b2b_employees')
-          .select('id, employee_id')
-          .eq('b2b_partner_id', 10010)
-          .eq('state', 'active');
-
-        if (employeesError) {
-          console.error('Error fetching b2b_employees:', employeesError);
-          return;
-        }
-
-        if (!employees || employees.length === 0) {
-          console.log('No active employees found for partner_id 10010');
-          setData([]);
-          return;
-        }
-
-        // Filter program data by company employees
-        const employeeIds = employees.map(emp => emp.id);
-        const filteredProgramData = programData.filter(program => 
-          program.b2b_employee_id && employeeIds.includes(program.b2b_employee_id)
-        );
-
-        console.log('Filtered program data:', filteredProgramData);
 
         // Count individual pain areas (split comma-separated values)
         const painAreaCounts: Record<string, number> = {};
-        filteredProgramData.forEach((program: any) => {
+        programData.forEach((program: any) => {
           if (program.pain_area) {
             // Split comma-separated pain areas and count each individually
             const areas = program.pain_area.split(',').map((area: string) => area.trim().toLowerCase());
@@ -93,6 +81,7 @@ const TopIssuesChart = () => {
         setData(chartData);
       } catch (error) {
         console.error('Error in fetchPainAreaData:', error);
+        setData([]);
       } finally {
         setLoading(false);
       }
