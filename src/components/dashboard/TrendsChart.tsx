@@ -29,13 +29,28 @@ const TrendsChart = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
+        // First try to get partner ID from user profile
         const { data: userProfile } = await supabase
           .from('user_profiles')
           .select('b2b_partner_id')
           .eq('user_id', user.id)
           .single();
 
-        const partnerIdToUse = userProfile?.b2b_partner_id || 10010; // fallback to 10010
+        let partnerIdToUse = userProfile?.b2b_partner_id;
+
+        // If not found in user profile, check if user is HR manager
+        if (!partnerIdToUse) {
+          const { data: hrManager } = await supabase
+            .from('hr_managers')
+            .select('b2b_partner')
+            .eq('email', user.email)
+            .single();
+          
+          partnerIdToUse = hrManager?.b2b_partner;
+        }
+
+        // Fallback to 10010 if still not found
+        partnerIdToUse = partnerIdToUse || 10010;
         
         // Get all program tracking data for the selected period
         const { data: programData, error: programError } = await supabase
