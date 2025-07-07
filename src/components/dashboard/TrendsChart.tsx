@@ -224,16 +224,22 @@ const TrendsChart = () => {
     
     const totalCompliance = monthGoalsData.reduce((sum, goal) => {
       const weeks = [
-        goal.first_month_week || 0,
-        goal.second_month_week || 0,
-        goal.third_month_week || 0,
-        goal.fourth_month_week || 0,
-        goal.fifth_month_week || 0
+        goal.first_month_week,
+        goal.second_month_week,
+        goal.third_month_week,
+        goal.fourth_month_week,
+        goal.fifth_month_week
       ];
       
       // For current month, only use weeks up to current week
       const weeksToUse = isCurrentMonth ? weeks.slice(0, currentWeek) : weeks;
-      const weekAverage = weeksToUse.reduce((a, b) => a + b, 0) / weeksToUse.length;
+      
+      // Filter out null values before calculating average
+      const validWeeks = weeksToUse.filter(week => week !== null && week !== undefined);
+      
+      if (validWeeks.length === 0) return sum; // No valid data for this user
+      
+      const weekAverage = validWeeks.reduce((a, b) => a + b, 0) / validWeeks.length;
       
       return sum + weekAverage;
     }, 0);
