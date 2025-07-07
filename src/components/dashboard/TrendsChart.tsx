@@ -80,11 +80,14 @@ const TrendsChart = () => {
         }
 
         // Get weekly exercise goals for the date range
+        const startMonth = start.toISOString().slice(0, 7) + '-01';
+        const endMonth = end.toISOString().slice(0, 7) + '-01';
+        
         const { data: weeklyGoals, error: goalsError } = await supabase
           .from('user_weekly_exercise_goals')
           .select('*')
-          .gte('month_year', start.toISOString().slice(0, 7) + '-01')
-          .lte('month_year', end.toISOString().slice(0, 7) + '-01');
+          .gte('month_year', startMonth)
+          .lte('month_year', endMonth);
 
         if (goalsError) {
           console.error('Error fetching weekly goals:', goalsError);
@@ -106,12 +109,6 @@ const TrendsChart = () => {
         const filteredGoalsData = weeklyGoals?.filter(goal => 
           goal.user_id && employeeUserIds.includes(goal.user_id)
         ) || [];
-
-        // Debug logging
-        console.log('Employee User IDs:', employeeUserIds);
-        console.log('Weekly Goals Data:', weeklyGoals);
-        console.log('Filtered Goals Data:', filteredGoalsData);
-        console.log('Employees data:', employees);
 
         // Calculate monthly trends
         const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, start, end);
