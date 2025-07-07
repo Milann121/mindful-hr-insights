@@ -147,34 +147,53 @@ export const useExerciseEngagementData = () => {
         const completedProgramsPercentage = totalPrograms > 0 ? 
           Math.round((endedPrograms / totalPrograms) * 100) : 0;
 
-        // Get weekly goals data
-        const currentMonthStr = start.toISOString().slice(0, 7) + '-01';
-        const { data: weeklyGoals } = await supabase
+        // Get weekly goals data - query user_goals for active goals in the period
+        const { data: activeGoals } = await supabase
+          .from('user_goals')
+          .select('*')
+          .in('user_id', userIds)
+          .eq('goal_type', 'weekly_exercise')
+          .lte('created_at', end.toISOString());
+
+        console.log('Active weekly goals found:', activeGoals?.length);
+        console.log('Active goals data:', activeGoals);
+
+        // Get weekly exercise completion data to determine met goals
+        const { data: weeklyCompletionData } = await supabase
           .from('user_weekly_exercise_goals')
           .select('*')
           .in('user_id', userIds)
-          .eq('month_year', currentMonthStr);
+          .eq('goal_type', 'weekly_exercise');
 
-        // Calculate average weekly goal completion
+        console.log('Weekly completion data:', weeklyCompletionData?.length);
+
+        // Calculate goals met vs active for the period
         let totalGoalsMet = 0;
-        let totalPossibleGoals = 0;
+        let totalActiveGoals = activeGoals?.length || 0;
 
-        weeklyGoals?.forEach(goal => {
-          const weeks = [
-            goal.first_month_week,
-            goal.second_month_week,
-            goal.third_month_week,
-            goal.fourth_month_week,
-            goal.fifth_month_week
-          ].filter(week => week !== null);
+        // For each active goal, check if it was met during the period
+        activeGoals?.forEach(goal => {
+          const userCompletionData = weeklyCompletionData?.find(wc => wc.user_id === goal.user_id);
           
-          const metGoals = weeks.filter(week => week >= 100).length;
-          totalGoalsMet += metGoals;
-          totalPossibleGoals += weeks.length;
+          if (userCompletionData) {
+            // Check weeks within the period and count those that met the goal (>=100%)
+            const weeks = [
+              userCompletionData.first_month_week,
+              userCompletionData.second_month_week,
+              userCompletionData.third_month_week,
+              userCompletionData.fourth_month_week,
+              userCompletionData.fifth_month_week
+            ].filter(week => week !== null && week >= 100);
+            
+            // If any week in the period had 100%+ completion, count as met
+            if (weeks.length > 0) {
+              totalGoalsMet += 1;
+            }
+          }
         });
 
-        const weeklyGoalsPercentage = totalPossibleGoals > 0 ? 
-          Math.round((totalGoalsMet / totalPossibleGoals) * 100) : 0;
+        const weeklyGoalsPercentage = totalActiveGoals > 0 ? 
+          Math.round((totalGoalsMet / totalActiveGoals) * 100) : 0;
 
         setData({
           completedExercises: {
@@ -189,7 +208,7 @@ export const useExerciseEngagementData = () => {
           },
           weeklyGoals: {
             met: totalGoalsMet,
-            total: totalPossibleGoals,
+            total: totalActiveGoals,
             percentage: weeklyGoalsPercentage
           }
         });
@@ -238,6 +257,18 @@ export const useExerciseEngagementData = () => {
           table: 'user_weekly_exercise_goals'
         },
         () => {
+          fetchEngagementData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_goals'
+        },
+        () => {
+          console.log('User goals change detected');
           fetchEngagementData();
         }
       )

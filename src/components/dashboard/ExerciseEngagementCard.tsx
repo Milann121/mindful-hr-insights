@@ -29,7 +29,8 @@ const ExerciseEngagementCard = () => {
       label: t('dashboard.exerciseEngagement.weeklyGoals'), 
       value: data.weeklyGoals.met, 
       total: data.weeklyGoals.total, 
-      percentage: data.weeklyGoals.percentage 
+      percentage: data.weeklyGoals.percentage,
+      showTooltip: true
     },
   ];
 
@@ -59,7 +60,9 @@ const ExerciseEngagementCard = () => {
                           <p className="max-w-xs">
                             {index === 0 
                               ? t('dashboard.exerciseEngagement.completedExercisesDescription')
-                              : t('dashboard.exerciseEngagement.completedProgramsDescription')
+                              : index === 1 
+                                ? t('dashboard.exerciseEngagement.completedProgramsDescription')
+                                : t('dashboard.exerciseEngagement.weeklyGoalsDescription')
                             }
                           </p>
                         </TooltipContent>

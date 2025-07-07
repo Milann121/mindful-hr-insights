@@ -110,7 +110,8 @@
       "completedExercisesDescription": "The Completed Exercises displays how many exercises employees clicked as \"exercised\" in a given period. This provides clues about employee exercise adherence and suggest if they need some push (e.g. campaign, motivation, help).",
       "completedPrograms": "Completed Programs",
       "completedProgramsDescription": "This progress bar displays the ended programs vs. active programs for a given period. The data updates immediately.",
-      "weeklyGoals": "Weekly Goals Met"
+      "weeklyGoals": "Weekly Goals Met",
+      "weeklyGoalsDescription": "This progress bar displays completed weekly goals vs. active goals for this period. The data updates in a real time."
     },
     "filters": {
       "allDepartments": "All Departments",

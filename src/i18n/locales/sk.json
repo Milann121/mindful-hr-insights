@@ -109,7 +109,8 @@
       "completedExercisesDescription": "Dokončené cvičenia zobrazujú koľko cvičení zamestnanci klikli ako \"odcvičené\" v danom období. Poskytuje pohľad na dodržiavanie cvičení zamestnancami a naznačuje, či potrebujú podporu (napr. kampaň, motiváciu, pomoc).",
       "completedPrograms": "Dokončené programy",
       "completedProgramsDescription": "Tento ukazovateľ priebehu zobrazuje ukončené programy vs. aktívne programy za dané obdobie. Údaje sa aktualizujú okamžite.",
-      "weeklyGoals": "Týždenné ciele splnené"
+      "weeklyGoals": "Splnené týždenné ciele",
+      "weeklyGoalsDescription": "Tento progress bar zobrazuje dokončené týždenné ciele versus aktívne ciele za toto obdobie. Údaje sa aktualizujú v reálnom čase."
     },
     "filters": {
       "allDepartments": "Všetky oddelenia",
