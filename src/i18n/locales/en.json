@@ -108,7 +108,8 @@
       "title": "Exercise Engagement",
       "completedExercises": "Completed Exercises",
       "completedExercisesDescription": "The Completed Exercises displays how many exercises employees clicked as \"exercised\" in a given period. This provides clues about employee exercise adherence and suggest if they need some push (e.g. campaign, motivation, help).",
-      "favoriteExercises": "Favorite Exercises",
+      "completedPrograms": "Completed Programs",
+      "completedProgramsDescription": "This progress bar displays the ended programs vs. active programs for a given period. The data updates immediately.",
       "weeklyGoals": "Weekly Goals Met"
     },
     "filters": {

@@ -107,7 +107,8 @@
       "title": "Zapojení do cvičení",
       "completedExercises": "Dokončená cvičení",
       "completedExercisesDescription": "Dokončená cvičení zobrazují kolik cvičení zaměstnanci klikli jako \"odcvičené\" v daném období. Poskytuje náhled na dodržování cvičení zaměstnanci a naznačuje, zda potřebují podporu (např. kampaň, motivaci, pomoc).",
-      "favoriteExercises": "Oblíbená cvičení",
+      "completedPrograms": "Dokončené programy",
+      "completedProgramsDescription": "Tento ukazatel průběhu zobrazuje ukončené programy vs. aktivní programy za dané období. Data se aktualizují okamžitě.",
       "weeklyGoals": "Týdenní cíle splněny"
     },
     "filters": {

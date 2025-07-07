@@ -8,8 +8,8 @@ interface ExerciseEngagementData {
     total: number;
     percentage: number;
   };
-  favoriteExercises: {
-    count: number;
+  completedPrograms: {
+    completed: number;
     total: number;
     percentage: number;
   };
@@ -24,7 +24,7 @@ export const useExerciseEngagementData = () => {
   const { getDateRange } = useDateFilter();
   const [data, setData] = useState<ExerciseEngagementData>({
     completedExercises: { completed: 0, total: 0, percentage: 0 },
-    favoriteExercises: { count: 0, total: 0, percentage: 0 },
+    completedPrograms: { completed: 0, total: 0, percentage: 0 },
     weeklyGoals: { met: 0, total: 0, percentage: 0 }
   });
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export const useExerciseEngagementData = () => {
           console.log('No employees found for company', companyId);
           setData({
             completedExercises: { completed: 0, total: 0, percentage: 0 },
-            favoriteExercises: { count: 0, total: 0, percentage: 0 },
+            completedPrograms: { completed: 0, total: 0, percentage: 0 },
             weeklyGoals: { met: 0, total: 0, percentage: 0 }
           });
           return;
@@ -117,16 +117,18 @@ export const useExerciseEngagementData = () => {
         const completedPercentage = totalPossibleExercises > 0 ? 
           Math.round((completedCount / totalPossibleExercises) * 100) : 0;
 
-        // Get favorite exercises count
-        const { data: favoriteExercises } = await supabase
-          .from('favorite_exercises')
-          .select('id')
-          .in('user_id', userIds);
+        // Get completed programs data for the given period
+        const { data: allPrograms } = await supabase
+          .from('user_program_tracking')
+          .select('program_status')
+          .in('b2b_employee_id', employeeIds)
+          .gte('program_started_at', start.toISOString())
+          .lte('program_started_at', end.toISOString());
 
-        const favoritesCount = favoriteExercises?.length || 0;
-        // Estimate total available exercises as 100 for percentage calculation
-        const totalAvailableExercises = 100;
-        const favoritesPercentage = Math.min(100, Math.round((favoritesCount / totalAvailableExercises) * 100));
+        const endedPrograms = allPrograms?.filter(p => p.program_status === 'ended').length || 0;
+        const totalPrograms = allPrograms?.length || 0;
+        const completedProgramsPercentage = totalPrograms > 0 ? 
+          Math.round((endedPrograms / totalPrograms) * 100) : 0;
 
         // Get weekly goals data
         const currentMonthStr = start.toISOString().slice(0, 7) + '-01';
@@ -163,10 +165,10 @@ export const useExerciseEngagementData = () => {
             total: totalPossibleExercises,
             percentage: completedPercentage
           },
-          favoriteExercises: {
-            count: favoritesCount,
-            total: totalAvailableExercises,
-            percentage: favoritesPercentage
+          completedPrograms: {
+            completed: endedPrograms,
+            total: totalPrograms,
+            percentage: completedProgramsPercentage
           },
           weeklyGoals: {
             met: totalGoalsMet,
@@ -204,9 +206,10 @@ export const useExerciseEngagementData = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'favorite_exercises'
+          table: 'user_program_tracking'
         },
         () => {
+          console.log('Program tracking change detected');
           fetchEngagementData();
         }
       )
@@ -216,17 +219,6 @@ export const useExerciseEngagementData = () => {
           event: '*',
           schema: 'public',
           table: 'user_weekly_exercise_goals'
-        },
-        () => {
-          fetchEngagementData();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'user_program_tracking'
         },
         () => {
           fetchEngagementData();

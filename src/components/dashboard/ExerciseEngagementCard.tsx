@@ -19,10 +19,11 @@ const ExerciseEngagementCard = () => {
       percentage: data.completedExercises.percentage 
     },
     { 
-      label: t('dashboard.exerciseEngagement.favoriteExercises'), 
-      value: data.favoriteExercises.count, 
-      total: data.favoriteExercises.total, 
-      percentage: data.favoriteExercises.percentage 
+      label: t('dashboard.exerciseEngagement.completedPrograms'), 
+      value: data.completedPrograms.completed, 
+      total: data.completedPrograms.total, 
+      percentage: data.completedPrograms.percentage,
+      showTooltip: true
     },
     { 
       label: t('dashboard.exerciseEngagement.weeklyGoals'), 
@@ -48,14 +49,19 @@ const ExerciseEngagementCard = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-gray-600">{item.label}</span>
-                  {index === 0 && (
+                  {(index === 0 || item.showTooltip) && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
                           <Info className="h-4 w-4 text-gray-400" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="max-w-xs">{t('dashboard.exerciseEngagement.completedExercisesDescription')}</p>
+                          <p className="max-w-xs">
+                            {index === 0 
+                              ? t('dashboard.exerciseEngagement.completedExercisesDescription')
+                              : t('dashboard.exerciseEngagement.completedProgramsDescription')
+                            }
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
