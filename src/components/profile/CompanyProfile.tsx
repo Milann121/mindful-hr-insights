@@ -162,6 +162,11 @@ const CompanyProfile = () => {
     setDepartments(newDepartments);
   };
 
+  // Convert property name from database format to translation key format
+  const getTranslationKey = (propertyName: string) => {
+    return propertyName.toLowerCase().replace(/\s+/g, '_');
+  };
+
   const toggleJobProperty = (deptIndex: number, propertyName: string) => {
     const newDepartments = [...departments];
     const dept = newDepartments[deptIndex];
@@ -423,7 +428,7 @@ const CompanyProfile = () => {
                             htmlFor={`${index}-${prop.property_name}`}
                             className="text-sm"
                           >
-                            {t(`profile.jobProperties.${prop.property_name}`)}
+                            {t(`profile.jobProperties.${getTranslationKey(prop.property_name)}`)}
                           </Label>
                         </div>
                       ))}
@@ -435,7 +440,7 @@ const CompanyProfile = () => {
                           key={propIndex}
                           className="inline-block px-2 py-1 bg-primary/10 text-primary text-sm rounded-md"
                         >
-                          {t(`profile.jobProperties.${propName}`)}
+                          {t(`profile.jobProperties.${getTranslationKey(propName)}`)}
                         </span>
                       ))}
                     </div>
