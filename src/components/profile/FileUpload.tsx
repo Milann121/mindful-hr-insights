@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,15 @@ interface FileUploadProps {
 
 const FileUpload = ({ onFileSelect, currentImageUrl, placeholder, className = "", circular = false }: FileUploadProps) => {
   const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
+
+  useEffect(() => {
+    setPreview((prev) => {
+      if (prev && prev.startsWith('blob:')) {
+        URL.revokeObjectURL(prev);
+      }
+      return currentImageUrl || null;
+    });
+  }, [currentImageUrl]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
