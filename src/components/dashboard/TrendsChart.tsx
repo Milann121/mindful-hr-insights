@@ -43,7 +43,7 @@ const TrendsChart = () => {
         // Get b2b_employees to filter by partner_id 10010
         const { data: employees, error: employeesError } = await supabase
           .from('b2b_employees')
-          .select('id, employee_id')
+          .select('id, employee_id, user_id')
           .eq('b2b_partner_id', 10010)
           .eq('state', 'active');
 
@@ -52,18 +52,36 @@ const TrendsChart = () => {
           return;
         }
 
-        if (!employees || employees.length === 0 || !programData || programData.length === 0) {
+        // Get weekly exercise goals for the date range
+        const { data: weeklyGoals, error: goalsError } = await supabase
+          .from('user_weekly_exercise_goals')
+          .select('*')
+          .gte('month_year', start.toISOString().slice(0, 7) + '-01')
+          .lte('month_year', end.toISOString().slice(0, 7) + '-01');
+
+        if (goalsError) {
+          console.error('Error fetching weekly goals:', goalsError);
+          return;
+        }
+
+        if (!employees || employees.length === 0) {
           setData([]);
           return;
         }
 
         const employeeIds = employees.map(emp => emp.id);
-        const filteredData = programData.filter(program => 
+        const employeeUserIds = employees.map(emp => emp.user_id).filter(Boolean);
+        
+        const filteredProgramData = programData?.filter(program => 
           program.b2b_employee_id && employeeIds.includes(program.b2b_employee_id)
-        );
+        ) || [];
+
+        const filteredGoalsData = weeklyGoals?.filter(goal => 
+          goal.user_id && employeeUserIds.includes(goal.user_id)
+        ) || [];
 
         // Calculate monthly trends
-        const monthlyData = calculateMonthlyTrends(filteredData, start, end);
+        const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, start, end);
         setData(monthlyData);
       } catch (error) {
         console.error('Error in fetchTrendsData:', error);
@@ -75,7 +93,7 @@ const TrendsChart = () => {
     fetchTrendsData();
   }, [getDateRange]);
 
-  const calculateMonthlyTrends = (data: any[], start: Date, end: Date) => {
+  const calculateMonthlyTrends = (programData: any[], weeklyGoalsData: any[], start: Date, end: Date) => {
     const months: Array<{ 
       month: string; 
       painReduction: number; 
@@ -92,20 +110,27 @@ const TrendsChart = () => {
       const monthName = current.toLocaleDateString('en', { month: 'short' });
       
       // Calculate metrics for this month
-      const monthData = data.filter(item => {
+      const monthProgramData = programData.filter(item => {
         const itemDate = new Date(item.program_started_at);
         return itemDate.getFullYear() === current.getFullYear() && 
                itemDate.getMonth() === current.getMonth();
       });
 
+      // Get weekly goals for this month
+      const monthGoalsData = weeklyGoalsData.filter(goal => {
+        const goalDate = new Date(goal.month_year);
+        return goalDate.getFullYear() === current.getFullYear() && 
+               goalDate.getMonth() === current.getMonth();
+      });
+
       // Pain Reduction: average pain improvement percentage
-      const painReduction = calculatePainReduction(monthData);
+      const painReduction = calculatePainReduction(monthProgramData);
       
       // Program Completion: % of ended programs
-      const programCompletion = calculateProgramCompletion(monthData);
+      const programCompletion = calculateProgramCompletion(monthProgramData);
       
-      // Exercise Compliance: average of exercise_goal_completion arrays
-      const exerciseCompliance = calculateExerciseCompliance(monthData);
+      // Exercise Compliance: average from weekly goals
+      const exerciseCompliance = calculateExerciseCompliance(monthGoalsData, current);
 
       months.push({
         month: monthName,
@@ -148,21 +173,42 @@ const TrendsChart = () => {
     return (endedPrograms / totalPrograms) * 100;
   };
 
-  const calculateExerciseCompliance = (monthData: any[]) => {
-    if (monthData.length === 0) return 0;
+  const getCurrentWeekOfMonth = (date: Date) => {
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const currentDay = date.getDate();
+    const firstWeekday = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
     
-    const validComplianceData = monthData.filter(item => 
-      item.exercise_goal_completion && Array.isArray(item.exercise_goal_completion)
-    );
+    // Calculate which week we're in (1-based)
+    const weekOfMonth = Math.ceil((currentDay + firstWeekday) / 7);
+    return Math.min(weekOfMonth, 5); // Cap at 5 weeks
+  };
+
+  const calculateExerciseCompliance = (monthGoalsData: any[], monthDate: Date) => {
+    if (monthGoalsData.length === 0) return 0;
     
-    if (validComplianceData.length === 0) return 0;
+    const now = new Date();
+    const isCurrentMonth = monthDate.getFullYear() === now.getFullYear() && 
+                          monthDate.getMonth() === now.getMonth();
     
-    const totalCompliance = validComplianceData.reduce((sum, item) => {
-      const userAvg = item.exercise_goal_completion.reduce((a: number, b: number) => a + b, 0) / item.exercise_goal_completion.length;
-      return sum + userAvg;
+    const currentWeek = isCurrentMonth ? getCurrentWeekOfMonth(now) : 5;
+    
+    const totalCompliance = monthGoalsData.reduce((sum, goal) => {
+      const weeks = [
+        goal.first_month_week || 0,
+        goal.second_month_week || 0,
+        goal.third_month_week || 0,
+        goal.fourth_month_week || 0,
+        goal.fifth_month_week || 0
+      ];
+      
+      // For current month, only use weeks up to current week
+      const weeksToUse = isCurrentMonth ? weeks.slice(0, currentWeek) : weeks;
+      const weekAverage = weeksToUse.reduce((a, b) => a + b, 0) / weeksToUse.length;
+      
+      return sum + weekAverage;
     }, 0);
     
-    return totalCompliance / validComplianceData.length;
+    return totalCompliance / monthGoalsData.length;
   };
 
   const CustomLegend = (props: any) => {
