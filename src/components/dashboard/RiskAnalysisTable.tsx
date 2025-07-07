@@ -31,62 +31,95 @@ const RiskAnalysisTable = () => {
   const fetchDepartmentsWithEmployeeCount = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.error('No authenticated user found');
+        return;
+      }
 
       // Get user's B2B partner info
-      const { data: userData } = await supabase
+      const { data: userData, error: userError } = await supabase
         .from('users')
         .select('hr_manager_id')
         .eq('id', user.id)
         .single();
 
-      if (userData?.hr_manager_id) {
-        const { data: hrManager } = await supabase
-          .from('hr_managers')
-          .select('b2b_partner')
-          .eq('id', userData.hr_manager_id)
-          .single();
+      if (userError) {
+        console.error('Error fetching user data:', userError);
+        return;
+      }
 
-        if (hrManager?.b2b_partner) {
-          // Use the new function to get department data with pain levels
-          const { data: deptData, error } = await supabase
-            .rpc('calculate_department_avg_pain_level', {
-              target_b2b_partner_id: hrManager.b2b_partner
-            });
+      if (!userData?.hr_manager_id) {
+        console.error('User is not associated with an HR manager');
+        return;
+      }
 
-          if (error) {
-            console.error('Error fetching department pain levels:', error);
-            return;
-          }
+      const { data: hrManager, error: hrError } = await supabase
+        .from('hr_managers')
+        .select('b2b_partner')
+        .eq('id', userData.hr_manager_id)
+        .single();
 
-          if (deptData) {
-            // Get trend data for today
-            const { data: trendData } = await supabase
-              .from('department_pain_trends')
-              .select('department_id, trend_direction')
-              .eq('b2b_partner_id', hrManager.b2b_partner)
-              .eq('calculated_date', new Date().toISOString().split('T')[0]);
+      if (hrError) {
+        console.error('Error fetching HR manager data:', hrError);
+        return;
+      }
 
-            // Combine data with trend information
-            const departmentsWithTrends = deptData.map((dept: any) => {
-              const trend = trendData?.find(t => t.department_id === dept.department_id);
-              return {
-                id: dept.department_id,
-                department_name: dept.department_name,
-                department_headcount: 0, // This will be set from company_departments if needed
-                job_type: '', // This will be set from company_departments if needed
-                employee_count: Number(dept.employee_count),
-                avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
-                trend_direction: trend?.trend_direction || null
-              };
-            });
+      if (!hrManager?.b2b_partner) {
+        console.error('HR manager is not associated with a B2B partner');
+        return;
+      }
 
-            setDepartments(departmentsWithTrends);
-          }
+      console.log('Fetching department data for partner:', hrManager.b2b_partner);
+
+      // Use the fixed function to get department data with pain levels
+      const { data: deptData, error } = await supabase
+        .rpc('calculate_department_avg_pain_level', {
+          target_b2b_partner_id: hrManager.b2b_partner
+        });
+
+      if (error) {
+        console.error('Error fetching department pain levels:', error);
+        return;
+      }
+
+      console.log('Department data received:', deptData);
+
+      if (deptData && deptData.length > 0) {
+        // Get trend data for today
+        const { data: trendData, error: trendError } = await supabase
+          .from('department_pain_trends')
+          .select('department_id, trend_direction')
+          .eq('b2b_partner_id', hrManager.b2b_partner)
+          .eq('calculated_date', new Date().toISOString().split('T')[0]);
+
+        if (trendError) {
+          console.error('Error fetching trend data:', trendError);
         }
+
+        console.log('Trend data received:', trendData);
+
+        // Combine data with trend information
+        const departmentsWithTrends = deptData.map((dept: any) => {
+          const trend = trendData?.find(t => t.department_id === dept.department_id);
+          return {
+            id: dept.department_id,
+            department_name: dept.department_name,
+            department_headcount: 0,
+            job_type: '',
+            employee_count: Number(dept.employee_count),
+            avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
+            trend_direction: trend?.trend_direction || null
+          };
+        });
+
+        console.log('Final departments data:', departmentsWithTrends);
+        setDepartments(departmentsWithTrends);
+      } else {
+        console.log('No department data found');
+        setDepartments([]);
       }
     } catch (error) {
-      console.error('Error fetching departments:', error);
+      console.error('Unexpected error in fetchDepartmentsWithEmployeeCount:', error);
     } finally {
       setLoading(false);
     }

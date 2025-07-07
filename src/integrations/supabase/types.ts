@@ -234,6 +234,7 @@ export type Database = {
           department_id: string
           id: string
           trend_direction: string | null
+          user_id: string
         }
         Insert: {
           avg_pain_level?: number | null
@@ -243,6 +244,7 @@ export type Database = {
           department_id: string
           id?: string
           trend_direction?: string | null
+          user_id: string
         }
         Update: {
           avg_pain_level?: number | null
@@ -252,8 +254,17 @@ export type Database = {
           department_id?: string
           id?: string
           trend_direction?: string | null
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "department_pain_trends_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       exercise_completion_clicks: {
         Row: {
@@ -689,8 +700,6 @@ export type Database = {
           job_type: string | null
           last_name: string | null
           pain_area: string | null
-          pain_level_followup: number | null
-          pain_level_initial: number | null
           updated_at: string | null
           user_id: string
         }
@@ -710,8 +719,6 @@ export type Database = {
           job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
-          pain_level_followup?: number | null
-          pain_level_initial?: number | null
           updated_at?: string | null
           user_id: string
         }
@@ -731,8 +738,6 @@ export type Database = {
           job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
-          pain_level_followup?: number | null
-          pain_level_initial?: number | null
           updated_at?: string | null
           user_id?: string
         }
