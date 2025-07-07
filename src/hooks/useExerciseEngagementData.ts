@@ -44,7 +44,13 @@ export const useExerciseEngagementData = () => {
           user_id: user.id
         });
 
-        if (!companyId) return;
+        console.log('Current user:', user.id);
+        console.log('Company ID from RPC:', companyId);
+
+        if (!companyId) {
+          console.log('No company ID found - checking if user is HR manager directly');
+          return;
+        }
 
         // Get employee IDs for this company
         const { data: employees } = await supabase
@@ -89,19 +95,20 @@ export const useExerciseEngagementData = () => {
 
         const completedCount = exerciseClicks?.length || 0;
         
-        // Get all active programs for these employees (not date-filtered for total count)
-        const { data: allActivePrograms } = await supabase
-          .from('user_program_tracking')
-          .select('*')
-          .in('b2b_employee_id', employeeIds)
-          .eq('program_status', 'active');
+        // Get all exercise clicks for these users to calculate a more realistic total
+        const { data: allExerciseClicks } = await supabase
+          .from('exercise_completion_clicks')
+          .select('id, user_id, clicked_at')
+          .in('user_id', userIds)
+          .eq('is_active', true);
+
+        console.log('All exercise clicks (any date):', allExerciseClicks?.length);
         
-        // Calculate total possible exercises based on all active programs
-        // Each active program typically has exercises assigned, we'll estimate based on program count
-        const totalEstimatedExercises = (allActivePrograms?.length || 0) * 15;
+        // Use actual total clicks as the baseline, with a minimum to avoid 100% on small datasets
+        const totalPossibleExercises = Math.max(allExerciseClicks?.length || 0, completedCount * 2, 50);
         
-        const completedPercentage = totalEstimatedExercises > 0 ? 
-          Math.round((completedCount / totalEstimatedExercises) * 100) : 0;
+        const completedPercentage = totalPossibleExercises > 0 ? 
+          Math.round((completedCount / totalPossibleExercises) * 100) : 0;
 
         // Get favorite exercises count
         const { data: favoriteExercises } = await supabase
@@ -146,7 +153,7 @@ export const useExerciseEngagementData = () => {
         setData({
           completedExercises: {
             completed: completedCount,
-            total: totalEstimatedExercises,
+            total: totalPossibleExercises,
             percentage: completedPercentage
           },
           favoriteExercises: {
