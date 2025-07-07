@@ -106,7 +106,7 @@
     "exerciseEngagement": {
       "title": "Zapojení do cvičení",
       "completedExercises": "Dokončená cvičení",
-      "completedExercisesDescription": "Dokončená cvičení zobrazují kolik cvičení zaměstnanci klikli jako \"vycvičené\" v daném období. Poskytuje vodítka o dodržování cvičení zaměstnanci a naznačuje, zda potřebují podporu (např. kampaň, motivaci, pomoc).",
+      "completedExercisesDescription": "Dokončená cvičení zobrazují kolik cvičení zaměstnanci klikli jako \"odcvičené\" v daném období. Poskytuje náhled na dodržování cvičení zaměstnanci a naznačuje, zda potřebují podporu (např. kampaň, motivaci, pomoc).",
       "favoriteExercises": "Oblíbená cvičení",
       "weeklyGoals": "Týdenní cíle splněny"
     },
