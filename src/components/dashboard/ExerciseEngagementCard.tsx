@@ -3,14 +3,31 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { useExerciseEngagementData } from '@/hooks/useExerciseEngagementData';
 
 const ExerciseEngagementCard = () => {
   const { t } = useTranslation();
+  const { data, loading } = useExerciseEngagementData();
 
   const engagementData = [
-    { label: t('dashboard.exerciseEngagement.completedExercises'), value: 1247, total: 1500, percentage: 83 },
-    { label: t('dashboard.exerciseEngagement.favoriteExercises'), value: 89, total: 100, percentage: 89 },
-    { label: t('dashboard.exerciseEngagement.weeklyGoals'), value: 156, total: 200, percentage: 78 },
+    { 
+      label: t('dashboard.exerciseEngagement.completedExercises'), 
+      value: data.completedExercises.completed, 
+      total: data.completedExercises.total, 
+      percentage: data.completedExercises.percentage 
+    },
+    { 
+      label: t('dashboard.exerciseEngagement.favoriteExercises'), 
+      value: data.favoriteExercises.count, 
+      total: data.favoriteExercises.total, 
+      percentage: data.favoriteExercises.percentage 
+    },
+    { 
+      label: t('dashboard.exerciseEngagement.weeklyGoals'), 
+      value: data.weeklyGoals.met, 
+      total: data.weeklyGoals.total, 
+      percentage: data.weeklyGoals.percentage 
+    },
   ];
 
   return (
@@ -19,18 +36,24 @@ const ExerciseEngagementCard = () => {
         <CardTitle>{t('dashboard.exerciseEngagement.title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {engagementData.map((item, index) => (
-          <div key={index} className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-600">{item.label}</span>
-              <span className="text-sm text-gray-500">{item.value}/{item.total}</span>
-            </div>
-            <Progress value={item.percentage} className="h-2" />
-            <div className="text-right">
-              <span className="text-xs text-gray-400">{item.percentage}%</span>
-            </div>
+        {loading ? (
+          <div className="flex items-center justify-center h-48">
+            <div className="text-muted-foreground">Loading...</div>
           </div>
-        ))}
+        ) : (
+          engagementData.map((item, index) => (
+            <div key={index} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-gray-600">{item.label}</span>
+                <span className="text-sm text-gray-500">{item.value}/{item.total}</span>
+              </div>
+              <Progress value={item.percentage} className="h-2" />
+              <div className="text-right">
+                <span className="text-xs text-gray-400">{item.percentage}%</span>
+              </div>
+            </div>
+          ))
+        )}
         
         <div className="pt-4 space-y-2">
           <Button variant="outline" size="sm" className="w-full">
