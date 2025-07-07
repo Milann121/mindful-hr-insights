@@ -107,6 +107,12 @@ const TrendsChart = () => {
           goal.user_id && employeeUserIds.includes(goal.user_id)
         ) || [];
 
+        // Debug logging
+        console.log('Employee User IDs:', employeeUserIds);
+        console.log('Weekly Goals Data:', weeklyGoals);
+        console.log('Filtered Goals Data:', filteredGoalsData);
+        console.log('Employees data:', employees);
+
         // Calculate monthly trends
         const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, start, end);
         setData(monthlyData);
