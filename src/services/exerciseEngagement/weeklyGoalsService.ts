@@ -4,15 +4,25 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
   // First, update weekly goal completions for all weeks in the period
   await updateWeeklyGoalCompletionsForPeriod(startDate, endDate);
 
-  // Get users with weekly goals (from the company employees)
-  const { data: usersWithGoals } = await supabase
+  console.log('Getting weekly goals for userIds:', userIds);
+  console.log('Date range:', startDate.toISOString().split('T')[0], 'to', endDate.toISOString().split('T')[0]);
+
+  // Get users with weekly goals - only filter by user_id if we have company employees
+  let usersWithGoalsQuery = supabase
     .from('user_goals')
     .select('user_id')
-    .in('user_id', userIds)
     .eq('goal_type', 'weekly_exercise');
+
+  // Only filter by userIds if we have employee data (for HR managers)
+  if (userIds.length > 0) {
+    usersWithGoalsQuery = usersWithGoalsQuery.in('user_id', userIds);
+  }
+
+  const { data: usersWithGoals, error: goalsError } = await usersWithGoalsQuery;
 
   console.log('Users with weekly goals found:', usersWithGoals?.length);
   console.log('Users with goals data:', usersWithGoals);
+  if (goalsError) console.error('Error fetching user goals:', goalsError);
 
   const totalUsersWithGoals = usersWithGoals?.length || 0;
 
@@ -24,15 +34,26 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
     };
   }
 
-  // Get weekly goal completions for the period
-  const { data: weeklyCompletions } = await supabase
+  // Get user IDs from users with goals to query completions
+  const usersWithGoalIds = usersWithGoals?.map(u => u.user_id) || [];
+  console.log('User IDs with goals:', usersWithGoalIds);
+
+  // Get weekly goal completions for the period - query by users who actually have goals
+  let weeklyCompletionsQuery = supabase
     .from('weekly_goal_completions')
-    .select('user_id, goal_met, week_start_date')
-    .in('user_id', userIds)
+    .select('user_id, goal_met, week_start_date, goal_target, exercises_completed')
     .gte('week_start_date', startDate.toISOString().split('T')[0])
     .lte('week_start_date', endDate.toISOString().split('T')[0]);
 
+  if (usersWithGoalIds.length > 0) {
+    weeklyCompletionsQuery = weeklyCompletionsQuery.in('user_id', usersWithGoalIds);
+  }
+
+  const { data: weeklyCompletions, error: completionsError } = await weeklyCompletionsQuery;
+
   console.log('Weekly goal completions found:', weeklyCompletions?.length);
+  console.log('Weekly completions data:', weeklyCompletions);
+  if (completionsError) console.error('Error fetching weekly completions:', completionsError);
 
   // Count users who met their goals in any week during the period
   const usersWhoMetGoals = new Set();
