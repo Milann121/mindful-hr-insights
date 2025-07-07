@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
 import { useExerciseEngagementData } from '@/hooks/useExerciseEngagementData';
 
 const ExerciseEngagementCard = () => {
@@ -44,7 +46,21 @@ const ExerciseEngagementCard = () => {
           engagementData.map((item, index) => (
             <div key={index} className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600">{item.label}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600">{item.label}</span>
+                  {index === 0 && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="h-4 w-4 text-gray-400" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">{t('dashboard.exerciseEngagement.completedExercisesDescription')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
                 <span className="text-sm text-gray-500">{item.value}/{item.total}</span>
               </div>
               <Progress value={item.percentage} className="h-2" />

@@ -107,6 +107,7 @@
     "exerciseEngagement": {
       "title": "Exercise Engagement",
       "completedExercises": "Completed Exercises",
+      "completedExercisesDescription": "Completed Exercises displays how many exercises employees finished as \"exercised\" in current month",
       "favoriteExercises": "Favorite Exercises",
       "weeklyGoals": "Weekly Goals Met"
     },

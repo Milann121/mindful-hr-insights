@@ -74,19 +74,25 @@ export const useExerciseEngagementData = () => {
           .gte('program_started_at', start.toISOString())
           .lte('program_started_at', end.toISOString());
 
-        // For now, we'll estimate total exercises based on active programs
-        // Assuming each active program has approximately 20 exercises
-        const totalEstimatedExercises = (activePrograms?.length || 0) * 20;
+        // Get current month's completed exercises from exercise_completion_clicks
+        const currentMonth = new Date();
+        const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
-        // Get completed exercises for these users within the date range
-        const { data: completedExercises } = await supabase
-          .from('completed_exercises')
-          .select('id')
+        const { data: exerciseClicks } = await supabase
+          .from('exercise_completion_clicks')
+          .select('id, user_id')
           .in('user_id', userIds)
-          .gte('completed_at', start.toISOString())
-          .lte('completed_at', end.toISOString());
+          .eq('is_active', true)
+          .gte('clicked_at', startOfMonth.toISOString())
+          .lte('clicked_at', endOfMonth.toISOString());
 
-        const completedCount = completedExercises?.length || 0;
+        const completedCount = exerciseClicks?.length || 0;
+        
+        // Calculate total possible exercises based on active programs
+        // Each active program typically has exercises assigned, we'll estimate based on program count
+        const totalEstimatedExercises = (activePrograms?.length || 0) * 15; // More realistic estimate
+        
         const completedPercentage = totalEstimatedExercises > 0 ? 
           Math.round((completedCount / totalEstimatedExercises) * 100) : 0;
 
@@ -102,12 +108,12 @@ export const useExerciseEngagementData = () => {
         const favoritesPercentage = Math.min(100, Math.round((favoritesCount / totalAvailableExercises) * 100));
 
         // Get weekly goals data
-        const currentMonth = start.toISOString().slice(0, 7) + '-01';
+        const currentMonthStr = start.toISOString().slice(0, 7) + '-01';
         const { data: weeklyGoals } = await supabase
           .from('user_weekly_exercise_goals')
           .select('*')
           .in('user_id', userIds)
-          .eq('month_year', currentMonth);
+          .eq('month_year', currentMonthStr);
 
         // Calculate average weekly goal completion
         let totalGoalsMet = 0;
@@ -165,7 +171,7 @@ export const useExerciseEngagementData = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'completed_exercises'
+          table: 'exercise_completion_clicks'
         },
         () => {
           fetchEngagementData();
