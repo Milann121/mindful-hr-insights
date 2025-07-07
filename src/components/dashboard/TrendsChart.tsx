@@ -25,6 +25,18 @@ const TrendsChart = () => {
         setLoading(true);
         const { start, end } = getDateRange();
         
+        // Get current user's b2b_partner_id
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: userProfile } = await supabase
+          .from('user_profiles')
+          .select('b2b_partner_id')
+          .eq('user_id', user.id)
+          .single();
+
+        const partnerIdToUse = userProfile?.b2b_partner_id || 10010; // fallback to 10010
+        
         // Get all program tracking data for the selected period
         const { data: programData, error: programError } = await supabase
           .from('user_program_tracking')
@@ -40,11 +52,11 @@ const TrendsChart = () => {
           return;
         }
 
-        // Get b2b_employees to filter by partner_id 10010
+        // Get b2b_employees for the user's partner
         const { data: employees, error: employeesError } = await supabase
           .from('b2b_employees')
           .select('id, employee_id, user_id')
-          .eq('b2b_partner_id', 10010)
+          .eq('b2b_partner_id', partnerIdToUse)
           .eq('state', 'active');
 
         if (employeesError) {
