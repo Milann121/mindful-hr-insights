@@ -107,7 +107,7 @@
     "exerciseEngagement": {
       "title": "Exercise Engagement",
       "completedExercises": "Completed Exercises",
-      "completedExercisesDescription": "Completed Exercises displays how many exercises employees finished as \"exercised\" in current month",
+      "completedExercisesDescription": "The Completed Exercises displays how many exercises employees clicked as \"exercised\" in a given period. This provides clues about employee exercise adherence and suggest if they need some push (e.g. campaign, motivation, help).",
       "favoriteExercises": "Favorite Exercises",
       "weeklyGoals": "Weekly Goals Met"
     },
