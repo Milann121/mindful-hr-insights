@@ -57,6 +57,18 @@ export const useExerciseEngagementRealtime = ({ onDataChange }: UseExerciseEngag
           onDataChange();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'weekly_goal_completions'
+        },
+        () => {
+          console.log('Weekly goal completions change detected');
+          onDataChange();
+        }
+      )
       .subscribe();
 
     return () => {

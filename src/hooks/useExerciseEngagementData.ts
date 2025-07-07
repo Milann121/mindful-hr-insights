@@ -37,7 +37,7 @@ export const useExerciseEngagementData = () => {
       const [completedExercises, completedPrograms, weeklyGoals] = await Promise.all([
         getExerciseCompletionData(userIds, start, end),
         getProgramCompletionData(employeeIds, start, end),
-        getWeeklyGoalsData(userIds)
+        getWeeklyGoalsData(userIds, start, end)
       ]);
 
       setData({

@@ -1,7 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export const getWeeklyGoalsData = async (userIds: string[]) => {
-  // Get weekly goals data - count users with weekly goals (regardless of when they were created)
+export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, endDate: Date) => {
+  // First, update weekly goal completions for all weeks in the period
+  await updateWeeklyGoalCompletionsForPeriod(startDate, endDate);
+
+  // Get users with weekly goals (from the company employees)
   const { data: usersWithGoals } = await supabase
     .from('user_goals')
     .select('user_id')
@@ -11,40 +14,35 @@ export const getWeeklyGoalsData = async (userIds: string[]) => {
   console.log('Users with weekly goals found:', usersWithGoals?.length);
   console.log('Users with goals data:', usersWithGoals);
 
-  // Get weekly exercise completion data to determine met goals for the period
-  const { data: weeklyCompletionData } = await supabase
-    .from('user_weekly_exercise_goals')
-    .select('*')
-    .in('user_id', userIds)
-    .eq('goal_type', 'weekly_exercise');
-
-  console.log('Weekly completion data:', weeklyCompletionData?.length);
-
-  // Calculate users who met their goals vs users who have goals
-  let usersWithMetGoals = 0;
   const totalUsersWithGoals = usersWithGoals?.length || 0;
 
-  // For each user with goals, check if they met their goal in any week during the period
-  usersWithGoals?.forEach(userGoal => {
-    const userCompletionData = weeklyCompletionData?.find(wc => wc.user_id === userGoal.user_id);
-    
-    if (userCompletionData) {
-      // Check weeks within the period and count those that met the goal (>=100%)
-      const weeks = [
-        userCompletionData.first_month_week,
-        userCompletionData.second_month_week,
-        userCompletionData.third_month_week,
-        userCompletionData.fourth_month_week,
-        userCompletionData.fifth_month_week
-      ].filter(week => week !== null && week >= 100);
-      
-      // If any week in the period had 100%+ completion, count this user as having met their goal
-      if (weeks.length > 0) {
-        usersWithMetGoals += 1;
-      }
+  if (totalUsersWithGoals === 0) {
+    return {
+      met: 0,
+      total: 0,
+      percentage: 0
+    };
+  }
+
+  // Get weekly goal completions for the period
+  const { data: weeklyCompletions } = await supabase
+    .from('weekly_goal_completions')
+    .select('user_id, goal_met, week_start_date')
+    .in('user_id', userIds)
+    .gte('week_start_date', startDate.toISOString().split('T')[0])
+    .lte('week_start_date', endDate.toISOString().split('T')[0]);
+
+  console.log('Weekly goal completions found:', weeklyCompletions?.length);
+
+  // Count users who met their goals in any week during the period
+  const usersWhoMetGoals = new Set();
+  weeklyCompletions?.forEach(completion => {
+    if (completion.goal_met) {
+      usersWhoMetGoals.add(completion.user_id);
     }
   });
 
+  const usersWithMetGoals = usersWhoMetGoals.size;
   const weeklyGoalsPercentage = totalUsersWithGoals > 0 ? 
     Math.round((usersWithMetGoals / totalUsersWithGoals) * 100) : 0;
 
@@ -53,4 +51,32 @@ export const getWeeklyGoalsData = async (userIds: string[]) => {
     total: totalUsersWithGoals,
     percentage: weeklyGoalsPercentage
   };
+};
+
+// Helper function to update weekly goal completions for a date range
+const updateWeeklyGoalCompletionsForPeriod = async (startDate: Date, endDate: Date) => {
+  // Calculate all week starts in the period
+  const weekStarts: Date[] = [];
+  let currentWeekStart = new Date(startDate);
+  
+  // Find the Monday of the week containing startDate
+  const dayOfWeek = currentWeekStart.getDay();
+  const daysUntilMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  currentWeekStart.setDate(currentWeekStart.getDate() - daysUntilMonday);
+  
+  while (currentWeekStart <= endDate) {
+    weekStarts.push(new Date(currentWeekStart));
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+  }
+
+  // Update completions for each week
+  for (const weekStart of weekStarts) {
+    try {
+      await supabase.rpc('update_all_weekly_goal_completions', {
+        target_week_start: weekStart.toISOString().split('T')[0]
+      });
+    } catch (error) {
+      console.error('Error updating weekly goal completions for week:', weekStart, error);
+    }
+  }
 };
