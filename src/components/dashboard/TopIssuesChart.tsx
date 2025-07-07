@@ -28,7 +28,7 @@ const TopIssuesChart = () => {
           return;
         }
         
-        // Get user_program_tracking data for programs active during the selected period
+        // Get user_program_tracking data for programs that were active during the selected period
         const { data: programData, error: programError } = await supabase
           .from('user_program_tracking')
           .select(`
@@ -41,7 +41,7 @@ const TopIssuesChart = () => {
           .in('b2b_employee_id', employeeIds)
           .lte('program_started_at', end.toISOString())
           .or(`program_ended_at.is.null,program_ended_at.gte.${start.toISOString()}`)
-          .eq('program_status', 'active');
+          .neq('program_status', 'deleted');
 
         if (programError) {
           console.error('Error fetching program tracking data:', programError);
