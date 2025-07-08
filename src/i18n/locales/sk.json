@@ -79,7 +79,7 @@
       "painReduction": "Zníženie bolesti",
       "programCompletion": "Dokončenie programu",
       "exerciseCompliance": "Dodržiavanie cvičení",
-      "painReductionDesc": "Línia Zníženie bolesti popisuje mesačnú zmenu z existujúcich aktívnych programov prostredníctvom následných dotazníkov a ukončených programov prostredníctvom záverečných dotazníkov. Čím vyššia je % zmena oproti predchádzajúcemu mesiacu, tým lepšie sú výsledky.",
+      "painReductionDesc": "Línia Zníženie bolesti popisuje priemernú mesačnú zmenu úrovní bolesti z existujúcich aktívnych programov prostredníctvom následných dotazníkov a ukončených programov prostredníctvom záverečných dotazníkov. Čím vyššia je % zmena oproti predchádzajúcemu mesiacu, tým lepšie sú výsledky.",
       "programCompletionDesc": "Línia Dokončenie programu popisuje mesačnú zmenu v novo ukončených programoch oproti predchádzajúcemu mesiacu.",
       "exerciseComplianceDesc": "Línia Dodržiavanie cvičení popisuje, koľko % zamestnancov splnilo svoje týždenné ciele v danom mesiaci. Údaje sa aktualizujú každý týždeň v pondelok."
     },
