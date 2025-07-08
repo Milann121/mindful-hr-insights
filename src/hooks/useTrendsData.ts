@@ -56,16 +56,10 @@ export const useTrendsData = () => {
           .gte('program_started_at', '2020-01-01') // Get all programs regardless of start date
           .lte('program_started_at', end.toISOString());
 
-        // Get follow-up responses for the selected period with program tracking data
+        // Get follow-up responses for the selected period
         const { data: followUpData, error: followUpError } = await supabase
           .from('follow_up_responses')
-          .select(`
-            *,
-            user_program_tracking!follow_up_responses_assessment_id_fkey (
-              initial_pain_level,
-              b2b_employee_id
-            )
-          `)
+          .select('*')
           .gte('created_at', start.toISOString())
           .lte('created_at', end.toISOString());
 
@@ -132,16 +126,30 @@ export const useTrendsData = () => {
         console.log('Users with goals:', usersWithGoals);
         console.log('All goals data being used:', filteredGoalsData);
 
-        // Filter follow-up data by employees (only include those with valid employee tracking)
-        const filteredFollowUpData = followUpData?.filter(followUp => {
-          const programTracking = followUp.user_program_tracking as any;
-          const hasEmployeeTracking = programTracking?.[0]?.b2b_employee_id && 
-                                     employeeIds.includes(programTracking[0].b2b_employee_id);
-          return hasEmployeeTracking && employeeUserIds.includes(followUp.user_id);
-        }) || [];
+        // Filter follow-up data by employees and attach program tracking data
+        const filteredFollowUpData = followUpData?.filter(followUp => 
+          employeeUserIds.includes(followUp.user_id)
+        ).map(followUp => {
+          // Find the corresponding program tracking data
+          const programTracking = programData?.find(program => 
+            program.assessment_id === followUp.assessment_id && 
+            program.user_id === followUp.user_id
+          );
+          return {
+            ...followUp,
+            initial_pain_level: programTracking?.initial_pain_level,
+            b2b_employee_id: programTracking?.b2b_employee_id
+          };
+        }).filter(followUp => 
+          followUp.b2b_employee_id && employeeIds.includes(followUp.b2b_employee_id)
+        ) || [];
+
+        console.log('Filtered follow-up data:', filteredFollowUpData);
+        console.log('Filtered program data:', filteredProgramData);
 
         // Calculate monthly trends
         const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, filteredFollowUpData, start, end);
+        console.log('Calculated monthly trends:', monthlyData);
         setData(monthlyData);
       } catch (error) {
         console.error('Error in fetchTrendsData:', error);

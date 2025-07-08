@@ -17,10 +17,9 @@ export const calculatePainReduction = (monthFollowUpData: any[], monthEndedProgr
   
   // Process follow-up responses for this month
   monthFollowUpData.forEach(followUp => {
-    // Use the initial pain level from the joined program tracking data
-    const initialPainLevel = followUp.user_program_tracking?.[0]?.initial_pain_level;
-    if (initialPainLevel && followUp.pain_level) {
-      const initial = initialPainLevel;
+    // Use the initial pain level that was attached during data processing
+    if (followUp.initial_pain_level && followUp.pain_level) {
+      const initial = followUp.initial_pain_level;
       const current = followUp.pain_level;
       const reduction = ((initial - current) / initial) * 100;
       validPainReductions.push(reduction);
