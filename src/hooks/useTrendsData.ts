@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useDateFilter } from '@/contexts/DateFilterContext';
 import { calculateMonthlyTrends } from '@/utils/trendsCalculations';
@@ -12,12 +12,16 @@ export const useTrendsData = () => {
     exerciseCompliance: number; 
   }>>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  useEffect(() => {
-    const fetchTrendsData = async () => {
-      try {
-        setLoading(true);
-        const { start, end } = getDateRange();
+  const fetchTrendsData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { start, end } = getDateRange();
+      
+      // Ensure end date includes today for real-time updates
+      const today = new Date();
+      const adjustedEnd = end < today ? today : end;
         
         // Get current user's b2b_partner_id
         const { data: { user } } = await supabase.auth.getUser();
@@ -56,12 +60,12 @@ export const useTrendsData = () => {
           .gte('program_started_at', '2020-01-01') // Get all programs regardless of start date
           .lte('program_started_at', end.toISOString());
 
-        // Get follow-up responses for the selected period
+        // Get follow-up responses for the selected period (including today for real-time updates)
         const { data: followUpData, error: followUpError } = await supabase
           .from('follow_up_responses')
           .select('*')
           .gte('created_at', start.toISOString())
-          .lte('created_at', end.toISOString());
+          .lte('created_at', adjustedEnd.toISOString());
 
         if (programError) {
           console.error('Error fetching program data:', programError);
@@ -147,19 +151,63 @@ export const useTrendsData = () => {
         console.log('Filtered follow-up data:', filteredFollowUpData);
         console.log('Filtered program data:', filteredProgramData);
 
-        // Calculate monthly trends
-        const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, filteredFollowUpData, start, end);
+        // Calculate monthly trends with adjusted end date
+        const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, filteredFollowUpData, start, adjustedEnd);
         console.log('Calculated monthly trends:', monthlyData);
         setData(monthlyData);
+        setLastUpdated(new Date());
       } catch (error) {
         console.error('Error in fetchTrendsData:', error);
       } finally {
         setLoading(false);
       }
-    };
+    }, [getDateRange]);
 
+  useEffect(() => {
     fetchTrendsData();
-  }, [getDateRange]);
+  }, [fetchTrendsData]);
 
-  return { data, loading };
+  useEffect(() => {
+    // Set up real-time subscription for follow-up responses
+    const channel = supabase
+      .channel('trends-data-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'follow_up_responses'
+        },
+        (payload) => {
+          console.log('Follow-up response change detected:', payload);
+          // Refresh data when new follow-ups are submitted
+          fetchTrendsData();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_program_tracking'
+        },
+        (payload) => {
+          console.log('Program tracking change detected:', payload);
+          // Refresh when program tracking updates
+          fetchTrendsData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchTrendsData]);
+
+  return { 
+    data, 
+    loading, 
+    lastUpdated, 
+    refreshData: fetchTrendsData 
+  };
 };

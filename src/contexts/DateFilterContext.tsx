@@ -32,7 +32,7 @@ interface DateFilterProviderProps {
 }
 
 export const DateFilterProvider: React.FC<DateFilterProviderProps> = ({ children }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState<DateFilterPeriod>('last-30-days');
+  const [selectedPeriod, setSelectedPeriod] = useState<DateFilterPeriod>('month-to-date'); // Default to current month to include today
 
   const getDateRange = (): { start: Date; end: Date } => {
     const now = new Date();

@@ -14,15 +14,27 @@ export const getCurrentWeekOfMonth = (date: Date) => {
 
 export const calculatePainReduction = (monthFollowUpData: any[], monthEndedPrograms: any[]) => {
   const validPainReductions = [];
+  const now = new Date();
   
-  // Process follow-up responses for this month
+  // Process follow-up responses for this month with recency weighting
   monthFollowUpData.forEach(followUp => {
     // Use the initial pain level that was attached during data processing
     if (followUp.initial_pain_level && followUp.pain_level) {
       const initial = followUp.initial_pain_level;
       const current = followUp.pain_level;
       const reduction = ((initial - current) / initial) * 100;
-      validPainReductions.push(reduction);
+      
+      // Calculate recency weight (more recent = higher weight)
+      const followUpDate = new Date(followUp.created_at);
+      const daysAgo = Math.max(1, Math.ceil((now.getTime() - followUpDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const weight = Math.max(0.1, 1 / Math.sqrt(daysAgo)); // Recent responses have higher weight
+      
+      validPainReductions.push({ 
+        reduction, 
+        weight,
+        date: followUpDate,
+        isRecent: daysAgo <= 7 // Mark if within last week
+      });
     }
   });
   
@@ -32,13 +44,26 @@ export const calculatePainReduction = (monthFollowUpData: any[], monthEndedProgr
       const initial = program.initial_pain_level;
       const current = program.pain_level_ended;
       const reduction = ((initial - current) / initial) * 100;
-      validPainReductions.push(reduction);
+      const endDate = new Date(program.program_ended_at);
+      const daysAgo = Math.max(1, Math.ceil((now.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const weight = Math.max(0.1, 1 / Math.sqrt(daysAgo));
+      
+      validPainReductions.push({ 
+        reduction, 
+        weight,
+        date: endDate,
+        isRecent: daysAgo <= 7
+      });
     }
   });
   
   if (validPainReductions.length === 0) return 0;
   
-  return validPainReductions.reduce((sum, reduction) => sum + reduction, 0) / validPainReductions.length;
+  // Calculate weighted average with preference for recent data
+  const totalWeight = validPainReductions.reduce((sum, item) => sum + item.weight, 0);
+  const weightedSum = validPainReductions.reduce((sum, item) => sum + (item.reduction * item.weight), 0);
+  
+  return weightedSum / totalWeight;
 };
 
 export const calculateProgramCompletion = (monthData: any[]) => {

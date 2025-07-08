@@ -1,18 +1,36 @@
 
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { RefreshCw } from 'lucide-react';
 import { useTrendsData } from '@/hooks/useTrendsData';
 import { TrendsLegend } from './TrendsLegend';
 
 const TrendsChart = () => {
   const { t } = useTranslation();
-  const { data, loading } = useTrendsData();
+  const { data, loading, lastUpdated, refreshData } = useTrendsData();
 
   return (
     <Card className="col-span-1 lg:col-span-2">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle>{t('dashboard.trends.title')}</CardTitle>
+        <div className="flex items-center gap-2">
+          {lastUpdated && (
+            <span className="text-sm text-muted-foreground">
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refreshData}
+            disabled={loading}
+            className="h-8 w-8 p-0"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {loading ? (
