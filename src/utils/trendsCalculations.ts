@@ -12,15 +12,15 @@ export const getCurrentWeekOfMonth = (date: Date) => {
   return Math.min(weekOfMonth, 5); // Cap at 5 weeks
 };
 
-export const calculatePainReduction = (monthFollowUpData: any[], programData: any[], monthEndedPrograms: any[]) => {
+export const calculatePainReduction = (monthFollowUpData: any[], monthEndedPrograms: any[]) => {
   const validPainReductions = [];
   
   // Process follow-up responses for this month
   monthFollowUpData.forEach(followUp => {
-    // Find the corresponding program to get initial pain level
-    const program = programData.find(p => p.assessment_id === followUp.assessment_id);
-    if (program && program.initial_pain_level && followUp.pain_level) {
-      const initial = program.initial_pain_level;
+    // Use the initial pain level from the joined program tracking data
+    const initialPainLevel = followUp.user_program_tracking?.[0]?.initial_pain_level;
+    if (initialPainLevel && followUp.pain_level) {
+      const initial = initialPainLevel;
       const current = followUp.pain_level;
       const reduction = ((initial - current) / initial) * 100;
       validPainReductions.push(reduction);
@@ -163,7 +163,7 @@ export const calculateMonthlyTrends = (
     });
 
     // Pain Reduction: average pain improvement percentage based on when improvements were reported
-    const painReduction = calculatePainReduction(monthFollowUpData, programData, monthEndedPrograms);
+    const painReduction = calculatePainReduction(monthFollowUpData, monthEndedPrograms);
     
     // Program Completion: % of ended programs
     const programCompletion = calculateProgramCompletion(monthProgramData);
