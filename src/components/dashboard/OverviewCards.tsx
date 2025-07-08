@@ -51,40 +51,47 @@ const OverviewCards = () => {
         const employeeUserIds = employees?.map(emp => emp.user_id).filter(Boolean) || [];
 
         if (employeeIds.length > 0) {
-          // Get active programs count from user_program_tracking within date range
+          // Get active programs that were active during the selected period
+          // A program is considered active during a period if:
+          // 1. It started before or during the period AND
+          // 2. It either hasn't ended yet OR ended after the period started
           const { count: activePrograms } = await supabase
             .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
             .in('b2b_employee_id', employeeIds)
             .eq('program_status', 'active')
-            .gte('program_started_at', start.toISOString())
-            .lte('program_started_at', end.toISOString());
+            .lte('program_started_at', end.toISOString()); // Started before or during the period
 
-          // Get completed programs count from user_program_tracking within date range
+          console.log('Active programs count for date range:', activePrograms);
+          console.log('Date range:', { start: start.toISOString(), end: end.toISOString() });
+
+          // Get programs that ended during the selected period
           const { count: completedPrograms } = await supabase
             .from('user_program_tracking')
             .select('*', { count: 'exact', head: true })
             .in('b2b_employee_id', employeeIds)
             .eq('program_status', 'ended')
-            .gte('program_started_at', start.toISOString())
-            .lte('program_started_at', end.toISOString());
+            .gte('program_ended_at', start.toISOString())
+            .lte('program_ended_at', end.toISOString());
 
-          // Calculate completion rate
-          const totalPrograms = (activePrograms || 0) + (completedPrograms || 0);
-          const completionRate = totalPrograms > 0 ? Math.round((completedPrograms || 0) / totalPrograms * 100) : 0;
+          console.log('Completed programs count for date range:', completedPrograms);
 
-          // Get high risk employees (those with pain level > 6) from active programs in date range
+          // Calculate completion rate based on programs that had activity during the period
+          const totalProgramsWithActivity = (activePrograms || 0) + (completedPrograms || 0);
+          const completionRate = totalProgramsWithActivity > 0 ? Math.round((completedPrograms || 0) / totalProgramsWithActivity * 100) : 0;
+
+          // Get high risk employees from currently active programs (regardless of when they started)
           const { data: trackingData } = await supabase
             .from('user_program_tracking')
             .select('initial_pain_level')
             .in('b2b_employee_id', employeeIds)
-            .eq('program_status', 'active')
-            .gte('program_started_at', start.toISOString())
-            .lte('program_started_at', end.toISOString());
+            .eq('program_status', 'active'); // All currently active programs
 
           const highRiskCount = trackingData?.filter(program => 
             program.initial_pain_level && program.initial_pain_level > 6
           ).length || 0;
+
+          console.log('High risk count:', highRiskCount);
 
           setStats({
             totalEmployees: totalEmployees || 0,
