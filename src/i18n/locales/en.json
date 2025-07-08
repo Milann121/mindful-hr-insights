@@ -80,7 +80,7 @@
       "painReduction": "Pain Reduction",
       "programCompletion": "Program Completion",
       "exerciseCompliance": "Exercise Compliance",
-      "painReductionDesc": "The Pain Reduction line describes the average month-to-month change in pain levels out of existing Active Programs follow up questionnaires and Ended Programs ending questionnaires. The higher the % change compared to previous month, the better the results.",
+      "painReductionDesc": "The Pain Reduction line displays the average pain improvement percentage for each month based on when follow-up responses and program endings were reported. The higher the percentage, the better the pain reduction results.",
       "programCompletionDesc": "The Program Completion line describes month-to-month change in newly Ended Programs compared to previous month.",
       "exerciseComplianceDesc": "The Exercise Compliance line describes what % of employees has completed their weekly goals, in a given month. The data updates every week on Monday."
     },

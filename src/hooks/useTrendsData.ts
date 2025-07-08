@@ -46,18 +46,30 @@ export const useTrendsData = () => {
         // Fallback to 10010 if still not found
         partnerIdToUse = partnerIdToUse || 10010;
         
-        // Get all program tracking data for the selected period
+        // Get all program tracking data for pain reduction calculation
         const { data: programData, error: programError } = await supabase
           .from('user_program_tracking')
           .select(`
             *,
             b2b_employee_id
           `)
-          .gte('program_started_at', start.toISOString())
+          .gte('program_started_at', '2020-01-01') // Get all programs regardless of start date
           .lte('program_started_at', end.toISOString());
+
+        // Get follow-up responses for the selected period
+        const { data: followUpData, error: followUpError } = await supabase
+          .from('follow_up_responses')
+          .select('*')
+          .gte('created_at', start.toISOString())
+          .lte('created_at', end.toISOString());
 
         if (programError) {
           console.error('Error fetching program data:', programError);
+          return;
+        }
+
+        if (followUpError) {
+          console.error('Error fetching follow-up data:', followUpError);
           return;
         }
 
@@ -114,8 +126,13 @@ export const useTrendsData = () => {
         console.log('Users with goals:', usersWithGoals);
         console.log('All goals data being used:', filteredGoalsData);
 
+        // Filter follow-up data by employees
+        const filteredFollowUpData = followUpData?.filter(followUp => 
+          employeeUserIds.includes(followUp.user_id)
+        ) || [];
+
         // Calculate monthly trends
-        const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, start, end);
+        const monthlyData = calculateMonthlyTrends(filteredProgramData, filteredGoalsData, filteredFollowUpData, start, end);
         setData(monthlyData);
       } catch (error) {
         console.error('Error in fetchTrendsData:', error);
