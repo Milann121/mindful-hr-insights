@@ -97,6 +97,18 @@
     },
     "topIssues": {
       "title": "Areas of most common pain",
+      "viewBy": "View by:",
+      "viewOptions": {
+        "overall": "Overall",
+        "department": "Department",
+        "jobProperties": "Job Properties"
+      },
+      "dropdowns": {
+        "selectDepartment": "Select Department",
+        "selectJobProperty": "Select Job Property",
+        "allDepartments": "All Departments",
+        "allJobProperties": "All Job Properties"
+      },
       "backPain": "Back Pain",
       "neckPain": "Neck Pain",
       "middleBackPain": "Middle Back Pain",

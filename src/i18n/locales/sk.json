@@ -96,6 +96,18 @@
     },
     "topIssues": {
       "title": "Oblasti najčastejších bolestí",
+      "viewBy": "Zobraziť podľa:",
+      "viewOptions": {
+        "overall": "Celkovo",
+        "department": "Oddelenie",
+        "jobProperties": "Vlastnosti práce"
+      },
+      "dropdowns": {
+        "selectDepartment": "Vybrať oddelenie",
+        "selectJobProperty": "Vybrať vlastnosť práce",
+        "allDepartments": "Všetky oddelenia",
+        "allJobProperties": "Všetky vlastnosti práce"
+      },
       "backPain": "Bolesť chrbta",
       "neckPain": "Bolesť krku",
       "middleBackPain": "Bolesť hrudnej chrbtice",

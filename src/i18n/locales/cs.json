@@ -96,6 +96,18 @@
     },
     "topIssues": {
       "title": "Oblasti nejčastějších bolestí",
+      "viewBy": "Zobrazit podle:",
+      "viewOptions": {
+        "overall": "Celkově",
+        "department": "Oddělení",
+        "jobProperties": "Vlastnosti práce"
+      },
+      "dropdowns": {
+        "selectDepartment": "Vybrat oddělení",
+        "selectJobProperty": "Vybrat vlastnost práce",
+        "allDepartments": "Všechna oddělení",
+        "allJobProperties": "Všechny vlastnosti práce"
+      },
       "backPain": "Bolest zad",
       "neckPain": "Bolest krku",
       "middleBackPain": "Bolest hrudní páteře",
