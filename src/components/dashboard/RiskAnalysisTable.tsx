@@ -141,10 +141,10 @@ const RiskAnalysisTable = () => {
     if (painLevel === null) {
       return 'notAvailable';
     }
-    if (painLevel >= 0 && painLevel < 5) {
+    if (painLevel >= 0 && painLevel < 4.50) {
       return 'low';
     }
-    if (painLevel >= 5 && painLevel < 7) {
+    if (painLevel >= 4.5 && painLevel < 7) {
       return 'medium';
     }
     if (painLevel >= 7 && painLevel <= 10) {
