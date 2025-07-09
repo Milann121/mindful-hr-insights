@@ -138,7 +138,7 @@ const RiskAnalysisTable = () => {
   };
 
   const getRiskLevel = (painLevel: number | null) => {
-    if (painLevel === null || painLevel === 0) {
+    if (painLevel === null) {
       return 'notAvailable';
     }
     if (painLevel >= 0 && painLevel <= 4) {
