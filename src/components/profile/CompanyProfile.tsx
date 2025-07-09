@@ -44,63 +44,34 @@ const CompanyProfile = () => {
   const fetchCompanyData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.log('No authenticated user found');
-        return;
-      }
-
-      console.log('Fetching company data for user:', user.id);
+      if (!user) return;
 
       // Get user's B2B partner info
-      const { data: userData, error: userError } = await supabase
+      const { data: userData } = await supabase
         .from('users')
         .select('hr_manager_id')
         .eq('id', user.id)
         .single();
 
-      if (userError) {
-        console.error('Error fetching user data:', userError);
-        return;
-      }
-
-      console.log('User data:', userData);
-
       if (userData?.hr_manager_id) {
-        const { data: hrManager, error: hrError } = await supabase
+        const { data: hrManager } = await supabase
           .from('hr_managers')
           .select('b2b_partner')
           .eq('id', userData.hr_manager_id)
           .single();
 
-        if (hrError) {
-          console.error('Error fetching HR manager data:', hrError);
-          return;
-        }
-
-        console.log('HR Manager data:', hrManager);
-
         if (hrManager?.b2b_partner) {
-          const { data: partner, error: partnerError } = await supabase
+          const { data: partner } = await supabase
             .from('B2B_partners')
             .select('name')
             .eq('id', hrManager.b2b_partner)
             .single();
 
-          if (partnerError) {
-            console.error('Error fetching partner data:', partnerError);
-            return;
-          }
-
-          console.log('Partner data:', partner);
-
           if (partner) {
             setCompanyName(partner.name);
-            console.log('Company name set to:', partner.name);
-          } else {
-            console.log('No partner data found');
           }
 
-          // Get employee count
+          // Get employee count for Test s.r.o.
           const { count } = await supabase
             .from('b2b_employees')
             .select('*', { count: 'exact', head: true })
@@ -129,11 +100,7 @@ const CompanyProfile = () => {
             }));
             setDepartments(formattedDepts);
           }
-        } else {
-          console.log('HR manager has no b2b_partner assigned');
         }
-      } else {
-        console.log('User has no hr_manager_id assigned');
       }
     } catch (error) {
       console.error('Error fetching company data:', error);
