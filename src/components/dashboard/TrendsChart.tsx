@@ -27,7 +27,7 @@ const TrendsChart = () => {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="py-[5px] my-[7px]">
         {loading ? <div className="h-[350px] flex items-center justify-center">
             <p className="text-gray-500">{t('common.loading')}</p>
           </div> : data.length > 0 ? <ResponsiveContainer width="100%" height={350}>
