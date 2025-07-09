@@ -156,7 +156,7 @@ const RiskAnalysisTable = () => {
     <Card className="col-span-2">
       <CardHeader>
         <CardTitle>{t('dashboard.riskAnalysis.title')}</CardTitle>
-        <p className="text-sm text-muted-foreground">(overall view only)</p>
+        <p className="text-sm text-muted-foreground">({t('dashboard.riskAnalysis.overallViewOnly')})</p>
       </CardHeader>
       <CardContent>
         <TooltipProvider>

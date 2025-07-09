@@ -90,6 +90,7 @@
       "avgPainLevel": "Priem. úroveň bolesti",
       "riskLevel": "Úroveň rizika",
       "notAvailable": "Nie je k dispozícii",
+      "overallViewOnly": "iba celkový pohľad",
       "departmentTooltip": "Aktualizácie v reálnom čase.",
       "employeesTooltip": "Údaje zobrazujú aktívnych používateľov a aktualizujú sa v reálnom čase.",
       "avgPainLevelTooltip": "Maximálna úroveň bolesti je 10 (najhoršia), minimálna úroveň bolesti je 0 (najlepšia). Údaje sa aktualizujú každý deň o polnoci."
