@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useDateFilter } from '@/contexts/DateFilterContext';
@@ -241,63 +242,62 @@ const TopIssuesChart = () => {
       <CardHeader>
         <CardTitle>{t('dashboard.topIssues.title')}</CardTitle>
         
-        {/* View selector and filter dropdowns */}
-        <div className="flex flex-col gap-4 mt-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{t('dashboard.topIssues.viewBy')}</span>
-            <Select value={viewBy} onValueChange={(value: ViewType) => {
-              setViewBy(value);
-              if (value === 'overall') {
-                setSelectedDepartment('');
-                setSelectedJobProperty('');
-              }
-            }}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="overall">{t('dashboard.topIssues.viewOptions.overall')}</SelectItem>
-                <SelectItem value="department">{t('dashboard.topIssues.viewOptions.department')}</SelectItem>
-                <SelectItem value="jobProperties">{t('dashboard.topIssues.viewOptions.jobProperties')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Inline dropdown buttons */}
+        <div className="flex flex-wrap items-center gap-2 mt-4">
+          {/* Overall button */}
+          <Button
+            variant={viewBy === 'overall' ? 'default' : 'outline'}
+            onClick={() => {
+              setViewBy('overall');
+              setSelectedDepartment('');
+              setSelectedJobProperty('');
+            }}
+            className="h-9"
+          >
+            {t('dashboard.topIssues.viewOptions.overall')}
+          </Button>
           
-          {/* Department dropdown */}
-          {viewBy === 'department' && (
-            <div className="flex items-center gap-2">
-              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-                <SelectTrigger className="w-64">
-                  <SelectValue placeholder={t('dashboard.topIssues.dropdowns.selectDepartment')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept.id} value={dept.id}>
-                      {dept.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {/* By Department dropdown */}
+          <Select 
+            value={viewBy === 'department' ? selectedDepartment : ''} 
+            onValueChange={(value) => {
+              setViewBy('department');
+              setSelectedDepartment(value);
+              setSelectedJobProperty('');
+            }}
+          >
+            <SelectTrigger className={`w-auto min-w-[140px] h-9 ${viewBy === 'department' && selectedDepartment ? 'bg-primary text-primary-foreground' : ''}`}>
+              <SelectValue placeholder={t('dashboard.topIssues.viewOptions.department')} />
+            </SelectTrigger>
+            <SelectContent>
+              {departments.map((dept) => (
+                <SelectItem key={dept.id} value={dept.id}>
+                  {dept.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           
-          {/* Job Properties dropdown */}
-          {viewBy === 'jobProperties' && (
-            <div className="flex items-center gap-2">
-              <Select value={selectedJobProperty} onValueChange={setSelectedJobProperty}>
-                <SelectTrigger className="w-64">
-                  <SelectValue placeholder={t('dashboard.topIssues.dropdowns.selectJobProperty')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {jobProperties.map((jobProp) => (
-                    <SelectItem key={jobProp.id} value={jobProp.id}>
-                      {t(`profile.jobProperties.${jobProp.name}`) || jobProp.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {/* By Job Property dropdown */}
+          <Select 
+            value={viewBy === 'jobProperties' ? selectedJobProperty : ''} 
+            onValueChange={(value) => {
+              setViewBy('jobProperties');
+              setSelectedJobProperty(value);
+              setSelectedDepartment('');
+            }}
+          >
+            <SelectTrigger className={`w-auto min-w-[140px] h-9 ${viewBy === 'jobProperties' && selectedJobProperty ? 'bg-primary text-primary-foreground' : ''}`}>
+              <SelectValue placeholder={t('dashboard.topIssues.viewOptions.jobProperties')} />
+            </SelectTrigger>
+            <SelectContent>
+              {jobProperties.map((jobProp) => (
+                <SelectItem key={jobProp.id} value={jobProp.id}>
+                  {t(`profile.jobProperties.${jobProp.name}`) || jobProp.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </CardHeader>
       <CardContent>
