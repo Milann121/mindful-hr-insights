@@ -92,6 +92,11 @@
       "riskLevel": "Risk Level",
       "notAvailable": "Not available",
       "overallViewOnly": "overall view only",
+      "riskLevels": {
+        "low": "Low Risk",
+        "medium": "Medium Risk",
+        "high": "High Risk"
+      },
       "departmentTooltip": "Real time updates.",
       "employeesTooltip": "The data displays Active users and updates in real time.",
       "avgPainLevelTooltip": "The maximum pain level is 10 (worst), the minimum pain level is 0 (best). The data updates every day at midnight."

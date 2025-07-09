@@ -137,6 +137,35 @@ const RiskAnalysisTable = () => {
     }
   };
 
+  const getRiskLevel = (painLevel: number | null) => {
+    if (painLevel === null || painLevel === 0) {
+      return 'notAvailable';
+    }
+    if (painLevel >= 0 && painLevel <= 4) {
+      return 'low';
+    }
+    if (painLevel >= 5 && painLevel <= 6) {
+      return 'medium';
+    }
+    if (painLevel >= 7 && painLevel <= 10) {
+      return 'high';
+    }
+    return 'notAvailable';
+  };
+
+  const getRiskBadgeVariant = (riskLevel: string) => {
+    switch (riskLevel) {
+      case 'low':
+        return 'default'; // Will be styled green
+      case 'medium':
+        return 'secondary'; // Will be styled yellow
+      case 'high':
+        return 'destructive'; // Will be styled red
+      default:
+        return 'outline';
+    }
+  };
+
   const formatPainLevel = (painLevel: number | null, trend: string | null) => {
     if (painLevel === null) {
       return t('dashboard.riskAnalysis.notAvailable');
@@ -224,11 +253,29 @@ const RiskAnalysisTable = () => {
                   <TableCell className="font-medium">{dept.department_name}</TableCell>
                   <TableCell>{dept.employee_count}</TableCell>
                   <TableCell>{formatPainLevel(dept.avg_pain_level, dept.trend_direction)}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {t('dashboard.riskAnalysis.notAvailable')}
-                    </Badge>
-                  </TableCell>
+                   <TableCell>
+                     {(() => {
+                       const riskLevel = getRiskLevel(dept.avg_pain_level);
+                       const variant = getRiskBadgeVariant(riskLevel);
+                       const isHighRisk = riskLevel === 'high';
+                       
+                       return (
+                         <Badge 
+                           variant={variant as any}
+                           className={`${isHighRisk ? 'animate-pulse bg-red-500 text-white border-red-500' : ''} ${
+                             riskLevel === 'low' ? 'bg-green-500 text-white border-green-500' : ''
+                           } ${
+                             riskLevel === 'medium' ? 'bg-yellow-500 text-white border-yellow-500' : ''
+                           }`}
+                         >
+                           {riskLevel === 'notAvailable' 
+                             ? t('dashboard.riskAnalysis.notAvailable')
+                             : t(`dashboard.riskAnalysis.riskLevels.${riskLevel}`)
+                           }
+                         </Badge>
+                       );
+                     })()}
+                   </TableCell>
                   <TableCell>
                     <Button variant="outline" size="sm">
                       {t('dashboard.actions.takeAction')}
