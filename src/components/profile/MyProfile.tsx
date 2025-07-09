@@ -48,7 +48,7 @@ const MyProfile = () => {
         .single();
 
       if (userProfile) {
-        setPosition(userProfile.job_type || '');
+        setPosition(userProfile.job || '');
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -81,7 +81,7 @@ const MyProfile = () => {
           user_id: user.id,
           first_name: firstName,
           last_name: lastName,
-          job_type: position,
+          job: position,
           updated_at: new Date().toISOString()
         });
 

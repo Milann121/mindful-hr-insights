@@ -73,21 +73,7 @@
       "low": "Low (1-3)",
       "moderate": "Moderate (4-6)",
       "high": "High (7-10)",
-      "noData": "No Data",
-      "viewBy": "View by",
-      "overall": "Overall",
-      "byDepartment": "By Department",
-      "byAgeGroup": "By Age Group",
-      "byJobType": "By Job Type",
-      "byJobProperties": "By Job Properties",
-      "ageGroups": {
-        "18-24": "18-24 years",
-        "25-34": "25-34 years",
-        "35-44": "35-44 years",
-        "45-54": "45-54 years",
-        "55+": "55+ years",
-        "unknown": "Unknown Age"
-      }
+      "noData": "No Data"
     },
     "trends": {
       "title": "Monthly Trends",

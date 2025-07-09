@@ -72,21 +72,7 @@
       "low": "Nízká (1-3)",
       "moderate": "Střední (4-6)",
       "high": "Vysoká (7-10)",
-      "noData": "Žádná data",
-      "viewBy": "Zobrazit podle",
-      "overall": "Celkově",
-      "byDepartment": "Podle oddělení",
-      "byAgeGroup": "Podle věkových skupin",
-      "byJobType": "Podle typu práce",
-      "byJobProperties": "Podle vlastností práce",
-      "ageGroups": {
-        "18-24": "18-24 let",
-        "25-34": "25-34 let",
-        "35-44": "35-44 let",
-        "45-54": "45-54 let",
-        "55+": "55+ let",
-        "unknown": "Neznámý věk"
-      }
+      "noData": "Žádná data"
     },
     "trends": {
       "title": "Měsíční trendy",

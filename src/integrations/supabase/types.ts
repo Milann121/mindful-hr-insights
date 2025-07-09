@@ -688,6 +688,7 @@ export type Database = {
       }
       user_profiles: {
         Row: {
+          age: number | null
           b2b_partner_id: number | null
           b2b_partner_name: string | null
           created_at: string | null
@@ -697,15 +698,16 @@ export type Database = {
           first_name: string | null
           gender: string | null
           id: string
-          job_properties: string | null
+          job: string | null
+          job_properties: string[] | null
           job_type: string | null
           last_name: string | null
           pain_area: string | null
           updated_at: string | null
           user_id: string
-          year_birth: number | null
         }
         Insert: {
+          age?: number | null
           b2b_partner_id?: number | null
           b2b_partner_name?: string | null
           created_at?: string | null
@@ -715,15 +717,16 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id?: string
-          job_properties?: string | null
+          job?: string | null
+          job_properties?: string[] | null
           job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
           updated_at?: string | null
           user_id: string
-          year_birth?: number | null
         }
         Update: {
+          age?: number | null
           b2b_partner_id?: number | null
           b2b_partner_name?: string | null
           created_at?: string | null
@@ -733,13 +736,13 @@ export type Database = {
           first_name?: string | null
           gender?: string | null
           id?: string
-          job_properties?: string | null
+          job?: string | null
+          job_properties?: string[] | null
           job_type?: string | null
           last_name?: string | null
           pain_area?: string | null
           updated_at?: string | null
           user_id?: string
-          year_birth?: number | null
         }
         Relationships: [
           {
