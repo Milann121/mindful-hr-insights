@@ -175,7 +175,7 @@ const PainLevelChart = () => {
 
   // Filter out zero values for cleaner display
   const filteredData = data.filter(item => item.value > 0);
-  return <Card className="col-span-1 px-0 my-[21px] py-px">
+  return <Card className="col-span-1 px-0 py-0 my-[20px]">
       <CardHeader>
         <CardTitle>{t('dashboard.painLevels.title')}</CardTitle>
       </CardHeader>
