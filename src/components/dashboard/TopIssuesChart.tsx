@@ -51,6 +51,11 @@ const TopIssuesChart = () => {
     fetchFiltersData();
   }, []);
 
+  // Convert property name from database format to translation key format
+  const getTranslationKey = (propertyName: string) => {
+    return propertyName.toLowerCase().replace(/\s+/g, '_');
+  };
+
   useEffect(() => {
     const fetchPainAreaData = async () => {
       try {
@@ -293,7 +298,7 @@ const TopIssuesChart = () => {
             <SelectContent>
               {jobProperties.map((jobProp) => (
                 <SelectItem key={jobProp.id} value={jobProp.id}>
-                  {t(`profile.jobProperties.${jobProp.name}`) || jobProp.name}
+                  {t(`profile.jobProperties.${getTranslationKey(jobProp.name)}`) || jobProp.name}
                 </SelectItem>
               ))}
             </SelectContent>
