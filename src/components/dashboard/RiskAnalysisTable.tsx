@@ -160,9 +160,9 @@ const RiskAnalysisTable = () => {
             // Get ALL OREBRO responses for employees in this department
             const { data: orebroData, error: orebroError } = await supabase
               .from('orebro_responses')
-              .select('user_id, risk_level, created_at')
+              .select('user_id, risk_level, updated_at')
               .in('user_id', employeeUserIds)
-              .order('created_at', { ascending: false });
+              .order('updated_at', { ascending: false });
 
             if (orebroError) {
               console.error('Error fetching OREBRO data for department:', dept.department_id, orebroError);
@@ -175,7 +175,7 @@ const RiskAnalysisTable = () => {
             orebroData?.forEach(record => {
               console.log(`Processing OREBRO record:`, record);
               const existingRecord = latestOrebroByUser.get(record.user_id);
-              if (!existingRecord || new Date(record.created_at) > new Date(existingRecord.created_at)) {
+              if (!existingRecord || new Date(record.updated_at) > new Date(existingRecord.updated_at)) {
                 console.log(`Setting latest record for user ${record.user_id}:`, record);
                 latestOrebroByUser.set(record.user_id, record);
               }
@@ -187,7 +187,9 @@ const RiskAnalysisTable = () => {
             const latestRecords = Array.from(latestOrebroByUser.values());
             console.log(`All latest records:`, latestRecords);
             
-            const highRiskRecords = latestRecords.filter(record => record.risk_level === 'high');
+            const highRiskRecords = latestRecords.filter(
+              r => r.risk_level && r.risk_level.toLowerCase().trim().includes('high')
+            );
             console.log(`High risk records:`, highRiskRecords);
             
             const highRiskCount = highRiskRecords.length;
