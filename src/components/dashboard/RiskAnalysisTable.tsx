@@ -27,6 +27,28 @@ const RiskAnalysisTable = () => {
 
   useEffect(() => {
     fetchDepartmentsWithEmployeeCount();
+
+    // Set up real-time subscription for OREBRO responses changes
+    const channel = supabase
+      .channel('orebro-responses-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orebro_responses'
+        },
+        (payload) => {
+          console.log('OREBRO response change detected:', payload);
+          // Refresh department data when OREBRO responses change
+          fetchDepartmentsWithEmployeeCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchDepartmentsWithEmployeeCount = async () => {
@@ -102,20 +124,57 @@ const RiskAnalysisTable = () => {
         // Get high risk percentages for each department
         const departmentsWithHighRisk = await Promise.all(
           deptData.map(async (dept: any) => {
-            const { data: highRiskData, error: highRiskError } = await supabase
+            // Get all employees in this department
+            const { data: deptEmployees, error: deptError } = await supabase
               .from('user_profiles')
-              .select(`
-                user_id,
-                orebro_responses!inner(risk_level)
-              `)
-              .eq('department_id', dept.department_id)
-              .eq('orebro_responses.risk_level', 'high');
+              .select('user_id')
+              .eq('department_id', dept.department_id);
 
-            if (highRiskError) {
-              console.error('Error fetching high risk data for department:', dept.department_id, highRiskError);
+            if (deptError) {
+              console.error('Error fetching department employees:', dept.department_id, deptError);
             }
 
-            const highRiskCount = highRiskData?.length || 0;
+            const employeeUserIds = deptEmployees?.map(emp => emp.user_id) || [];
+            
+            if (employeeUserIds.length === 0) {
+              const totalEmployees = Number(dept.employee_count);
+              const highRiskPercentage = 0;
+              return {
+                id: dept.department_id,
+                department_name: dept.department_name,
+                department_headcount: 0,
+                job_type: '',
+                employee_count: totalEmployees,
+                avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
+                trend_direction: trendData?.find(t => t.department_id === dept.department_id)?.trend_direction || null,
+                high_risk_percentage: highRiskPercentage
+              };
+            }
+
+            // Get latest OREBRO response for each employee (one record per employee)
+            const { data: orebroData, error: orebroError } = await supabase
+              .from('orebro_responses')
+              .select('user_id, risk_level, created_at')
+              .in('user_id', employeeUserIds)
+              .order('created_at', { ascending: false });
+
+            if (orebroError) {
+              console.error('Error fetching OREBRO data for department:', dept.department_id, orebroError);
+            }
+
+            // Keep only the latest record per employee
+            const latestOrebroByUser = new Map();
+            orebroData?.forEach(record => {
+              const existingRecord = latestOrebroByUser.get(record.user_id);
+              if (!existingRecord || new Date(record.created_at) > new Date(existingRecord.created_at)) {
+                latestOrebroByUser.set(record.user_id, record);
+              }
+            });
+
+            // Count employees with high risk
+            const highRiskCount = Array.from(latestOrebroByUser.values())
+              .filter(record => record.risk_level === 'high').length;
+
             const totalEmployees = Number(dept.employee_count);
             const highRiskPercentage = totalEmployees > 0 ? Math.round((highRiskCount / totalEmployees) * 100) : 0;
 
