@@ -90,6 +90,7 @@
       "employees": "Employees",
       "avgPainLevel": "Avg Pain Level",
       "riskLevel": "Risk Level",
+      "highRisk": "High Risk",
       "notAvailable": "Not available",
       "overallViewOnly": "overall view only",
       "riskLevels": {
@@ -99,7 +100,8 @@
       },
       "departmentTooltip": "Real time updates.",
       "employeesTooltip": "The data displays Active users and updates in real time.",
-      "avgPainLevelTooltip": "The maximum pain level is 10 (worst), the minimum pain level is 0 (best). The data updates every day at midnight."
+      "avgPainLevelTooltip": "The maximum pain level is 10 (worst), the minimum pain level is 0 (best). The data updates every day at midnight.",
+      "highRiskTooltip": "The data displays what % out of department's employees are at high risk of musculoskeletal disorder, based on OREBRO Questionnaire results."
     },
     "topIssues": {
       "title": "Areas of most common pain",

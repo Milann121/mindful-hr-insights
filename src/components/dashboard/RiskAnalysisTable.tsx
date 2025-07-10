@@ -17,6 +17,7 @@ interface Department {
   employee_count: number;
   avg_pain_level: number | null;
   trend_direction: string | null;
+  high_risk_percentage: number | null;
 }
 
 const RiskAnalysisTable = () => {
@@ -98,22 +99,42 @@ const RiskAnalysisTable = () => {
 
         console.log('Trend data received:', trendData);
 
-        // Combine data with trend information
-        const departmentsWithTrends = deptData.map((dept: any) => {
-          const trend = trendData?.find(t => t.department_id === dept.department_id);
-          return {
-            id: dept.department_id,
-            department_name: dept.department_name,
-            department_headcount: 0,
-            job_type: '',
-            employee_count: Number(dept.employee_count),
-            avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
-            trend_direction: trend?.trend_direction || null
-          };
-        });
+        // Get high risk percentages for each department
+        const departmentsWithHighRisk = await Promise.all(
+          deptData.map(async (dept: any) => {
+            const { data: highRiskData, error: highRiskError } = await supabase
+              .from('user_profiles')
+              .select(`
+                user_id,
+                orebro_responses!inner(risk_level)
+              `)
+              .eq('department_id', dept.department_id)
+              .eq('orebro_responses.risk_level', 'high');
 
-        console.log('Final departments data:', departmentsWithTrends);
-        setDepartments(departmentsWithTrends);
+            if (highRiskError) {
+              console.error('Error fetching high risk data for department:', dept.department_id, highRiskError);
+            }
+
+            const highRiskCount = highRiskData?.length || 0;
+            const totalEmployees = Number(dept.employee_count);
+            const highRiskPercentage = totalEmployees > 0 ? Math.round((highRiskCount / totalEmployees) * 100) : 0;
+
+            const trend = trendData?.find(t => t.department_id === dept.department_id);
+            return {
+              id: dept.department_id,
+              department_name: dept.department_name,
+              department_headcount: 0,
+              job_type: '',
+              employee_count: totalEmployees,
+              avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
+              trend_direction: trend?.trend_direction || null,
+              high_risk_percentage: highRiskPercentage
+            };
+          })
+        );
+
+        console.log('Final departments data:', departmentsWithHighRisk);
+        setDepartments(departmentsWithHighRisk);
       } else {
         console.log('No department data found');
         setDepartments([]);
@@ -232,19 +253,32 @@ const RiskAnalysisTable = () => {
                   </div>
                 </TableHead>
                 <TableHead>{t('dashboard.riskAnalysis.riskLevel')}</TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    {t('dashboard.riskAnalysis.highRisk')}
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t('dashboard.riskAnalysis.highRiskTooltip')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center">
+                  <TableCell colSpan={6} className="text-center">
                     {t('common.loading')}
                   </TableCell>
                 </TableRow>
               ) : departments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center">
+                  <TableCell colSpan={6} className="text-center">
                     {t('common.noData')}
                   </TableCell>
                 </TableRow>
@@ -275,12 +309,17 @@ const RiskAnalysisTable = () => {
                          </Badge>
                        );
                      })()}
+                    </TableCell>
+                   <TableCell>
+                     <span className="font-bold text-red-500">
+                       {dept.high_risk_percentage !== null ? `${dept.high_risk_percentage}%` : t('dashboard.riskAnalysis.notAvailable')}
+                     </span>
                    </TableCell>
-                  <TableCell>
-                    <Button variant="outline" size="sm">
-                      {t('dashboard.actions.takeAction')}
-                    </Button>
-                  </TableCell>
+                   <TableCell>
+                     <Button variant="outline" size="sm">
+                       {t('dashboard.actions.takeAction')}
+                     </Button>
+                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>

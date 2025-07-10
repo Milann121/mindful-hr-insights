@@ -539,6 +539,39 @@ export type Database = {
           },
         ]
       }
+      orebro_responses: {
+        Row: {
+          anonymous_id: string | null
+          created_at: string
+          id: string
+          responses: Json
+          risk_level: string | null
+          total_score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anonymous_id?: string | null
+          created_at?: string
+          id?: string
+          responses: Json
+          risk_level?: string | null
+          total_score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anonymous_id?: string | null
+          created_at?: string
+          id?: string
+          responses?: Json
+          risk_level?: string | null
+          total_score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null

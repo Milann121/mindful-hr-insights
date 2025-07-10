@@ -89,6 +89,7 @@
       "employees": "Zamestnanci",
       "avgPainLevel": "Priem. úroveň bolesti",
       "riskLevel": "Úroveň rizika",
+      "highRisk": "Vysoké riziko",
       "notAvailable": "Nie je k dispozícii",
       "overallViewOnly": "iba celkový pohľad",
       "riskLevels": {
@@ -98,7 +99,8 @@
       },
       "departmentTooltip": "Aktualizácie v reálnom čase.",
       "employeesTooltip": "Údaje zobrazujú aktívnych používateľov a aktualizujú sa v reálnom čase.",
-      "avgPainLevelTooltip": "Maximálna úroveň bolesti je 10 (najhoršia), minimálna úroveň bolesti je 0 (najlepšia). Údaje sa aktualizujú každý deň o polnoci."
+      "avgPainLevelTooltip": "Maximálna úroveň bolesti je 10 (najhoršia), minimálna úroveň bolesti je 0 (najlepšia). Údaje sa aktualizujú každý deň o polnoci.",
+      "highRiskTooltip": "Údaje zobrazujú koľko % zamestnancov v oddelení má vysoké riziko porúch pohybového aparátu na základe výsledkov OREBRO dotazníka."
     },
     "topIssues": {
       "title": "Oblasti najčastejších bolestí",
