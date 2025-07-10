@@ -143,7 +143,7 @@ const RiskAnalysisTable = () => {
             
             if (employeeUserIds.length === 0) {
               console.log('No employees found in department, returning 0% high risk');
-              const totalEmployees = Number(dept.employee_count);
+              const totalEmployees = employeeUserIds.length;
               const highRiskPercentage = 0;
               return {
                 id: dept.department_id,
@@ -193,7 +193,7 @@ const RiskAnalysisTable = () => {
             const highRiskCount = highRiskRecords.length;
             console.log(`High risk count: ${highRiskCount}`);
 
-            const totalEmployees = Number(dept.employee_count);
+            const totalEmployees = employeeUserIds.length; // Use actual employees found, not dept.employee_count
             console.log(`Total employees: ${totalEmployees}`);
             
             const highRiskPercentage = totalEmployees > 0 ? Math.round((highRiskCount / totalEmployees) * 100) : 0;
