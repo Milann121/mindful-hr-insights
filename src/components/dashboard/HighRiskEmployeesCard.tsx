@@ -64,7 +64,7 @@ const HighRiskEmployeesCard = () => {
 
       // Count high risk employees
       const currentHighRisk = Array.from(latestResponses.values())
-        .filter(response => response.risk_level === 'high').length;
+        .filter(response => response.risk_level && response.risk_level.toLowerCase().trim() === 'high').length;
 
       setHighRiskCount(currentHighRisk);
 
@@ -91,7 +91,7 @@ const HighRiskEmployeesCard = () => {
       });
 
       const previousHighRisk = Array.from(previousLatestResponses.values())
-        .filter(response => response.risk_level === 'high').length;
+        .filter(response => response.risk_level && response.risk_level.toLowerCase().trim() === 'high').length;
 
       setPreviousCount(previousHighRisk);
 

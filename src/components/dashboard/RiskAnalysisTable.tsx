@@ -187,8 +187,13 @@ const RiskAnalysisTable = () => {
             const latestRecords = Array.from(latestOrebroByUser.values());
             console.log(`All latest records:`, latestRecords);
             
+            // Debug: Log all risk levels to see what values we have
+            latestRecords.forEach(record => {
+              console.log(`Risk level for user ${record.user_id}:`, record.risk_level, typeof record.risk_level);
+            });
+            
             const highRiskRecords = latestRecords.filter(
-              r => r.risk_level && r.risk_level.toLowerCase().trim().includes('high')
+              r => r.risk_level && r.risk_level.toLowerCase().trim() === 'high'
             );
             console.log(`High risk records:`, highRiskRecords);
             
