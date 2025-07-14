@@ -132,6 +132,9 @@ const ActionRoom = () => {
     <DateFilterProvider>
       <div className="min-h-screen bg-background p-8">
         <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex justify-end mb-4">
+            <LanguageSwitcher />
+          </div>
           <PageHeader 
             title={t('actionRoom.title')}
             subtitle={t('actionRoom.subtitle')}
