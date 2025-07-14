@@ -165,6 +165,7 @@ const RiskAnalysisTable = () => {
             // Get the latest OREBRO response for each employee
             const latestRiskLevels = await Promise.all(
               employeeUserIds.map(async (userId) => {
+                console.log(`Fetching OREBRO response for user: ${userId}`);
                 const { data: latestResponse, error } = await supabase
                   .from('orebro_responses')
                   .select('risk_level, updated_at')
@@ -173,8 +174,13 @@ const RiskAnalysisTable = () => {
                   .limit(1)
                   .maybeSingle();
 
-                if (error || !latestResponse) {
-                  console.log(`No OREBRO response found for user ${userId}`, error);
+                if (error) {
+                  console.error(`Error fetching OREBRO response for user ${userId}:`, error);
+                  return null;
+                }
+
+                if (!latestResponse) {
+                  console.log(`No OREBRO response found for user ${userId}`);
                   return null;
                 }
 
@@ -183,11 +189,17 @@ const RiskAnalysisTable = () => {
               })
             );
 
+            console.log(`Raw risk levels for ${dept.department_name}:`, latestRiskLevels);
+
             // Filter out null responses and count high risk
             const validRiskLevels = latestRiskLevels.filter(level => level !== null);
-            const highRiskCount = validRiskLevels.filter(level => 
-              level && String(level).toLowerCase().trim() === 'high'
-            ).length;
+            console.log(`Valid risk levels for ${dept.department_name}:`, validRiskLevels);
+            
+            const highRiskCount = validRiskLevels.filter(level => {
+              const isHigh = level && String(level).toLowerCase().trim() === 'high';
+              console.log(`Risk level "${level}" is high: ${isHigh}`);
+              return isHigh;
+            }).length;
 
             console.log(`Department ${dept.department_name}: ${highRiskCount} high risk out of ${validRiskLevels.length} with responses`);
             
