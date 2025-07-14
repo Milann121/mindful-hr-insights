@@ -160,7 +160,7 @@ const ActionRoom = () => {
             <CardContent className="space-y-6">
               {/* User Message - Blue bubble from right */}
               <div className="flex justify-end mb-4">
-                <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-br-md max-w-2xl w-1/2 shadow-sm">
+                <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
                   <p className="mb-2">Hey Pebee,</p>
                   <div className="flex flex-wrap items-center gap-2 text-sm">
                     <span>create a new</span>
@@ -199,7 +199,7 @@ const ActionRoom = () => {
 
               {/* Bot Response - Grey bubble from left */}
               <div className="flex justify-start mb-4">
-                <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md max-w-2xl w-1/2 shadow-sm">
+                <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
                   <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
                   <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
                   <div>
