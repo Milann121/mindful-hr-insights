@@ -323,6 +323,36 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_swaps: {
+        Row: {
+          assessment_id: string | null
+          created_at: string
+          id: string
+          original_video_id: string
+          replacement_video_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          created_at?: string
+          id?: string
+          original_video_id: string
+          replacement_video_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string | null
+          created_at?: string
+          id?: string
+          original_video_id?: string
+          replacement_video_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorite_blogs: {
         Row: {
           blog_description: string | null
@@ -596,6 +626,36 @@ export type Database = {
           last_name?: string | null
           profile_picture_url?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      secondary_programs: {
+        Row: {
+          created_at: string
+          id: string
+          program_type: string
+          secondary_exercise_name: string
+          secondary_program: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          program_type: string
+          secondary_exercise_name: string
+          secondary_program: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          program_type?: string
+          secondary_exercise_name?: string
+          secondary_program?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
