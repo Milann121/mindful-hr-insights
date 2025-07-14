@@ -13,14 +13,16 @@ interface PageHeaderProps {
 
 const PageHeader = ({ title, subtitle, showFilters = false }: PageHeaderProps) => {
   const { t, i18n } = useTranslation();
-  const { selectedPeriod, setSelectedPeriod } = useDateFilter();
+  const dateFilter = showFilters ? useDateFilter() : null;
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
   };
 
   const changePeriod = (period: string) => {
-    setSelectedPeriod(period as DateFilterPeriod);
+    if (dateFilter) {
+      dateFilter.setSelectedPeriod(period as DateFilterPeriod);
+    }
   };
 
   const periodOptions: { value: DateFilterPeriod; label: string }[] = [
@@ -69,7 +71,7 @@ const PageHeader = ({ title, subtitle, showFilters = false }: PageHeaderProps) =
                 </SelectContent>
               </Select>
               
-              <Select value={selectedPeriod} onValueChange={changePeriod}>
+              <Select value={dateFilter?.selectedPeriod || ''} onValueChange={changePeriod}>
                 <SelectTrigger className="w-full sm:w-48 h-10">
                   <Calendar className="h-4 w-4 mr-2" />
                   <SelectValue />
