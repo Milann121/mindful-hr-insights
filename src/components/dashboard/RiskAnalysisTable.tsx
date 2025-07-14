@@ -171,10 +171,10 @@ const RiskAnalysisTable = () => {
                   .eq('user_id', userId)
                   .order('updated_at', { ascending: false })
                   .limit(1)
-                  .single();
+                  .maybeSingle();
 
-                if (error) {
-                  console.log(`No OREBRO response found for user ${userId}`);
+                if (error || !latestResponse) {
+                  console.log(`No OREBRO response found for user ${userId}`, error);
                   return null;
                 }
 
@@ -186,7 +186,7 @@ const RiskAnalysisTable = () => {
             // Filter out null responses and count high risk
             const validRiskLevels = latestRiskLevels.filter(level => level !== null);
             const highRiskCount = validRiskLevels.filter(level => 
-              level && level.toString().toLowerCase().trim() === 'high'
+              level && String(level).toLowerCase().trim() === 'high'
             ).length;
 
             console.log(`Department ${dept.department_name}: ${highRiskCount} high risk out of ${validRiskLevels.length} with responses`);
