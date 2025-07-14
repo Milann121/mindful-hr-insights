@@ -236,19 +236,23 @@ const ActionRoom = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>
-                We have been able to identify <span className="font-bold text-destructive">{highRiskCount}</span> high risk employees.
-                Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
-                <Select value={invitationType} onValueChange={setInvitationType}>
-                  <SelectTrigger className="w-20 inline-flex">
-                    <SelectValue placeholder="type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {invitationTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                {' '}invitation to all high risk employees and ask them what they need.
-              </p>
+              <div>
+                <p>
+                  We have been able to identify <span className="font-bold text-destructive">{highRiskCount}</span> high risk employees.
+                </p>
+                <p>
+                  Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
+                  <Select value={invitationType} onValueChange={setInvitationType}>
+                    <SelectTrigger className="w-20 inline-flex">
+                      <SelectValue placeholder="type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {invitationTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  {' '}invitation to all high risk employees and ask them what they need.
+                </p>
+              </div>
               <Button className="flex items-center gap-2">
                 <Send size={16} />
                 Send Invitation
