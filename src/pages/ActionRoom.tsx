@@ -148,6 +148,7 @@ const ActionRoom = () => {
                 <SelectValue placeholder="Choose department..." />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">All</SelectItem>
                 {departments.map((dept) => (
                   <SelectItem key={dept.id} value={dept.id}>
                     {dept.department_name}
@@ -201,6 +202,7 @@ const ActionRoom = () => {
                       <SelectValue placeholder="dept" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
                       {departments.map((dept) => (
                         <SelectItem key={dept.id} value={dept.department_name}>
                           {dept.department_name}
@@ -235,7 +237,7 @@ const ActionRoom = () => {
                           checked={focusAreas.includes(option)}
                           onCheckedChange={(checked) => handleFocusAreaChange(option, checked as boolean)}
                         />
-                        <label htmlFor={option} className="text-sm">→ {option}</label>
+                        <label htmlFor={option} className="text-sm">{option}</label>
                       </div>
                     ))}
                   </div>
