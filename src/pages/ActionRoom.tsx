@@ -144,7 +144,7 @@ const ActionRoom = () => {
               <CardTitle>Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</CardTitle>
               
               {/* Credits Dashboard */}
-              <div className="flex flex-col gap-2 md:flex-row md:gap-4 mb-4">
+              <div className="flex flex-col gap-1 md:flex-row md:gap-4 mb-4">
                 <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
                   Credits used this month: <span className="font-bold ml-1">1,240</span>
                 </Badge>
