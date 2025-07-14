@@ -12,7 +12,7 @@ import TrendsChart from '@/components/dashboard/TrendsChart';
 import RiskAnalysisTable from '@/components/dashboard/RiskAnalysisTable';
 import TopIssuesChart from '@/components/dashboard/TopIssuesChart';
 import ExerciseEngagementCard from '@/components/dashboard/ExerciseEngagementCard';
-import HighRiskEmployeesCard from '@/components/dashboard/HighRiskEmployeesCard';
+
 import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
@@ -93,9 +93,8 @@ const Index = () => {
               <TopIssuesChart />
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ExerciseEngagementCard />
-              <HighRiskEmployeesCard />
               <div className="col-span-1">
                 {/* Placeholder for additional content */}
                 <div className="h-64 bg-white rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center">
@@ -113,7 +112,6 @@ const Index = () => {
             <PainLevelChart />
             <RiskAnalysisTable />
             <ExerciseEngagementCard />
-            <HighRiskEmployeesCard />
           </div>
         </div>
       </div>
