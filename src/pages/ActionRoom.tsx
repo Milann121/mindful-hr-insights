@@ -122,10 +122,10 @@ const ActionRoom = () => {
           
           <div className="space-y-6">
             {/* Department Filter */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
             <label className="text-sm font-medium">Select Departments:</label>
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="w-64">
+              <SelectTrigger className="w-full md:w-64">
                 <SelectValue placeholder="Choose department..." />
               </SelectTrigger>
               <SelectContent>
@@ -144,7 +144,7 @@ const ActionRoom = () => {
               <CardTitle>Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</CardTitle>
               
               {/* Credits Dashboard */}
-              <div className="flex gap-4 mb-4">
+              <div className="flex flex-col gap-2 md:flex-row md:gap-4 mb-4">
                 <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
                   Credits used this month: <span className="font-bold ml-1">1,240</span>
                 </Badge>
@@ -214,7 +214,7 @@ const ActionRoom = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                 <Button className="flex items-center gap-2">
                   <Download size={16} />
                   Download Campaign
