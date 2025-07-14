@@ -158,25 +158,22 @@ const ActionRoom = () => {
             </Select>
           </div>
 
-          {/* Company Campaigns Header */}
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</h2>
-            
-            {/* Credits Dashboard */}
-            <div className="flex gap-4">
-              <Badge variant="outline" className="px-4 py-2">
-                Credits used this month: <span className="font-bold ml-1">1,240</span>
-              </Badge>
-              <Badge variant="outline" className="px-4 py-2">
-                Free monthly credits: <span className="font-bold ml-1">800/2,000</span> (free)
-              </Badge>
-            </div>
-          </div>
 
           {/* Container 1: Custom Campaign */}
           <Card>
             <CardHeader>
-              <CardTitle>Create Your Company's Custom Campaign</CardTitle>
+              <CardTitle>Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</CardTitle>
+              
+              {/* Credits Dashboard */}
+              <div className="flex gap-4 mb-4">
+                <Badge variant="outline" className="px-4 py-2">
+                  Credits used this month: <span className="font-bold ml-1">1,240</span>
+                </Badge>
+                <Badge variant="outline" className="px-4 py-2">
+                  Free monthly credits: <span className="font-bold ml-1">800/2,000</span> (free)
+                </Badge>
+              </div>
+              
               <p className="text-muted-foreground">
                 Create a custom campaign and increase the health awareness of your workforce.
               </p>
