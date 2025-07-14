@@ -158,52 +158,58 @@ const ActionRoom = () => {
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-muted/50 p-4 rounded-lg space-y-4">
-                <p>Hey Pebee,</p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span>create a new</span>
-                  <Select value={campaignType} onValueChange={setCampaignType}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <span>campaign for our</span>
-                  <Select value={targetDepartment} onValueChange={setTargetDepartment}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="dept" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
-                          {dept.department_name}
-                        </SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <span>colleagues about</span>
-                  <Select value={campaignTopic} onValueChange={setCampaignTopic}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue placeholder="topic" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+              {/* User Message - Blue bubble from right */}
+              <div className="flex justify-end mb-4">
+                <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-br-md max-w-xs shadow-sm">
+                  <p className="mb-2">Hey Pebee,</p>
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span>create a new</span>
+                    <Select value={campaignType} onValueChange={setCampaignType}>
+                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                        <SelectValue placeholder="type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <span>campaign for our</span>
+                    <Select value={targetDepartment} onValueChange={setTargetDepartment}>
+                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                        <SelectValue placeholder="dept" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
+                            {dept.department_name}
+                          </SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <span>colleagues about</span>
+                    <Select value={campaignTopic} onValueChange={setCampaignTopic}>
+                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                        <SelectValue placeholder="topic" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-primary/5 p-4 rounded-lg space-y-4">
-                <p>Hello {userProfile?.first_name || 'there'},</p>
-                <p>sure, I'll be happy to prepare the campaign for you!</p>
-                <div>
-                  <p className="mb-3">What do you want me to focus on (multi-choice):</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {focusOptions.map(option => <div key={option} className="flex items-center space-x-2">
-                        <Checkbox id={option} checked={focusAreas.includes(option)} onCheckedChange={checked => handleFocusAreaChange(option, checked as boolean)} />
-                        <label htmlFor={option} className="text-sm">{option}</label>
-                      </div>)}
+              {/* Bot Response - Grey bubble from left */}
+              <div className="flex justify-start mb-4">
+                <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md max-w-md shadow-sm">
+                  <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
+                  <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
+                  <div>
+                    <p className="mb-3 text-sm">What do you want me to focus on (multi-choice):</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {focusOptions.map(option => <div key={option} className="flex items-center space-x-2">
+                          <Checkbox id={option} checked={focusAreas.includes(option)} onCheckedChange={checked => handleFocusAreaChange(option, checked as boolean)} />
+                          <label htmlFor={option} className="text-xs">{option}</label>
+                        </div>)}
+                    </div>
                   </div>
                 </div>
               </div>
