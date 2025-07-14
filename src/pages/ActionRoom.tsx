@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { DateFilterProvider } from '@/contexts/DateFilterContext';
 import PageHeader from '@/components/layout/PageHeader';
 import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -128,208 +129,210 @@ const ActionRoom = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <PageHeader 
-            title={t('actionRoom.title')}
-            subtitle={t('actionRoom.subtitle')}
-          />
-          <LanguageSwitcher />
-        </div>
-
-        {/* Department Filter */}
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium">Select Departments:</label>
-          <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-            <SelectTrigger className="w-64">
-              <SelectValue placeholder="Choose department..." />
-            </SelectTrigger>
-            <SelectContent>
-              {departments.map((dept) => (
-                <SelectItem key={dept.id} value={dept.id}>
-                  {dept.department_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Company Campaigns Header */}
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</h2>
-          
-          {/* Credits Dashboard */}
-          <div className="flex gap-4">
-            <Badge variant="outline" className="px-4 py-2">
-              Credits used this month: <span className="font-bold ml-1">1,240</span>
-            </Badge>
-            <Badge variant="outline" className="px-4 py-2">
-              Free monthly credits: <span className="font-bold ml-1">800/2,000</span> (free)
-            </Badge>
+    <DateFilterProvider>
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <PageHeader 
+              title={t('actionRoom.title')}
+              subtitle={t('actionRoom.subtitle')}
+            />
+            <LanguageSwitcher />
           </div>
-        </div>
 
-        {/* Container 1: Custom Campaign */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Create Your Company's Custom Campaign</CardTitle>
-            <p className="text-muted-foreground">
-              Create a custom campaign and increase the health awareness of your workforce.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-muted/50 p-4 rounded-lg space-y-4">
-              <p>Hey Pebee,</p>
-              <div className="flex flex-wrap items-center gap-2">
-                <span>create a new</span>
-                <Select value={campaignType} onValueChange={setCampaignType}>
-                  <SelectTrigger className="w-32">
+          {/* Department Filter */}
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium">Select Departments:</label>
+            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder="Choose department..." />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map((dept) => (
+                  <SelectItem key={dept.id} value={dept.id}>
+                    {dept.department_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Company Campaigns Header */}
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold">Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</h2>
+            
+            {/* Credits Dashboard */}
+            <div className="flex gap-4">
+              <Badge variant="outline" className="px-4 py-2">
+                Credits used this month: <span className="font-bold ml-1">1,240</span>
+              </Badge>
+              <Badge variant="outline" className="px-4 py-2">
+                Free monthly credits: <span className="font-bold ml-1">800/2,000</span> (free)
+              </Badge>
+            </div>
+          </div>
+
+          {/* Container 1: Custom Campaign */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Create Your Company's Custom Campaign</CardTitle>
+              <p className="text-muted-foreground">
+                Create a custom campaign and increase the health awareness of your workforce.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-muted/50 p-4 rounded-lg space-y-4">
+                <p>Hey Pebee,</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span>create a new</span>
+                  <Select value={campaignType} onValueChange={setCampaignType}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {campaignTypes.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <span>campaign for our</span>
+                  <Select value={targetDepartment} onValueChange={setTargetDepartment}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="dept" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.department_name}>
+                          {dept.department_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <span>colleagues about</span>
+                  <Select value={campaignTopic} onValueChange={setCampaignTopic}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="topic" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {differentials.map((diff) => (
+                        <SelectItem key={diff} value={diff}>{diff}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="bg-primary/5 p-4 rounded-lg space-y-4">
+                <p>Hello {userProfile?.first_name || 'there'},</p>
+                <p>sure, I'll be happy to prepare the campaign for you!</p>
+                <div>
+                  <p className="mb-3">What do you want me to focus on (multi-choice):</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {focusOptions.map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={option}
+                          checked={focusAreas.includes(option)}
+                          onCheckedChange={(checked) => handleFocusAreaChange(option, checked as boolean)}
+                        />
+                        <label htmlFor={option} className="text-sm">→ {option}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button className="flex items-center gap-2">
+                  <Download size={16} />
+                  Download Campaign
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Send size={16} />
+                  Export Campaign
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Container 2: Help High Risk Employees */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users size={20} />
+                Help High Risk Employees
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>
+                We have been able to identify <span className="font-bold text-destructive">{highRiskCount}</span> high risk employees.
+                Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
+                <Select value={invitationType} onValueChange={setInvitationType}>
+                  <SelectTrigger className="w-20 inline-flex">
                     <SelectValue placeholder="type" />
                   </SelectTrigger>
                   <SelectContent>
-                    {campaignTypes.map((type) => (
+                    {invitationTypes.map((type) => (
                       <SelectItem key={type} value={type}>{type}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <span>campaign for our</span>
-                <Select value={targetDepartment} onValueChange={setTargetDepartment}>
+                {' '}invitation to all high risk employees and ask them what they need.
+              </p>
+              <Button className="flex items-center gap-2">
+                <Send size={16} />
+                Send Invitation
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Container 3: Rotation Reminder */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar size={20} />
+                Rotation Reminder
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>
+                Utilize the power of one of the most effective prevention pain and disability actions: workspace rotation.
+                Set a regular workplace circulation reminder, so you can consult the possible rotation with your HSE and Manufacturing managers.
+              </p>
+              
+              <div className="flex items-center gap-2">
+                <span>Reminder in</span>
+                <Select value={rotationPeriod} onValueChange={setRotationPeriod}>
                   <SelectTrigger className="w-32">
-                    <SelectValue placeholder="dept" />
+                    <SelectValue placeholder="period" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept.id} value={dept.department_name}>
-                        {dept.department_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <span>colleagues about</span>
-                <Select value={campaignTopic} onValueChange={setCampaignTopic}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="topic" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {differentials.map((diff) => (
-                      <SelectItem key={diff} value={diff}>{diff}</SelectItem>
+                    {rotationPeriods.map((period) => (
+                      <SelectItem key={period} value={period}>{period}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            </div>
 
-            <div className="bg-primary/5 p-4 rounded-lg space-y-4">
-              <p>Hello {userProfile?.first_name || 'there'},</p>
-              <p>sure, I'll be happy to prepare the campaign for you!</p>
-              <div>
-                <p className="mb-3">What do you want me to focus on (multi-choice):</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {focusOptions.map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={option}
-                        checked={focusAreas.includes(option)}
-                        onCheckedChange={(checked) => handleFocusAreaChange(option, checked as boolean)}
-                      />
-                      <label htmlFor={option} className="text-sm">→ {option}</label>
-                    </div>
-                  ))}
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="font-medium mb-2">Reminder window:</p>
+                <div className="space-y-2 text-sm">
+                  <p>Hello {userProfile?.first_name || 'there'},</p>
+                  <p>this is a rotation reminder. The rotation date is upcoming in [days_to_rotation] days.</p>
+                  <p>Let's implement the plan:</p>
+                  <ol className="list-decimal list-inside space-y-1 ml-4">
+                    <li>Review current workstation assignments</li>
+                    <li>Identify employees for rotation</li>
+                    <li>Coordinate with HSE and Manufacturing managers</li>
+                    <li>Schedule and implement the rotation plan</li>
+                  </ol>
                 </div>
               </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button className="flex items-center gap-2">
-                <Download size={16} />
-                Download Campaign
-              </Button>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Send size={16} />
-                Export Campaign
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Container 2: Help High Risk Employees */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users size={20} />
-              Help High Risk Employees
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              We have been able to identify <span className="font-bold text-destructive">{highRiskCount}</span> high risk employees.
-              Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
-              <Select value={invitationType} onValueChange={setInvitationType}>
-                <SelectTrigger className="w-20 inline-flex">
-                  <SelectValue placeholder="type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {invitationTypes.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {' '}invitation to all high risk employees and ask them what they need.
-            </p>
-            <Button className="flex items-center gap-2">
-              <Send size={16} />
-              Send Invitation
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Container 3: Rotation Reminder */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar size={20} />
-              Rotation Reminder
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Utilize the power of one of the most effective prevention pain and disability actions: workspace rotation.
-              Set a regular workplace circulation reminder, so you can consult the possible rotation with your HSE and Manufacturing managers.
-            </p>
-            
-            <div className="flex items-center gap-2">
-              <span>Reminder in</span>
-              <Select value={rotationPeriod} onValueChange={setRotationPeriod}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="period" />
-                </SelectTrigger>
-                <SelectContent>
-                  {rotationPeriods.map((period) => (
-                    <SelectItem key={period} value={period}>{period}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <p className="font-medium mb-2">Reminder window:</p>
-              <div className="space-y-2 text-sm">
-                <p>Hello {userProfile?.first_name || 'there'},</p>
-                <p>this is a rotation reminder. The rotation date is upcoming in [days_to_rotation] days.</p>
-                <p>Let's implement the plan:</p>
-                <ol className="list-decimal list-inside space-y-1 ml-4">
-                  <li>Review current workstation assignments</li>
-                  <li>Identify employees for rotation</li>
-                  <li>Coordinate with HSE and Manufacturing managers</li>
-                  <li>Schedule and implement the rotation plan</li>
-                </ol>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </DateFilterProvider>
   );
 };
 
