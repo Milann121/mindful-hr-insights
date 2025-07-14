@@ -130,17 +130,18 @@ const ActionRoom = () => {
 
   return (
     <DateFilterProvider>
-      <div className="min-h-screen bg-background p-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex justify-end mb-4">
-            <LanguageSwitcher />
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
+          <LanguageSwitcher />
+        </div>
+        <div className="container mx-auto px-6 py-8">
           <PageHeader 
             title={t('actionRoom.title')}
             subtitle={t('actionRoom.subtitle')}
           />
-
-          {/* Department Filter */}
+          
+          <div className="space-y-6">
+            {/* Department Filter */}
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium">Select Departments:</label>
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
@@ -328,7 +329,8 @@ const ActionRoom = () => {
                 </div>
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
     </DateFilterProvider>

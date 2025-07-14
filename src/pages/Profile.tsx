@@ -15,11 +15,11 @@ const Profile = () => {
 
   return (
     <DateFilterProvider>
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-end mb-4">
-            <LanguageSwitcher />
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
+          <LanguageSwitcher />
+        </div>
+        <div className="container mx-auto px-6 py-8">
           <PageHeader 
             title={t('profile.title')}
             subtitle=""
