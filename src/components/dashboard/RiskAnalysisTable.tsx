@@ -125,7 +125,6 @@ const RiskAnalysisTable = () => {
         const departmentsWithHighRisk = await Promise.all(
           deptData.map(async (dept: any) => {
             console.log(`\n=== Processing department: ${dept.department_name} ===`);
-            console.log('Department data:', dept);
             
             // Get all employees in this department
             const { data: deptEmployees, error: deptError } = await supabase
@@ -135,77 +134,69 @@ const RiskAnalysisTable = () => {
 
             if (deptError) {
               console.error('Error fetching department employees:', dept.department_id, deptError);
-            }
-
-            console.log(`Department employees found:`, deptEmployees);
-            const employeeUserIds = deptEmployees?.map(emp => emp.user_id) || [];
-            console.log(`Employee user IDs:`, employeeUserIds);
-            
-            if (employeeUserIds.length === 0) {
-              console.log('No employees found in department, returning 0% high risk');
-              const totalEmployees = employeeUserIds.length;
-              const highRiskPercentage = 0;
               return {
                 id: dept.department_id,
                 department_name: dept.department_name,
                 department_headcount: 0,
                 job_type: '',
-                employee_count: totalEmployees,
+                employee_count: 0,
                 avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
                 trend_direction: trendData?.find(t => t.department_id === dept.department_id)?.trend_direction || null,
-                high_risk_percentage: highRiskPercentage
+                high_risk_percentage: 0
               };
             }
 
-            // Get ALL OREBRO responses for employees in this department
-            const { data: orebroData, error: orebroError } = await supabase
-              .from('orebro_responses')
-              .select('user_id, risk_level, updated_at')
-              .in('user_id', employeeUserIds)
-              .order('updated_at', { ascending: false });
-
-            if (orebroError) {
-              console.error('Error fetching OREBRO data for department:', dept.department_id, orebroError);
+            const employeeUserIds = deptEmployees?.map(emp => emp.user_id) || [];
+            console.log(`Found ${employeeUserIds.length} employees in ${dept.department_name}:`, employeeUserIds);
+            
+            if (employeeUserIds.length === 0) {
+              return {
+                id: dept.department_id,
+                department_name: dept.department_name,
+                department_headcount: 0,
+                job_type: '',
+                employee_count: 0,
+                avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
+                trend_direction: trendData?.find(t => t.department_id === dept.department_id)?.trend_direction || null,
+                high_risk_percentage: 0
+              };
             }
 
-            console.log(`All OREBRO responses for department:`, orebroData);
+            // Get the latest OREBRO response for each employee
+            const latestRiskLevels = await Promise.all(
+              employeeUserIds.map(async (userId) => {
+                const { data: latestResponse, error } = await supabase
+                  .from('orebro_responses')
+                  .select('risk_level, updated_at')
+                  .eq('user_id', userId)
+                  .order('updated_at', { ascending: false })
+                  .limit(1)
+                  .single();
 
-            // Keep only the latest record per employee using a simpler approach
-            const latestOrebroByUser = new Map();
-            orebroData?.forEach(record => {
-              console.log(`Processing OREBRO record:`, record);
-              const existingRecord = latestOrebroByUser.get(record.user_id);
-              if (!existingRecord || new Date(record.updated_at) > new Date(existingRecord.updated_at)) {
-                console.log(`Setting latest record for user ${record.user_id}:`, record);
-                latestOrebroByUser.set(record.user_id, record);
-              }
-            });
+                if (error) {
+                  console.log(`No OREBRO response found for user ${userId}`);
+                  return null;
+                }
 
-            console.log(`Latest OREBRO records by user:`, Array.from(latestOrebroByUser.entries()));
-
-            // Count employees with high risk
-            const latestRecords = Array.from(latestOrebroByUser.values());
-            console.log(`All latest records:`, latestRecords);
-            
-            // Debug: Log all risk levels to see what values we have
-            latestRecords.forEach(record => {
-              console.log(`Risk level for user ${record.user_id}:`, record.risk_level, typeof record.risk_level);
-            });
-            
-            const highRiskRecords = latestRecords.filter(
-              r => r.risk_level && String(r.risk_level).toLowerCase().trim() === 'high'
+                console.log(`User ${userId} latest risk level:`, latestResponse.risk_level);
+                return latestResponse.risk_level;
+              })
             );
-            console.log(`High risk records:`, highRiskRecords);
-            
-            const highRiskCount = highRiskRecords.length;
-            console.log(`High risk count: ${highRiskCount}`);
 
-            const totalEmployees = employeeUserIds.length; // Use actual employees found, not dept.employee_count
-            console.log(`Total employees: ${totalEmployees}`);
+            // Filter out null responses and count high risk
+            const validRiskLevels = latestRiskLevels.filter(level => level !== null);
+            const highRiskCount = validRiskLevels.filter(level => 
+              level && level.toString().toLowerCase().trim() === 'high'
+            ).length;
+
+            console.log(`Department ${dept.department_name}: ${highRiskCount} high risk out of ${validRiskLevels.length} with responses`);
             
-            const highRiskPercentage = totalEmployees > 0 ? Math.round((highRiskCount / totalEmployees) * 100) : 0;
-            console.log(`High risk percentage: ${highRiskPercentage}%`);
-            console.log(`=== End processing department: ${dept.department_name} ===\n`);
+            // Calculate percentage based on employees with OREBRO responses
+            const highRiskPercentage = validRiskLevels.length > 0 
+              ? Math.round((highRiskCount / validRiskLevels.length) * 100) 
+              : 0;
+
+            console.log(`Final high risk percentage for ${dept.department_name}: ${highRiskPercentage}%`);
 
             const trend = trendData?.find(t => t.department_id === dept.department_id);
             return {
@@ -213,7 +204,7 @@ const RiskAnalysisTable = () => {
               department_name: dept.department_name,
               department_headcount: 0,
               job_type: '',
-              employee_count: totalEmployees,
+              employee_count: employeeUserIds.length,
               avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
               trend_direction: trend?.trend_direction || null,
               high_risk_percentage: highRiskPercentage
