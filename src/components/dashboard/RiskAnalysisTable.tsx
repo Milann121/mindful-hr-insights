@@ -193,7 +193,7 @@ const RiskAnalysisTable = () => {
             });
             
             const highRiskRecords = latestRecords.filter(
-              r => r.risk_level && r.risk_level.toLowerCase().trim() === 'high'
+              r => r.risk_level && String(r.risk_level).toLowerCase().trim() === 'high'
             );
             console.log(`High risk records:`, highRiskRecords);
             
