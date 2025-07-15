@@ -24,7 +24,7 @@ const ActionRoom = () => {
     t
   } = useTranslation();
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [highRiskCount, setHighRiskCount] = useState<number>(0);
 
