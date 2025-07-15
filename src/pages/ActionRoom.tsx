@@ -336,13 +336,6 @@ const ActionRoom = () => {
                      </Select>
                      <span>.</span>
                    </div>
-                   
-                   {/* Full text display when all selections are made */}
-                   {campaignType && targetDepartment && campaignTopic && (
-                     <div className="mt-3 p-3 bg-blue-600 rounded-md text-sm">
-                       <p>create a new {campaignType} campaign for our {targetDepartment} colleagues about {campaignTopic}.</p>
-                     </div>
-                   )}
                   
                   {/* Send Icon - positioned in bottom right corner */}
                   <button
