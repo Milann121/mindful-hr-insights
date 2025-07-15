@@ -1,5 +1,6 @@
 
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ interface Department {
 
 const RiskAnalysisTable = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -345,6 +347,10 @@ const RiskAnalysisTable = () => {
     );
   };
 
+  const handleTakeAction = (departmentId: string) => {
+    navigate(`/action-room?department=${departmentId}`);
+  };
+
   return (
     <Card className="col-span-2">
       <CardHeader>
@@ -459,7 +465,11 @@ const RiskAnalysisTable = () => {
                      </span>
                    </TableCell>
                    <TableCell>
-                     <Button variant="outline" size="sm">
+                     <Button 
+                       variant="outline" 
+                       size="sm" 
+                       onClick={() => handleTakeAction(dept.id)}
+                     >
                        {t('dashboard.actions.takeAction')}
                      </Button>
                    </TableCell>

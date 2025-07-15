@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { DateFilterProvider } from '@/contexts/DateFilterContext';
 import PageHeader from '@/components/layout/PageHeader';
@@ -23,10 +24,12 @@ const ActionRoom = () => {
   const {
     t
   } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [highRiskCount, setHighRiskCount] = useState<number>(0);
+  const [showBreathingAnimation, setShowBreathingAnimation] = useState<boolean>(false);
 
   // Campaign form states
   const [campaignType, setCampaignType] = useState<string>('');
@@ -94,7 +97,19 @@ const ActionRoom = () => {
     fetchUserProfile();
     fetchDepartments();
     fetchHighRiskCount();
-  }, []);
+    
+    // Handle URL parameters for department pre-selection
+    const departmentParam = searchParams.get('department');
+    if (departmentParam) {
+      setSelectedDepartment(departmentParam);
+      setShowBreathingAnimation(true);
+      
+      // Stop breathing animation after 5 seconds
+      setTimeout(() => {
+        setShowBreathingAnimation(false);
+      }, 5000);
+    }
+  }, [searchParams]);
 
   // Refetch high risk count when department selection changes
   useEffect(() => {
@@ -352,8 +367,23 @@ const ActionRoom = () => {
           }
         }
         
+        @keyframes breathing {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.1);
+          }
+        }
+        
         .envelope-animation {
           animation: envelope-fly 2s ease-out forwards;
+        }
+        
+        .animate-breathing {
+          animation: breathing 1.5s ease-in-out infinite;
         }
         `}
       </style>
@@ -393,7 +423,7 @@ const ActionRoom = () => {
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
             <label className="text-sm font-medium">{t('actionRoom.selectDepartments')}</label>
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="w-full md:w-64">
+              <SelectTrigger className={`w-full md:w-64 ${showBreathingAnimation ? 'animate-breathing' : ''}`}>
                 <SelectValue placeholder={t('actionRoom.chooseDepartment')} />
               </SelectTrigger>
               <SelectContent>
