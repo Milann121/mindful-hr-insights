@@ -41,12 +41,14 @@ const ActionRoom = () => {
   const [showTypingDots, setShowTypingDots] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [showSecondBlueBubble, setShowSecondBlueBubble] = useState<boolean>(false);
+  const [showSecondTypingDots, setShowSecondTypingDots] = useState<boolean>(false);
+  const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
   const campaignTypes = ['poster', 'email', 'billboard', 'sms', 'social media'];
   const differentials = ['back pain', 'neck pain', 'shoulder pain', 'wrist pain', 'knee pain'];
   const invitationTypes = ['email', 'sms'];
   const rotationPeriods = ['3 months', '6 months', '9 months', '12 months'];
   const focusOptions = ['definition', 'symptoms', 'exercises', 'behavioural tips'];
-  const secondBubbleFocusOptions = ['problem definitions', 'exercises', 'symptoms', 'behavioural tips'];
+  const secondBubbleFocusOptions = ['problem description', 'exercises', 'symptoms', 'behavioural tips'];
   useEffect(() => {
     fetchUserProfile();
     fetchDepartments();
@@ -229,8 +231,14 @@ const ActionRoom = () => {
   };
 
   const handleSecondSendMessage = () => {
-    // Add functionality for the second send button if needed
     console.log('Second blue bubble send clicked');
+    
+    setShowSecondTypingDots(true);
+    
+    setTimeout(() => {
+      setShowSecondTypingDots(false);
+      setShowSecondGreyBubble(true);
+    }, 2000);
   };
 
   const handleSecondBubbleFocusAreaChange = (area: string, checked: boolean) => {
@@ -385,6 +393,29 @@ const ActionRoom = () => {
                     >
                       <ArrowUp size={16} className="text-blue-500" />
                     </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Second Typing Dots Animation */}
+              {showSecondTypingDots && (
+                <div className="flex justify-start mb-4">
+                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Second Grey Bubble - appears after second typing dots */}
+              {showSecondGreyBubble && (
+                <div className="flex justify-start mb-4">
+                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                    <p className="mb-2">Sure, let's do this {userProfile?.first_name || ''}.</p>
+                    <p className="text-sm">Give me a few seconds to prepare a nice and functional campaign for you. When created, preview the campaign and let me know if you are satisfied or ready to download and distribute.</p>
                   </div>
                 </div>
               )}
