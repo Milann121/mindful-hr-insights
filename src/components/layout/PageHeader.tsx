@@ -40,20 +40,13 @@ const PageHeader = ({ title, subtitle, showFilters = false }: PageHeaderProps) =
   return (
     <div className="mb-8">
       <div className="flex justify-between items-start mb-6">
-        <div className="flex items-center gap-4">
-          {/* Mobile/Tablet Navigation Menu on the left */}
-          <div className="md:hidden">
-            <Navigation />
-          </div>
-          
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {title}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {subtitle}
-            </p>
-          </div>
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            {title}
+          </h1>
+          <p className="text-lg text-gray-600">
+            {subtitle}
+          </p>
         </div>
         
         {/* Desktop Navigation on the right */}
