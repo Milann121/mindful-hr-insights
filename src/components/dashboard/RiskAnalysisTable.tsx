@@ -348,7 +348,19 @@ const RiskAnalysisTable = () => {
   };
 
   const handleTakeAction = (departmentId: string) => {
-    navigate(`/action-room?department=${departmentId}`);
+    const department = departments.find(dept => dept.id === departmentId);
+    if (department) {
+      const riskLevel = getRiskLevel(department.avg_pain_level);
+      const highRiskPercentage = department.high_risk_percentage || 0;
+      
+      const queryParams = new URLSearchParams({
+        department: departmentId,
+        riskLevel: riskLevel,
+        highRiskPercentage: highRiskPercentage.toString()
+      });
+      
+      navigate(`/action-room?${queryParams.toString()}`);
+    }
   };
 
   return (

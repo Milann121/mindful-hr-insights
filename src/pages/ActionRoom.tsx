@@ -30,6 +30,8 @@ const ActionRoom = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [highRiskCount, setHighRiskCount] = useState<number>(0);
   const [showBreathingAnimation, setShowBreathingAnimation] = useState<boolean>(false);
+  const [showCampaignAnimation, setShowCampaignAnimation] = useState<boolean>(false);
+  const [showHighRiskAnimation, setShowHighRiskAnimation] = useState<boolean>(false);
 
   // Campaign form states
   const [campaignType, setCampaignType] = useState<string>('');
@@ -100,6 +102,9 @@ const ActionRoom = () => {
     
     // Handle URL parameters for department pre-selection
     const departmentParam = searchParams.get('department');
+    const riskLevelParam = searchParams.get('riskLevel');
+    const highRiskPercentageParam = searchParams.get('highRiskPercentage');
+    
     if (departmentParam) {
       setSelectedDepartment(departmentParam);
       setShowBreathingAnimation(true);
@@ -108,6 +113,21 @@ const ActionRoom = () => {
       setTimeout(() => {
         setShowBreathingAnimation(false);
       }, 5000);
+      
+      // Handle container animations based on risk analysis data
+      if (riskLevelParam === 'high') {
+        setShowCampaignAnimation(true);
+        setTimeout(() => {
+          setShowCampaignAnimation(false);
+        }, 5000);
+      }
+      
+      if (highRiskPercentageParam && parseInt(highRiskPercentageParam) > 0) {
+        setShowHighRiskAnimation(true);
+        setTimeout(() => {
+          setShowHighRiskAnimation(false);
+        }, 5000);
+      }
     }
   }, [searchParams]);
 
@@ -378,12 +398,29 @@ const ActionRoom = () => {
           }
         }
         
+        @keyframes radiating-red {
+          0% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6);
+          }
+          50% {
+            box-shadow: 0 0 0 20px rgba(239, 68, 68, 0.2);
+          }
+          100% {
+            box-shadow: 0 0 0 40px rgba(239, 68, 68, 0);
+          }
+        }
+        
         .envelope-animation {
           animation: envelope-fly 2s ease-out forwards;
         }
         
         .animate-breathing {
           animation: breathing 1.5s ease-in-out infinite;
+        }
+        
+        .animate-radiating-red {
+          animation: radiating-red 1.5s ease-out infinite;
+          border: 2px solid rgba(239, 68, 68, 0.3);
         }
         `}
       </style>
@@ -439,7 +476,7 @@ const ActionRoom = () => {
           {/* Container 1: Custom Campaign */}
           <div className="space-y-4">
             <div className={`flex gap-4 ${showHistory ? 'md:flex-row flex-col' : ''}`}>
-              <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
+              <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showCampaignAnimation ? 'animate-radiating-red' : ''}`}>
                 <CardHeader>
                   <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
                   
@@ -707,7 +744,7 @@ const ActionRoom = () => {
           {/* Container 2: Help High Risk Employees */}
           <div className="space-y-4">
             <div className={`flex gap-4 ${showHighRiskHistory ? 'md:flex-row flex-col' : ''}`}>
-              <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
+              <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showHighRiskAnimation ? 'animate-radiating-red' : ''}`}>
                 <CardHeader>
                   {/* Desktop: Title and History button inline */}
                   <div className="hidden md:flex items-center justify-between">
