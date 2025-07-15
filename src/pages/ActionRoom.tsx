@@ -44,6 +44,11 @@ const ActionRoom = () => {
     fetchDepartments();
     fetchHighRiskCount();
   }, []);
+
+  // Refetch high risk count when department selection changes
+  useEffect(() => {
+    fetchHighRiskCount();
+  }, [selectedDepartment]);
   const fetchUserProfile = async () => {
     const {
       data: {
@@ -82,10 +87,35 @@ const ActionRoom = () => {
         data: userProfile
       } = await supabase.from('user_profiles').select('b2b_partner_id').eq('user_id', user.id).single();
       if (!userProfile?.b2b_partner_id) return;
-      const {
-        data: employees
-      } = await supabase.from('b2b_employees').select('user_id').eq('b2b_partner_id', userProfile.b2b_partner_id).not('user_id', 'is', null);
-      if (!employees?.length) return;
+
+      let employeesQuery = supabase
+        .from('b2b_employees')
+        .select('user_id, id')
+        .eq('b2b_partner_id', userProfile.b2b_partner_id)
+        .not('user_id', 'is', null);
+
+      // If specific department is selected, filter by department
+      if (selectedDepartment && selectedDepartment !== 'all') {
+        const { data: userProfiles } = await supabase
+          .from('user_profiles')
+          .select('user_id')
+          .eq('department_id', selectedDepartment);
+        
+        if (!userProfiles?.length) {
+          setHighRiskCount(0);
+          return;
+        }
+        
+        const departmentUserIds = userProfiles.map(profile => profile.user_id);
+        employeesQuery = employeesQuery.in('user_id', departmentUserIds);
+      }
+
+      const { data: employees } = await employeesQuery;
+      if (!employees?.length) {
+        setHighRiskCount(0);
+        return;
+      }
+
       const userIds = employees.map(emp => emp.user_id);
       const {
         data: orebroResponses
@@ -238,7 +268,17 @@ const ActionRoom = () => {
             <CardContent className="space-y-4">
               <div>
                 <p>
-                  We have been able to identify <span className="font-bold text-destructive">{highRiskCount}</span> high risk employees.
+                  We have been able to identify{' '}
+                  <span 
+                    className={`font-bold ${
+                      highRiskCount === 0 
+                        ? 'text-green-600' 
+                        : 'text-red-600 animate-pulse'
+                    }`}
+                  >
+                    {highRiskCount}
+                  </span>{' '}
+                  high risk employees.
                 </p>
                 <p>
                   Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
