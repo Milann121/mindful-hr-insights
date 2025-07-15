@@ -32,6 +32,8 @@ const ActionRoom = () => {
   const [showBreathingAnimation, setShowBreathingAnimation] = useState<boolean>(false);
   const [showCampaignAnimation, setShowCampaignAnimation] = useState<boolean>(false);
   const [showHighRiskAnimation, setShowHighRiskAnimation] = useState<boolean>(false);
+  const [showCampaignGreenAnimation, setShowCampaignGreenAnimation] = useState<boolean>(false);
+  const [showHighRiskGreenAnimation, setShowHighRiskGreenAnimation] = useState<boolean>(false);
 
   // Campaign form states
   const [campaignType, setCampaignType] = useState<string>('');
@@ -119,14 +121,14 @@ const ActionRoom = () => {
         setShowCampaignAnimation(true);
         setTimeout(() => {
           setShowCampaignAnimation(false);
-        }, 5000);
+        }, 30000);
       }
       
       if (highRiskPercentageParam && parseInt(highRiskPercentageParam) > 0) {
         setShowHighRiskAnimation(true);
         setTimeout(() => {
           setShowHighRiskAnimation(false);
-        }, 5000);
+        }, 30000);
       }
     }
   }, [searchParams]);
@@ -161,6 +163,31 @@ const ActionRoom = () => {
       if (data) setDepartments(data);
     }
   };
+  // Function to check if campaign form is complete
+  const isCampaignComplete = () => {
+    return campaignType && targetDepartment && campaignTopic;
+  };
+
+  // Function to trigger green animation for campaign container
+  const triggerCampaignGreenAnimation = () => {
+    if (showCampaignAnimation) {
+      setShowCampaignGreenAnimation(true);
+      setTimeout(() => {
+        setShowCampaignGreenAnimation(false);
+      }, 3000);
+    }
+  };
+
+  // Function to trigger green animation for high-risk container
+  const triggerHighRiskGreenAnimation = () => {
+    if (showHighRiskAnimation) {
+      setShowHighRiskGreenAnimation(true);
+      setTimeout(() => {
+        setShowHighRiskGreenAnimation(false);
+      }, 3000);
+    }
+  };
+
   const fetchHighRiskCount = async () => {
     console.log('Starting fetchHighRiskCount...');
     
@@ -410,6 +437,18 @@ const ActionRoom = () => {
           }
         }
         
+        @keyframes radiating-green {
+          0% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+          }
+          50% {
+            box-shadow: 0 0 0 20px rgba(34, 197, 94, 0.2);
+          }
+          100% {
+            box-shadow: 0 0 0 40px rgba(34, 197, 94, 0);
+          }
+        }
+        
         .envelope-animation {
           animation: envelope-fly 2s ease-out forwards;
         }
@@ -421,6 +460,11 @@ const ActionRoom = () => {
         .animate-radiating-red {
           animation: radiating-red 1.5s ease-out infinite;
           border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .animate-radiating-green {
+          animation: radiating-green 1.5s ease-out infinite;
+          border: 2px solid rgba(34, 197, 94, 0.3);
         }
         `}
       </style>
@@ -476,7 +520,7 @@ const ActionRoom = () => {
           {/* Container 1: Custom Campaign */}
           <div className="space-y-4">
             <div className={`flex gap-4 ${showHistory ? 'md:flex-row flex-col' : ''}`}>
-              <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showCampaignAnimation ? 'animate-radiating-red' : ''}`}>
+              <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showCampaignGreenAnimation ? 'animate-radiating-green' : showCampaignAnimation ? 'animate-radiating-red' : ''}`}>
                 <CardHeader>
                   <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
                   
@@ -575,14 +619,19 @@ const ActionRoom = () => {
                          <span>.</span>
                        </div>
                       
-                      {/* Send Icon - positioned in bottom right corner */}
-                      <button
-                        onClick={handleSendMessage}
-                        disabled={isAnimating}
-                        className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
-                      >
-                        <ArrowUp size={16} className="text-blue-500" />
-                      </button>
+                       {/* Send Icon - positioned in bottom right corner */}
+                       <button
+                         onClick={() => {
+                           if (isCampaignComplete()) {
+                             triggerCampaignGreenAnimation();
+                           }
+                           handleSendMessage();
+                         }}
+                         disabled={isAnimating}
+                         className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
+                       >
+                         <ArrowUp size={16} className="text-blue-500" />
+                       </button>
                     </div>
                   </div>
 
@@ -744,7 +793,7 @@ const ActionRoom = () => {
           {/* Container 2: Help High Risk Employees */}
           <div className="space-y-4">
             <div className={`flex gap-4 ${showHighRiskHistory ? 'md:flex-row flex-col' : ''}`}>
-              <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showHighRiskAnimation ? 'animate-radiating-red' : ''}`}>
+              <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'} ${showHighRiskGreenAnimation ? 'animate-radiating-green' : showHighRiskAnimation ? 'animate-radiating-red' : ''}`}>
                 <CardHeader>
                   {/* Desktop: Title and History button inline */}
                   <div className="hidden md:flex items-center justify-between">
@@ -814,12 +863,13 @@ const ActionRoom = () => {
                       </p>
                       <p>
                         {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
-                        <Select value={invitationType} onValueChange={(value) => {
-                          setInvitationType(value);
-                          if (value) {
-                            setShowHighRiskBubble(true);
-                          }
-                        }}>
+                         <Select value={invitationType} onValueChange={(value) => {
+                           setInvitationType(value);
+                           if (value) {
+                             setShowHighRiskBubble(true);
+                             triggerHighRiskGreenAnimation();
+                           }
+                         }}>
                           <SelectTrigger className="w-20 inline-flex">
                             <SelectValue placeholder={t('actionRoom.type')} />
                           </SelectTrigger>
