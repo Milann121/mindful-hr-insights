@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Download, Send, Users, Calendar, ArrowUp } from 'lucide-react';
+import { Download, Send, Users, Calendar, ArrowUp, ChevronRight } from 'lucide-react';
 interface Department {
   id: string;
   department_name: string;
@@ -44,6 +44,7 @@ const ActionRoom = () => {
   const [showSecondTypingDots, setShowSecondTypingDots] = useState<boolean>(false);
   const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
   const [showThirdGreyBubble, setShowThirdGreyBubble] = useState<boolean>(false);
+  const [showHistory, setShowHistory] = useState<boolean>(false);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -310,213 +311,252 @@ const ActionRoom = () => {
 
 
           {/* Container 1: Custom Campaign */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
-              
-              {/* Credits Dashboard */}
-              <div className="flex flex-col gap-1 md:flex-row md:gap-4 mb-4">
-                <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
-                  {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
-                </Badge>
-                <Badge variant="outline" className="px-4 py-2 my-[25px]">
-                  {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
-                </Badge>
-              </div>
-              
-              <p className="text-zinc-950 text-lg font-thin">
-                {t('actionRoom.createCampaignDescription')}
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* User Message - Blue bubble from right */}
-              <div className="flex justify-end mb-4">
-                <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
-                  <p className="mb-2">{t('actionRoom.heyPebee')}</p>
-                   <div className="flex flex-wrap items-center gap-2 text-sm">
-                     <span>{t('actionRoom.createANew')}</span>
-                     <Select value={campaignType} onValueChange={setCampaignType}>
-                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder={t('actionRoom.type')} />
-                       </SelectTrigger>
-                       <SelectContent>
-                         {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                       </SelectContent>
-                     </Select>
-                     <span>{t('actionRoom.campaignForOur')}</span>
-                     <Select value={targetDepartment} onValueChange={setTargetDepartment}>
-                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder={t('actionRoom.dept')} />
-                       </SelectTrigger>
-                       <SelectContent>
-                         <SelectItem value="all">{t('actionRoom.all')}</SelectItem>
-                         {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
-                             {dept.department_name}
-                           </SelectItem>)}
-                       </SelectContent>
-                     </Select>
-                     <span>{t('actionRoom.colleaguesAbout')}</span>
-                     <Select value={campaignTopic} onValueChange={setCampaignTopic}>
-                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder={t('actionRoom.topic')} />
-                       </SelectTrigger>
-                       <SelectContent>
-                         {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
-                       </SelectContent>
-                     </Select>
-                     <span>.</span>
-                   </div>
-                  
-                  {/* Send Icon - positioned in bottom right corner */}
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={isAnimating}
-                    className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
+          <div className="flex gap-4">
+            <Card className={`transition-all duration-300 ${showHistory ? 'w-1/3' : 'w-full'}`}>
+              <CardHeader>
+                <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
+                
+                {/* Credits Dashboard */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col gap-1 md:flex-row md:gap-4">
+                    <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
+                      {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
+                    </Badge>
+                    <Badge variant="outline" className="px-4 py-2 my-[25px]">
+                      {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
+                    </Badge>
+                  </div>
+                  <Button
+                    onClick={() => setShowHistory(!showHistory)}
+                    variant="outline"
+                    size="sm"
                   >
-                    <ArrowUp size={16} className="text-blue-500" />
-                  </button>
+                    {t('actionRoom.history')}
+                  </Button>
                 </div>
-              </div>
-
-              {/* Typing Dots Animation */}
-              {showTypingDots && (
-                <div className="flex justify-start mb-4">
-                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Bot Response - Grey bubble from left */}
-              {showGreyBubble && (
-                <div className="flex justify-start mb-4">
-                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-2">{t('actionRoom.hello', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
-                    <p className="mb-3">{t('actionRoom.happyToPrepare')}</p>
-                    <p className="text-sm">{t('actionRoom.whatTopics')}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Second Blue Bubble - appears after 3 seconds */}
-              {showSecondBlueBubble && (
-                <div className="flex justify-end mb-4">
-                  <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-3">{t('actionRoom.pebeeIWantYou')}</p>
-                    <div className="space-y-2 mb-6">
-                      {secondBubbleFocusOptions.map(option => (
-                        <div key={option} className="flex items-center space-x-2">
-                          <Checkbox 
-                            id={`second-${option}`}
-                            checked={secondBubbleFocusAreas.includes(option)}
-                            onCheckedChange={(checked) => handleSecondBubbleFocusAreaChange(option, checked as boolean)}
-                            className="border-white data-[state=checked]:bg-white data-[state=checked]:text-blue-500"
-                          />
-                          <label htmlFor={`second-${option}`} className="text-sm">{option}</label>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {/* Send Icon - positioned in bottom right corner */}
-                    <button
-                      onClick={handleSecondSendMessage}
-                      className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors"
-                    >
-                      <ArrowUp size={16} className="text-blue-500" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Second Typing Dots Animation */}
-              {showSecondTypingDots && (
-                <div className="flex justify-start mb-4">
-                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Second Grey Bubble - appears after second typing dots */}
-              {showSecondGreyBubble && (
-                <div className="flex justify-start mb-4">
-                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-2">{t('actionRoom.sureLetsDo', { name: userProfile?.first_name || '' })}</p>
-                    <p className="text-sm mb-4">{t('actionRoom.giveMeSeconds')}</p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm">{t('actionRoom.pleaseConfirm')}</p>
-                      <Button 
-                        onClick={handleConfirmCampaign}
-                        size="sm"
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                
+                {!showHistory && (
+                  <p className="text-zinc-950 text-lg font-thin">
+                    {t('actionRoom.createCampaignDescription')}
+                  </p>
+                )}
+              </CardHeader>
+              
+              {showHistory ? (
+                <CardContent className="flex items-center justify-center">
+                  <Button
+                    onClick={() => setShowHistory(false)}
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1"
+                  >
+                    <ChevronRight size={16} />
+                  </Button>
+                </CardContent>
+              ) : (
+                <CardContent className="space-y-6">
+                  {/* User Message - Blue bubble from right */}
+                  <div className="flex justify-end mb-4">
+                    <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
+                      <p className="mb-2">{t('actionRoom.heyPebee')}</p>
+                       <div className="flex flex-wrap items-center gap-2 text-sm">
+                         <span>{t('actionRoom.createANew')}</span>
+                         <Select value={campaignType} onValueChange={setCampaignType}>
+                           <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                             <SelectValue placeholder={t('actionRoom.type')} />
+                           </SelectTrigger>
+                           <SelectContent>
+                             {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                           </SelectContent>
+                         </Select>
+                         <span>{t('actionRoom.campaignForOur')}</span>
+                         <Select value={targetDepartment} onValueChange={setTargetDepartment}>
+                           <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                             <SelectValue placeholder={t('actionRoom.dept')} />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="all">{t('actionRoom.all')}</SelectItem>
+                             {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
+                                 {dept.department_name}
+                               </SelectItem>)}
+                           </SelectContent>
+                         </Select>
+                         <span>{t('actionRoom.colleaguesAbout')}</span>
+                         <Select value={campaignTopic} onValueChange={setCampaignTopic}>
+                           <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                             <SelectValue placeholder={t('actionRoom.topic')} />
+                           </SelectTrigger>
+                           <SelectContent>
+                             {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
+                           </SelectContent>
+                         </Select>
+                         <span>.</span>
+                       </div>
+                      
+                      {/* Send Icon - positioned in bottom right corner */}
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={isAnimating}
+                        className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
                       >
-                        {t('actionRoom.confirm')}
-                      </Button>
+                        <ArrowUp size={16} className="text-blue-500" />
+                      </button>
                     </div>
                   </div>
-                </div>
-              )}
 
-              {/* Third Grey Bubble - appears after confirm is clicked */}
-              {showThirdGreyBubble && (
-                <div className="flex justify-start mb-4">
-                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-4 text-sm">{t('actionRoom.creatingCampaign')}</p>
-                    <div className="flex gap-4 justify-center">
-                      {/* Poster 1 */}
-                      <div className="relative w-20 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-md border-2 border-blue-300 animate-pulse">
-                        <div className="absolute inset-2 space-y-1">
-                          <div className="h-2 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '0.5s'}}></div>
-                          <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1s'}}></div>
-                          <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1.5s'}}></div>
-                          <div className="h-8 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '2s'}}></div>
-                        </div>
-                      </div>
-                      
-                      {/* Poster 2 */}
-                      <div className="relative w-20 h-28 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-md border-2 border-green-300 animate-pulse">
-                        <div className="absolute inset-2 space-y-1">
-                          <div className="h-2 bg-green-300 rounded animate-fade-in" style={{animationDelay: '0.7s'}}></div>
-                          <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.2s'}}></div>
-                          <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.7s'}}></div>
-                          <div className="h-8 bg-green-300 rounded animate-fade-in" style={{animationDelay: '2.2s'}}></div>
-                        </div>
-                      </div>
-                      
-                      {/* Poster 3 */}
-                      <div className="relative w-20 h-28 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg shadow-md border-2 border-purple-300 animate-pulse">
-                        <div className="absolute inset-2 space-y-1">
-                          <div className="h-2 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '0.9s'}}></div>
-                          <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.4s'}}></div>
-                          <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.9s'}}></div>
-                          <div className="h-8 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '2.4s'}}></div>
+                  {/* Typing Dots Animation */}
+                  {showTypingDots && (
+                    <div className="flex justify-start mb-4">
+                      <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              <div className="flex flex-col gap-2 md:flex-row md:gap-3">
-                <Button className="flex items-center gap-2">
-                  <Download size={16} />
-                  {t('actionRoom.downloadCampaign')}
-                </Button>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Send size={16} />
-                  {t('actionRoom.exportCampaign')}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  {/* Bot Response - Grey bubble from left */}
+                  {showGreyBubble && (
+                    <div className="flex justify-start mb-4">
+                      <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                        <p className="mb-2">{t('actionRoom.hello', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
+                        <p className="mb-3">{t('actionRoom.happyToPrepare')}</p>
+                        <p className="text-sm">{t('actionRoom.whatTopics')}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Second Blue Bubble - appears after 3 seconds */}
+                  {showSecondBlueBubble && (
+                    <div className="flex justify-end mb-4">
+                      <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                        <p className="mb-3">{t('actionRoom.pebeeIWantYou')}</p>
+                        <div className="space-y-2 mb-6">
+                          {secondBubbleFocusOptions.map(option => (
+                            <div key={option} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`second-${option}`}
+                                checked={secondBubbleFocusAreas.includes(option)}
+                                onCheckedChange={(checked) => handleSecondBubbleFocusAreaChange(option, checked as boolean)}
+                                className="border-white data-[state=checked]:bg-white data-[state=checked]:text-blue-500"
+                              />
+                              <label htmlFor={`second-${option}`} className="text-sm">{option}</label>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Send Icon - positioned in bottom right corner */}
+                        <button
+                          onClick={handleSecondSendMessage}
+                          className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors"
+                        >
+                          <ArrowUp size={16} className="text-blue-500" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Second Typing Dots Animation */}
+                  {showSecondTypingDots && (
+                    <div className="flex justify-start mb-4">
+                      <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                          <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Second Grey Bubble - appears after second typing dots */}
+                  {showSecondGreyBubble && (
+                    <div className="flex justify-start mb-4">
+                      <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                        <p className="mb-2">{t('actionRoom.sureLetsDo', { name: userProfile?.first_name || '' })}</p>
+                        <p className="text-sm mb-4">{t('actionRoom.giveMeSeconds')}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm">{t('actionRoom.pleaseConfirm')}</p>
+                          <Button 
+                            onClick={handleConfirmCampaign}
+                            size="sm"
+                            className="bg-blue-500 hover:bg-blue-600 text-white"
+                          >
+                            {t('actionRoom.confirm')}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Third Grey Bubble - appears after confirm is clicked */}
+                  {showThirdGreyBubble && (
+                    <div className="flex justify-start mb-4">
+                      <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                        <p className="mb-4 text-sm">{t('actionRoom.creatingCampaign')}</p>
+                        <div className="flex gap-4 justify-center">
+                          {/* Poster 1 */}
+                          <div className="relative w-20 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-md border-2 border-blue-300 animate-pulse">
+                            <div className="absolute inset-2 space-y-1">
+                              <div className="h-2 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '0.5s'}}></div>
+                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1s'}}></div>
+                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1.5s'}}></div>
+                              <div className="h-8 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '2s'}}></div>
+                            </div>
+                          </div>
+                          
+                          {/* Poster 2 */}
+                          <div className="relative w-20 h-28 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-md border-2 border-green-300 animate-pulse">
+                            <div className="absolute inset-2 space-y-1">
+                              <div className="h-2 bg-green-300 rounded animate-fade-in" style={{animationDelay: '0.7s'}}></div>
+                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.2s'}}></div>
+                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.7s'}}></div>
+                              <div className="h-8 bg-green-300 rounded animate-fade-in" style={{animationDelay: '2.2s'}}></div>
+                            </div>
+                          </div>
+                          
+                          {/* Poster 3 */}
+                          <div className="relative w-20 h-28 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg shadow-md border-2 border-purple-300 animate-pulse">
+                            <div className="absolute inset-2 space-y-1">
+                              <div className="h-2 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '0.9s'}}></div>
+                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.4s'}}></div>
+                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.9s'}}></div>
+                              <div className="h-8 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '2.4s'}}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-2 md:flex-row md:gap-3">
+                    <Button className="flex items-center gap-2">
+                      <Download size={16} />
+                      {t('actionRoom.downloadCampaign')}
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <Send size={16} />
+                      {t('actionRoom.exportCampaign')}
+                    </Button>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+
+            {/* History Container */}
+            {showHistory && (
+              <Card className="w-2/3 animate-fade-in">
+                <CardHeader>
+                  <CardTitle>{t('actionRoom.history')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* History content will be added here */}
+                </CardContent>
+              </Card>
+            )}
+          </div>
 
           {/* Container 2: Help High Risk Employees */}
           <Card>
