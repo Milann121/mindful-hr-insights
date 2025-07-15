@@ -594,37 +594,22 @@ const ActionRoom = () => {
             <div className={`flex gap-4 ${showHighRiskHistory ? 'md:flex-row flex-col' : ''}`}>
               <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users size={20} />
-                    {t('actionRoom.helpHighRiskEmployees')}
-                  </CardTitle>
-                  
-                  {!showHighRiskHistory && (
-                    <>
-                      {/* History button - desktop only */}
-                      <div className="hidden md:block">
-                        <Button
-                          onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
-                          variant="outline"
-                          size="sm"
-                          className="mb-4"
-                        >
-                          {t('actionRoom.history')}
-                        </Button>
-                      </div>
-                      
-                      {/* History button - mobile/tablet below title */}
-                      <div className="md:hidden mb-6">
-                        <Button
-                          onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          {t('actionRoom.history')}
-                        </Button>
-                      </div>
-                    </>
-                  )}
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Users size={20} />
+                      {t('actionRoom.helpHighRiskEmployees')}
+                    </CardTitle>
+                    
+                    {!showHighRiskHistory && (
+                      <Button
+                        onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        {t('actionRoom.history')}
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
               
                 {showHighRiskHistory ? (
@@ -711,7 +696,7 @@ const ActionRoom = () => {
               {showHighRiskHistory && (
                 <Card className="md:w-2/3 w-full transition-all duration-300">
                   <CardHeader>
-                    <CardTitle>{t('actionRoom.history')} - {t('actionRoom.helpHighRiskEmployees')}</CardTitle>
+                    <CardTitle>{t('actionRoom.history')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-500">History content will be displayed here...</p>
