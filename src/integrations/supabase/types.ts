@@ -572,6 +572,7 @@ export type Database = {
       orebro_responses: {
         Row: {
           anonymous_id: string | null
+          b2b_partner_id: number | null
           created_at: string
           id: string
           responses: Json
@@ -582,6 +583,7 @@ export type Database = {
         }
         Insert: {
           anonymous_id?: string | null
+          b2b_partner_id?: number | null
           created_at?: string
           id?: string
           responses: Json
@@ -592,6 +594,7 @@ export type Database = {
         }
         Update: {
           anonymous_id?: string | null
+          b2b_partner_id?: number | null
           created_at?: string
           id?: string
           responses?: Json
@@ -600,7 +603,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orebro_responses_b2b_partner_id_fkey"
+            columns: ["b2b_partner_id"]
+            isOneToOne: false
+            referencedRelation: "B2B_partners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

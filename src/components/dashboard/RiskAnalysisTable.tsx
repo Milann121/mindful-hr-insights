@@ -148,13 +148,13 @@ const RiskAnalysisTable = () => {
             validEmployees.map(async (employee) => {
               console.log(`Fetching OREBRO for employee: ${employee.first_name} ${employee.last_name} (ID: ${employee.user_id})`);
               
+              // First try to get the latest OREBRO response with more comprehensive query
               const { data: orebro, error } = await supabase
                 .from('orebro_responses')
-                .select('risk_level, updated_at, user_id')
+                .select('risk_level, updated_at, user_id, total_score')
                 .eq('user_id', employee.user_id)
                 .order('updated_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
+                .limit(1);
 
               console.log(`OREBRO query result for ${employee.first_name} ${employee.last_name}:`, { data: orebro, error });
 
@@ -163,13 +163,14 @@ const RiskAnalysisTable = () => {
                 return 'low'; // Treat as low risk on error
               }
 
-              if (!orebro) {
+              if (!orebro || orebro.length === 0) {
                 console.log(`No OREBRO response found for ${employee.first_name} ${employee.last_name} - treating as low risk`);
                 return 'low'; // Treat employees without OREBRO as low risk
               }
 
-              console.log(`${employee.first_name} ${employee.last_name} risk level: "${orebro.risk_level}"`);
-              return orebro.risk_level;
+              const latestOrebro = orebro[0];
+              console.log(`${employee.first_name} ${employee.last_name} risk level: "${latestOrebro.risk_level}"`);
+              return latestOrebro.risk_level || 'low';
             })
           );
 
