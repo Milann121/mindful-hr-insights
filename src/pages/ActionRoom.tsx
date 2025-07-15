@@ -279,7 +279,7 @@ const ActionRoom = () => {
                       
                       {/* History button - mobile/tablet below credits */}
                       <div className="md:hidden mb-6">
-                        <Button onClick={() => setShowHistory(!showHistory)} variant="outline" size="sm">
+                        <Button onClick={() => setShowHistory(!showHistory)} variant="outline" size="sm" className="my-[15px]">
                           {t('actionRoom.history')}
                         </Button>
                       </div>
