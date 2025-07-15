@@ -130,13 +130,18 @@ const RiskAnalysisTable = () => {
           employee_count: 0,
           avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
           trend_direction: trendData?.find((t: any) => t.department_id === dept.department_id)?.trend_direction || null,
-          high_risk_percentage: null
+          high_risk_percentage: 0 // Return 0% for departments with no employees
         });
 
         // Helper function to calculate high risk percentage
         const calculateHighRiskPercentage = async (validEmployees: any[], departmentName: string) => {
           console.log(`\n=== CALCULATING HIGH RISK FOR ${departmentName} ===`);
-          console.log(`Processing ${validEmployees.length} employees`);
+          console.log(`Processing ${validEmployees.length} total employees`);
+
+          if (validEmployees.length === 0) {
+            console.log(`No employees in department ${departmentName}`);
+            return { percentage: 0, details: '0/0' };
+          }
 
           const riskLevels = await Promise.all(
             validEmployees.map(async (employee) => {
@@ -156,8 +161,8 @@ const RiskAnalysisTable = () => {
               }
 
               if (!orebro) {
-                console.log(`No OREBRO response found for ${employee.first_name} ${employee.last_name}`);
-                return null;
+                console.log(`No OREBRO response found for ${employee.first_name} ${employee.last_name} - treating as low risk`);
+                return 'low'; // Treat employees without OREBRO as low risk
               }
 
               console.log(`${employee.first_name} ${employee.last_name} risk level: "${orebro.risk_level}"`);
@@ -168,27 +173,24 @@ const RiskAnalysisTable = () => {
           // Filter out null values and ensure we have valid risk levels
           const validRiskLevels = riskLevels.filter(level => level !== null && typeof level === 'string' && level.trim() !== '');
           
-          console.log(`Valid risk levels found for ${departmentName}:`, validRiskLevels);
-
-          if (validRiskLevels.length === 0) {
-            console.log(`No valid OREBRO responses found for ${departmentName}`);
-            return { percentage: null, details: 'No OREBRO responses' };
-          }
+          console.log(`Risk levels for all employees in ${departmentName}:`, validRiskLevels);
 
           // Count high risk cases (case-insensitive)
           const highRiskCount = validRiskLevels.filter(level => 
             level.toLowerCase().trim() === 'high'
           ).length;
 
-          const percentage = Math.round((highRiskCount / validRiskLevels.length) * 100);
+          // Business logic: (high risk employees / ALL employees in department) * 100
+          const percentage = Math.round((highRiskCount / validEmployees.length) * 100);
           
           console.log(`HIGH RISK CALCULATION FOR ${departmentName}:`);
-          console.log(`- Total employees: ${validEmployees.length}`);
-          console.log(`- With OREBRO responses: ${validRiskLevels.length}`);
+          console.log(`- Total employees in department: ${validEmployees.length}`);
+          console.log(`- Employees with OREBRO responses: ${validRiskLevels.length}`);
+          console.log(`- Employees without OREBRO (treated as low risk): ${validEmployees.length - validRiskLevels.length}`);
           console.log(`- High risk count: ${highRiskCount}`);
-          console.log(`- Percentage: ${percentage}%`);
+          console.log(`- Calculation: (${highRiskCount} / ${validEmployees.length}) * 100 = ${percentage}%`);
 
-          return { percentage, details: `${highRiskCount}/${validRiskLevels.length}` };
+          return { percentage, details: `${highRiskCount}/${validEmployees.length}` };
         };
 
         // Get high risk percentages for each department
