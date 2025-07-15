@@ -629,15 +629,12 @@ const ActionRoom = () => {
                   {' '}{t('actionRoom.invitationToAll')}
                 </p>
               </div>
-              <Button className="flex items-center gap-2">
-                <Send size={16} />
-                {t('actionRoom.sendInvitation')}
-              </Button>
               
-              {/* Blue Chat Bubble - High Risk Message */}
+              {/* Preview and Blue Chat Bubble - High Risk Message */}
               {showHighRiskBubble && (
-                <div className="mt-4 animate-fade-in">
-                  <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-bl-md shadow-sm max-w-md">
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-gray-700">{t('actionRoom.preview')}</p>
+                  <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-bl-md shadow-sm max-w-md animate-fade-in">
                     <h3 className="font-bold mb-3">{t('actionRoom.helpHighRiskMessage.title')}</h3>
                     <p className="text-sm leading-relaxed mb-3 whitespace-pre-line">
                       {t('actionRoom.helpHighRiskMessage.body', { 
@@ -649,7 +646,19 @@ const ActionRoom = () => {
                       {t('actionRoom.helpHighRiskMessage.footer')}
                     </p>
                   </div>
+                  <Button className="flex items-center gap-2">
+                    <Send size={16} />
+                    {t('actionRoom.sendInvitation')}
+                  </Button>
                 </div>
+              )}
+              
+              {/* Send Invitation Button - when bubble is not shown */}
+              {!showHighRiskBubble && (
+                <Button className="flex items-center gap-2">
+                  <Send size={16} />
+                  {t('actionRoom.sendInvitation')}
+                </Button>
               )}
             </CardContent>
           </Card>
