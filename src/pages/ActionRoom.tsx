@@ -594,8 +594,27 @@ const ActionRoom = () => {
             <div className={`flex gap-4 ${showHighRiskHistory ? 'md:flex-row flex-col' : ''}`}>
               <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  {/* Desktop: Title and History button inline */}
+                  <div className="hidden md:flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
+                      <Users size={20} />
+                      {t('actionRoom.helpHighRiskEmployees')}
+                    </CardTitle>
+                    
+                    {!showHighRiskHistory && (
+                      <Button
+                        onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        {t('actionRoom.history')}
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {/* Mobile: Title and History button stacked */}
+                  <div className="md:hidden">
+                    <CardTitle className="flex items-center gap-2 mb-4">
                       <Users size={20} />
                       {t('actionRoom.helpHighRiskEmployees')}
                     </CardTitle>
