@@ -76,32 +76,72 @@ const ActionRoom = () => {
     }
   };
   const fetchHighRiskCount = async () => {
+    console.log('Starting fetchHighRiskCount...');
+    
     const {
       data: {
         user
       }
     } = await supabase.auth.getUser();
-    if (!user) return;
+    
+    console.log('Current user:', user);
+    
+    if (!user) {
+      console.log('No authenticated user found');
+      setHighRiskCount(0);
+      return;
+    }
+    
     try {
-      const {
-        data: userProfile
-      } = await supabase.from('user_profiles').select('b2b_partner_id').eq('user_id', user.id).single();
-      if (!userProfile?.b2b_partner_id) return;
+      // First, let's check if this user is an HR manager
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('user_type, hr_manager_id')
+        .eq('id', user.id)
+        .single();
+      
+      console.log('User record:', userRecord);
+      
+      if (!userRecord || userRecord.user_type !== 'hr_manager') {
+        console.log('User is not an HR manager');
+        setHighRiskCount(0);
+        return;
+      }
+
+      // Get the HR manager's b2b_partner_id
+      const { data: hrManager } = await supabase
+        .from('hr_managers')
+        .select('b2b_partner')
+        .eq('id', userRecord.hr_manager_id)
+        .single();
+      
+      console.log('HR Manager data:', hrManager);
+      
+      if (!hrManager?.b2b_partner) {
+        console.log('No b2b_partner found for HR manager');
+        setHighRiskCount(0);
+        return;
+      }
 
       let employeesQuery = supabase
         .from('b2b_employees')
         .select('user_id, id')
-        .eq('b2b_partner_id', userProfile.b2b_partner_id)
+        .eq('b2b_partner_id', hrManager.b2b_partner)
         .not('user_id', 'is', null);
 
       // If specific department is selected, filter by department
       if (selectedDepartment && selectedDepartment !== 'all') {
+        console.log('Filtering by department:', selectedDepartment);
+        
         const { data: userProfiles } = await supabase
           .from('user_profiles')
           .select('user_id')
           .eq('department_id', selectedDepartment);
         
+        console.log('Department user profiles:', userProfiles);
+        
         if (!userProfiles?.length) {
+          console.log('No users found in selected department');
           setHighRiskCount(0);
           return;
         }
@@ -111,28 +151,47 @@ const ActionRoom = () => {
       }
 
       const { data: employees } = await employeesQuery;
+      console.log('Employees found:', employees);
+      
       if (!employees?.length) {
+        console.log('No employees found');
         setHighRiskCount(0);
         return;
       }
 
       const userIds = employees.map(emp => emp.user_id);
+      console.log('Employee user IDs:', userIds);
+      
       const {
         data: orebroResponses
       } = await supabase.from('orebro_responses').select('user_id, risk_level, updated_at').in('user_id', userIds).order('updated_at', {
         ascending: false
       });
-      if (!orebroResponses) return;
+      
+      console.log('OREBRO responses:', orebroResponses);
+      
+      if (!orebroResponses?.length) {
+        console.log('No OREBRO responses found');
+        setHighRiskCount(0);
+        return;
+      }
+      
       const latestResponses = new Map();
       orebroResponses.forEach(response => {
         if (!latestResponses.has(response.user_id)) {
           latestResponses.set(response.user_id, response);
         }
       });
+      
+      console.log('Latest responses per user:', Array.from(latestResponses.values()));
+      
       const currentHighRisk = Array.from(latestResponses.values()).filter(response => response.risk_level && response.risk_level.toLowerCase().trim() === 'high').length;
+      
+      console.log('High risk count calculated:', currentHighRisk);
       setHighRiskCount(currentHighRisk);
     } catch (error) {
       console.error('Error fetching high risk count:', error);
+      setHighRiskCount(0);
     }
   };
   const handleFocusAreaChange = (area: string, checked: boolean) => {
