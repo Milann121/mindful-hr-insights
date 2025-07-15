@@ -46,6 +46,9 @@ const ActionRoom = () => {
   const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
   const [showThirdGreyBubble, setShowThirdGreyBubble] = useState<boolean>(false);
   const [showHistory, setShowHistory] = useState<boolean>(false);
+  
+  // High Risk Employee Message State
+  const [showHighRiskBubble, setShowHighRiskBubble] = useState<boolean>(false);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -608,7 +611,12 @@ const ActionRoom = () => {
                 </p>
                 <p>
                   {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
-                  <Select value={invitationType} onValueChange={setInvitationType}>
+                  <Select value={invitationType} onValueChange={(value) => {
+                    setInvitationType(value);
+                    if (value) {
+                      setShowHighRiskBubble(true);
+                    }
+                  }}>
                     <SelectTrigger className="w-20 inline-flex">
                       <SelectValue placeholder={t('actionRoom.type')} />
                     </SelectTrigger>
@@ -623,6 +631,24 @@ const ActionRoom = () => {
                 <Send size={16} />
                 {t('actionRoom.sendInvitation')}
               </Button>
+              
+              {/* Blue Chat Bubble - High Risk Message */}
+              {showHighRiskBubble && (
+                <div className="mt-4 animate-fade-in">
+                  <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-bl-md shadow-sm max-w-md">
+                    <h3 className="font-bold mb-3">{t('actionRoom.helpHighRiskMessage.title')}</h3>
+                    <p className="text-sm leading-relaxed mb-3 whitespace-pre-line">
+                      {t('actionRoom.helpHighRiskMessage.body', { 
+                        firstName: userProfile?.first_name || '',
+                        lastName: 'Smith'  // Using placeholder last name as requested
+                      })}
+                    </p>
+                    <p className="text-xs opacity-80 italic">
+                      {t('actionRoom.helpHighRiskMessage.footer')}
+                    </p>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

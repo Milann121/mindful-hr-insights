@@ -285,6 +285,11 @@
       "exercises": "cvičení",
       "symptoms": "symptomy",
       "behaviouralTips": "behaviorální tipy"
+    },
+    "helpHighRiskMessage": {
+      "title": "CHCEME VÁM POMOCI",
+      "body": "Na základě výsledků vyplněného OREBRO dotazníku jsme byli upozorněni, že jste v vysokém riziku absence a postižení poruchami pohybového systému.\n\nVážíme si vašeho zdraví, proto pokud chcete s námi hledat řešení vašeho stavu, budeme rádi, když se ohlásíte na HR oddělení a společně budeme hledat optimální řešení vašeho stavu.\n\nDěkujeme, že jste součástí naší společnosti.\n{{firstName}} {{lastName}}.",
+      "footer": "*Tato zpráva je šifrovaná a odeslána z aplikace Pebee terapeut. Zaměstnavatel nemůže vystopovat vaše údaje a zpráva je plně anonymní."
     }
   },
   "common": {
