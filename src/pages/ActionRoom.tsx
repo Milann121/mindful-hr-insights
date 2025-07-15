@@ -265,7 +265,7 @@ const ActionRoom = () => {
                           <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
                             {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
                           </Badge>
-                          <Badge variant="outline" className="px-4 py-2 my-0">
+                          <Badge variant="outline" className="px-4 my-0 py-[8px] mx-[5px]">
                             {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
                           </Badge>
                         </div>
