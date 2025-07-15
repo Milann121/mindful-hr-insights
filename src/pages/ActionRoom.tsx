@@ -316,29 +316,31 @@ const ActionRoom = () => {
               <CardHeader>
                 <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
                 
-                {/* Credits Dashboard */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex flex-col gap-1 md:flex-row md:gap-4">
-                    <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
-                      {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
-                    </Badge>
-                    <Badge variant="outline" className="px-4 py-2 my-[25px]">
-                      {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
-                    </Badge>
-                  </div>
-                  <Button
-                    onClick={() => setShowHistory(!showHistory)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    {t('actionRoom.history')}
-                  </Button>
-                </div>
-                
                 {!showHistory && (
-                  <p className="text-zinc-950 text-lg font-thin">
-                    {t('actionRoom.createCampaignDescription')}
-                  </p>
+                  <>
+                    {/* Credits Dashboard */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col gap-1 md:flex-row md:gap-4">
+                        <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
+                          {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
+                        </Badge>
+                        <Badge variant="outline" className="px-4 py-2 my-[25px]">
+                          {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
+                        </Badge>
+                      </div>
+                      <Button
+                        onClick={() => setShowHistory(!showHistory)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        {t('actionRoom.history')}
+                      </Button>
+                    </div>
+                    
+                    <p className="text-zinc-950 text-lg font-thin">
+                      {t('actionRoom.createCampaignDescription')}
+                    </p>
+                  </>
                 )}
               </CardHeader>
               
@@ -348,7 +350,7 @@ const ActionRoom = () => {
                     onClick={() => setShowHistory(false)}
                     variant="ghost"
                     size="sm"
-                    className="flex items-center gap-1"
+                    className="w-8 h-8 rounded-full bg-black hover:bg-gray-800 text-white flex items-center justify-center p-0"
                   >
                     <ChevronRight size={16} />
                   </Button>
