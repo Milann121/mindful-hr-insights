@@ -124,13 +124,15 @@ const RiskAnalysisTable = () => {
         // Get high risk percentages for each department
         const departmentsWithHighRisk = await Promise.all(
           deptData.map(async (dept: any) => {
-            console.log(`\n=== Processing department: ${dept.department_name} ===`);
+            console.log(`\n=== Processing department: ${dept.department_name} (ID: ${dept.department_id}) ===`);
             
             // Get all employees in this department
             const { data: deptEmployees, error: deptError } = await supabase
               .from('user_profiles')
-              .select('user_id, first_name, last_name')
+              .select('user_id, first_name, last_name, department_id')
               .eq('department_id', dept.department_id);
+
+            console.log(`Query result for department ${dept.department_name}:`, { deptEmployees, deptError });
 
             if (deptError) {
               console.error('Error fetching department employees:', dept.department_id, deptError);
