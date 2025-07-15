@@ -296,8 +296,10 @@ const ActionRoom = () => {
             <Navigation />
           </div>
           
-          {/* Language Switcher - right aligned */}
-          <LanguageSwitcher />
+          {/* Language Switcher - right aligned on desktop, left on mobile */}
+          <div className="md:ml-auto">
+            <LanguageSwitcher />
+          </div>
         </div>
         <div className="container mx-auto px-6 py-8">
           <PageHeader title={t('actionRoom.title')} subtitle={t('actionRoom.subtitle')} />
