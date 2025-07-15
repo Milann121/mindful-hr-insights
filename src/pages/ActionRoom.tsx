@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { DateFilterProvider } from '@/contexts/DateFilterContext';
 import PageHeader from '@/components/layout/PageHeader';
+import Navigation from '@/components/layout/Navigation';
 import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -286,7 +287,13 @@ const ActionRoom = () => {
   };
   return <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
-        <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
+        <div className="flex justify-between items-center gap-4 p-4 border-b bg-white">
+          {/* Mobile Navigation - left aligned */}
+          <div className="md:hidden">
+            <Navigation />
+          </div>
+          
+          {/* Language Switcher - right aligned */}
           <LanguageSwitcher />
         </div>
         <div className="container mx-auto px-6 py-8">
