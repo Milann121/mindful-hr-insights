@@ -36,7 +36,7 @@ const ActionRoom = () => {
   const [rotationPeriod, setRotationPeriod] = useState<string>('');
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
   const [secondBubbleFocusAreas, setSecondBubbleFocusAreas] = useState<string[]>([]);
-
+  
   // Chat bubble animation states
   const [showGreyBubble, setShowGreyBubble] = useState<boolean>(false);
   const [showTypingDots, setShowTypingDots] = useState<boolean>(false);
@@ -46,12 +46,42 @@ const ActionRoom = () => {
   const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
   const [showThirdGreyBubble, setShowThirdGreyBubble] = useState<boolean>(false);
   const [showHistory, setShowHistory] = useState<boolean>(false);
-  const campaignTypes = [t('actionRoom.campaignTypes.poster'), t('actionRoom.campaignTypes.email'), t('actionRoom.campaignTypes.billboard'), t('actionRoom.campaignTypes.sms'), t('actionRoom.campaignTypes.socialMedia')];
-  const differentials = [t('actionRoom.differentials.backPain'), t('actionRoom.differentials.neckPain'), t('actionRoom.differentials.shoulderPain'), t('actionRoom.differentials.wristPain'), t('actionRoom.differentials.kneePain')];
-  const invitationTypes = [t('actionRoom.invitationTypes.email'), t('actionRoom.invitationTypes.sms')];
-  const rotationPeriods = [t('actionRoom.rotationPeriods.threeMonths'), t('actionRoom.rotationPeriods.sixMonths'), t('actionRoom.rotationPeriods.nineMonths'), t('actionRoom.rotationPeriods.twelveMonths')];
-  const focusOptions = [t('actionRoom.focusOptions.definition'), t('actionRoom.focusOptions.symptoms'), t('actionRoom.focusOptions.exercises'), t('actionRoom.focusOptions.behaviouralTips')];
-  const secondBubbleFocusOptions = [t('actionRoom.secondBubbleFocusOptions.problemDescription'), t('actionRoom.secondBubbleFocusOptions.exercises'), t('actionRoom.secondBubbleFocusOptions.symptoms'), t('actionRoom.secondBubbleFocusOptions.behaviouralTips')];
+  const campaignTypes = [
+    t('actionRoom.campaignTypes.poster'),
+    t('actionRoom.campaignTypes.email'),
+    t('actionRoom.campaignTypes.billboard'),
+    t('actionRoom.campaignTypes.sms'),
+    t('actionRoom.campaignTypes.socialMedia')
+  ];
+  const differentials = [
+    t('actionRoom.differentials.backPain'),
+    t('actionRoom.differentials.neckPain'),
+    t('actionRoom.differentials.shoulderPain'),
+    t('actionRoom.differentials.wristPain'),
+    t('actionRoom.differentials.kneePain')
+  ];
+  const invitationTypes = [
+    t('actionRoom.invitationTypes.email'),
+    t('actionRoom.invitationTypes.sms')
+  ];
+  const rotationPeriods = [
+    t('actionRoom.rotationPeriods.threeMonths'),
+    t('actionRoom.rotationPeriods.sixMonths'),
+    t('actionRoom.rotationPeriods.nineMonths'),
+    t('actionRoom.rotationPeriods.twelveMonths')
+  ];
+  const focusOptions = [
+    t('actionRoom.focusOptions.definition'),
+    t('actionRoom.focusOptions.symptoms'),
+    t('actionRoom.focusOptions.exercises'),
+    t('actionRoom.focusOptions.behaviouralTips')
+  ];
+  const secondBubbleFocusOptions = [
+    t('actionRoom.secondBubbleFocusOptions.problemDescription'),
+    t('actionRoom.secondBubbleFocusOptions.exercises'),
+    t('actionRoom.secondBubbleFocusOptions.symptoms'),
+    t('actionRoom.secondBubbleFocusOptions.behaviouralTips')
+  ];
   useEffect(() => {
     fetchUserProfile();
     fetchDepartments();
@@ -90,23 +120,31 @@ const ActionRoom = () => {
   };
   const fetchHighRiskCount = async () => {
     console.log('Starting fetchHighRiskCount...');
+    
     const {
       data: {
         user
       }
     } = await supabase.auth.getUser();
+    
     console.log('Current user:', user);
+    
     if (!user) {
       console.log('No authenticated user found');
       setHighRiskCount(0);
       return;
     }
+    
     try {
       // First, let's check if this user is an HR manager
-      const {
-        data: userRecord
-      } = await supabase.from('users').select('user_type, hr_manager_id').eq('id', user.id).single();
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('user_type, hr_manager_id')
+        .eq('id', user.id)
+        .single();
+      
       console.log('User record:', userRecord);
+      
       if (!userRecord || userRecord.user_type !== 'hr_manager') {
         console.log('User is not an HR manager');
         setHighRiskCount(0);
@@ -114,62 +152,84 @@ const ActionRoom = () => {
       }
 
       // Get the HR manager's b2b_partner_id
-      const {
-        data: hrManager
-      } = await supabase.from('hr_managers').select('b2b_partner').eq('id', userRecord.hr_manager_id).single();
+      const { data: hrManager } = await supabase
+        .from('hr_managers')
+        .select('b2b_partner')
+        .eq('id', userRecord.hr_manager_id)
+        .single();
+      
       console.log('HR Manager data:', hrManager);
+      
       if (!hrManager?.b2b_partner) {
         console.log('No b2b_partner found for HR manager');
         setHighRiskCount(0);
         return;
       }
-      let employeesQuery = supabase.from('b2b_employees').select('user_id, id').eq('b2b_partner_id', hrManager.b2b_partner).not('user_id', 'is', null);
+
+      let employeesQuery = supabase
+        .from('b2b_employees')
+        .select('user_id, id')
+        .eq('b2b_partner_id', hrManager.b2b_partner)
+        .not('user_id', 'is', null);
 
       // If specific department is selected, filter by department
       if (selectedDepartment && selectedDepartment !== 'all') {
         console.log('Filtering by department:', selectedDepartment);
-        const {
-          data: userProfiles
-        } = await supabase.from('user_profiles').select('user_id').eq('department_id', selectedDepartment);
+        
+        const { data: userProfiles } = await supabase
+          .from('user_profiles')
+          .select('user_id')
+          .eq('department_id', selectedDepartment);
+        
         console.log('Department user profiles:', userProfiles);
+        
         if (!userProfiles?.length) {
           console.log('No users found in selected department');
           setHighRiskCount(0);
           return;
         }
+        
         const departmentUserIds = userProfiles.map(profile => profile.user_id);
         employeesQuery = employeesQuery.in('user_id', departmentUserIds);
       }
-      const {
-        data: employees
-      } = await employeesQuery;
+
+      const { data: employees } = await employeesQuery;
       console.log('Employees found:', employees);
+      
       if (!employees?.length) {
         console.log('No employees found');
         setHighRiskCount(0);
         return;
       }
+
       const userIds = employees.map(emp => emp.user_id);
       console.log('Employee user IDs:', userIds);
+      
       const {
         data: orebroResponses
       } = await supabase.from('orebro_responses').select('user_id, risk_level, updated_at').in('user_id', userIds).order('updated_at', {
         ascending: false
       });
+      
       console.log('OREBRO responses:', orebroResponses);
+      
       if (!orebroResponses?.length) {
         console.log('No OREBRO responses found');
         setHighRiskCount(0);
         return;
       }
+      
       const latestResponses = new Map();
       orebroResponses.forEach(response => {
         if (!latestResponses.has(response.user_id)) {
           latestResponses.set(response.user_id, response);
         }
       });
+      
       console.log('Latest responses per user:', Array.from(latestResponses.values()));
+      
       const currentHighRisk = Array.from(latestResponses.values()).filter(response => response.risk_level && response.risk_level.toLowerCase().trim() === 'high').length;
+      
       console.log('High risk count calculated:', currentHighRisk);
       setHighRiskCount(currentHighRisk);
     } catch (error) {
@@ -184,29 +244,36 @@ const ActionRoom = () => {
       setFocusAreas(focusAreas.filter(f => f !== area));
     }
   };
+
   const handleSendMessage = () => {
     if (isAnimating) return;
+    
     setIsAnimating(true);
     setShowTypingDots(true);
+    
     setTimeout(() => {
       setShowTypingDots(false);
       setShowGreyBubble(true);
       setIsAnimating(false);
-
+      
       // Start timer for second blue bubble
       setTimeout(() => {
         setShowSecondBlueBubble(true);
       }, 3000);
     }, 2000);
   };
+
   const handleSecondSendMessage = () => {
     console.log('Second blue bubble send clicked');
+    
     setShowSecondTypingDots(true);
+    
     setTimeout(() => {
       setShowSecondTypingDots(false);
       setShowSecondGreyBubble(true);
     }, 2000);
   };
+
   const handleSecondBubbleFocusAreaChange = (area: string, checked: boolean) => {
     if (checked) {
       setSecondBubbleFocusAreas([...secondBubbleFocusAreas, area]);
@@ -214,6 +281,7 @@ const ActionRoom = () => {
       setSecondBubbleFocusAreas(secondBubbleFocusAreas.filter(f => f !== area));
     }
   };
+
   const handleConfirmCampaign = () => {
     setShowThirdGreyBubble(true);
   };
@@ -254,24 +322,27 @@ const ActionRoom = () => {
             <div className={`flex gap-4 ${showHistory ? 'md:flex-row flex-col' : ''}`}>
               <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
                 <CardHeader>
-                  <CardTitle>{t('actionRoom.ourCampaigns', {
-                      company: userProfile?.b2b_partner_name || t('actionRoom.company')
-                    })}</CardTitle>
+                  <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
                   
-                  {!showHistory && <>
+                  {!showHistory && (
+                    <>
                       {/* Credits Dashboard */}
                       <div className="flex items-center justify-between mb-4">
-                        <div className="flex flex-col gap-1 md:flex-row md:gap-2 my-0">
+                        <div className="flex flex-col gap-1 md:flex-row md:gap-2">
                           <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
                             {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
                           </Badge>
-                          <Badge variant="outline" className="px-4 my-0 py-[8px] mx-[5px]">
+                          <Badge variant="outline" className="px-4 py-2 my-[25px]">
                             {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
                           </Badge>
                         </div>
                         {/* History button - desktop only */}
                         <div className="hidden md:block">
-                          <Button onClick={() => setShowHistory(!showHistory)} variant="outline" size="sm">
+                          <Button
+                            onClick={() => setShowHistory(!showHistory)}
+                            variant="outline"
+                            size="sm"
+                          >
                             {t('actionRoom.history')}
                           </Button>
                         </div>
@@ -279,7 +350,11 @@ const ActionRoom = () => {
                       
                       {/* History button - mobile/tablet below credits */}
                       <div className="md:hidden mb-6">
-                        <Button onClick={() => setShowHistory(!showHistory)} variant="outline" size="sm" className="my-[15px]">
+                        <Button
+                          onClick={() => setShowHistory(!showHistory)}
+                          variant="outline"
+                          size="sm"
+                        >
                           {t('actionRoom.history')}
                         </Button>
                       </div>
@@ -287,14 +362,23 @@ const ActionRoom = () => {
                       <p className="text-zinc-950 text-lg font-thin">
                         {t('actionRoom.createCampaignDescription')}
                       </p>
-                    </>}
+                    </>
+                  )}
                 </CardHeader>
               
-              {showHistory ? <CardContent className="flex items-center justify-center">
-                  <Button onClick={() => setShowHistory(false)} variant="ghost" size="sm" className="w-8 h-8 rounded-full bg-black hover:bg-gray-800 text-white flex items-center justify-center p-0">
+              {showHistory ? (
+                <CardContent className="flex items-center justify-center">
+                  <Button
+                    onClick={() => setShowHistory(false)}
+                    variant="ghost"
+                    size="sm"
+                    className="w-8 h-8 rounded-full bg-black hover:bg-gray-800 text-white flex items-center justify-center p-0"
+                  >
                     <ChevronRight size={16} />
                   </Button>
-                </CardContent> : <CardContent className="space-y-6">
+                </CardContent>
+              ) : (
+                <CardContent className="space-y-6">
                   {/* User Message - Blue bubble from right */}
                   <div className="flex justify-end mb-4">
                     <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
@@ -334,14 +418,19 @@ const ActionRoom = () => {
                        </div>
                       
                       {/* Send Icon - positioned in bottom right corner */}
-                      <button onClick={handleSendMessage} disabled={isAnimating} className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50">
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={isAnimating}
+                        className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
+                      >
                         <ArrowUp size={16} className="text-blue-500" />
                       </button>
                     </div>
                   </div>
 
                   {/* Typing Dots Animation */}
-                  {showTypingDots && <div className="flex justify-start mb-4">
+                  {showTypingDots && (
+                    <div className="flex justify-start mb-4">
                       <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
@@ -349,39 +438,53 @@ const ActionRoom = () => {
                           <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
                         </div>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   {/* Bot Response - Grey bubble from left */}
-                  {showGreyBubble && <div className="flex justify-start mb-4">
+                  {showGreyBubble && (
+                    <div className="flex justify-start mb-4">
                       <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                        <p className="mb-2">{t('actionRoom.hello', {
-                          name: userProfile?.first_name || t('actionRoom.there')
-                        })}</p>
+                        <p className="mb-2">{t('actionRoom.hello', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
                         <p className="mb-3">{t('actionRoom.happyToPrepare')}</p>
                         <p className="text-sm">{t('actionRoom.whatTopics')}</p>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   {/* Second Blue Bubble - appears after 3 seconds */}
-                  {showSecondBlueBubble && <div className="flex justify-end mb-4">
+                  {showSecondBlueBubble && (
+                    <div className="flex justify-end mb-4">
                       <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
                         <p className="mb-3">{t('actionRoom.pebeeIWantYou')}</p>
                         <div className="space-y-2 mb-6">
-                          {secondBubbleFocusOptions.map(option => <div key={option} className="flex items-center space-x-2">
-                              <Checkbox id={`second-${option}`} checked={secondBubbleFocusAreas.includes(option)} onCheckedChange={checked => handleSecondBubbleFocusAreaChange(option, checked as boolean)} className="border-white data-[state=checked]:bg-white data-[state=checked]:text-blue-500" />
+                          {secondBubbleFocusOptions.map(option => (
+                            <div key={option} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`second-${option}`}
+                                checked={secondBubbleFocusAreas.includes(option)}
+                                onCheckedChange={(checked) => handleSecondBubbleFocusAreaChange(option, checked as boolean)}
+                                className="border-white data-[state=checked]:bg-white data-[state=checked]:text-blue-500"
+                              />
                               <label htmlFor={`second-${option}`} className="text-sm">{option}</label>
-                            </div>)}
+                            </div>
+                          ))}
                         </div>
                         
                         {/* Send Icon - positioned in bottom right corner */}
-                        <button onClick={handleSecondSendMessage} className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors">
+                        <button
+                          onClick={handleSecondSendMessage}
+                          className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors"
+                        >
                           <ArrowUp size={16} className="text-blue-500" />
                         </button>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   {/* Second Typing Dots Animation */}
-                  {showSecondTypingDots && <div className="flex justify-start mb-4">
+                  {showSecondTypingDots && (
+                    <div className="flex justify-start mb-4">
                       <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
@@ -389,85 +492,68 @@ const ActionRoom = () => {
                           <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
                         </div>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   {/* Second Grey Bubble - appears after second typing dots */}
-                  {showSecondGreyBubble && <div className="flex justify-start mb-4">
+                  {showSecondGreyBubble && (
+                    <div className="flex justify-start mb-4">
                       <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                        <p className="mb-2">{t('actionRoom.sureLetsDo', {
-                          name: userProfile?.first_name || ''
-                        })}</p>
+                        <p className="mb-2">{t('actionRoom.sureLetsDo', { name: userProfile?.first_name || '' })}</p>
                         <p className="text-sm mb-4">{t('actionRoom.giveMeSeconds')}</p>
                         <div className="flex items-center justify-between">
                           <p className="text-sm">{t('actionRoom.pleaseConfirm')}</p>
-                          <Button onClick={handleConfirmCampaign} size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
+                          <Button 
+                            onClick={handleConfirmCampaign}
+                            size="sm"
+                            className="bg-blue-500 hover:bg-blue-600 text-white"
+                          >
                             {t('actionRoom.confirm')}
                           </Button>
                         </div>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   {/* Third Grey Bubble - appears after confirm is clicked */}
-                  {showThirdGreyBubble && <div className="flex justify-start mb-4">
+                  {showThirdGreyBubble && (
+                    <div className="flex justify-start mb-4">
                       <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
                         <p className="mb-4 text-sm">{t('actionRoom.creatingCampaign')}</p>
                         <div className="flex gap-4 justify-center">
                           {/* Poster 1 */}
                           <div className="relative w-20 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-md border-2 border-blue-300 animate-pulse">
                             <div className="absolute inset-2 space-y-1">
-                              <div className="h-2 bg-blue-300 rounded animate-fade-in" style={{
-                              animationDelay: '0.5s'
-                            }}></div>
-                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{
-                              animationDelay: '1s'
-                            }}></div>
-                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{
-                              animationDelay: '1.5s'
-                            }}></div>
-                              <div className="h-8 bg-blue-300 rounded animate-fade-in" style={{
-                              animationDelay: '2s'
-                            }}></div>
+                              <div className="h-2 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '0.5s'}}></div>
+                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1s'}}></div>
+                              <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1.5s'}}></div>
+                              <div className="h-8 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '2s'}}></div>
                             </div>
                           </div>
                           
                           {/* Poster 2 */}
                           <div className="relative w-20 h-28 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-md border-2 border-green-300 animate-pulse">
                             <div className="absolute inset-2 space-y-1">
-                              <div className="h-2 bg-green-300 rounded animate-fade-in" style={{
-                              animationDelay: '0.7s'
-                            }}></div>
-                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{
-                              animationDelay: '1.2s'
-                            }}></div>
-                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{
-                              animationDelay: '1.7s'
-                            }}></div>
-                              <div className="h-8 bg-green-300 rounded animate-fade-in" style={{
-                              animationDelay: '2.2s'
-                            }}></div>
+                              <div className="h-2 bg-green-300 rounded animate-fade-in" style={{animationDelay: '0.7s'}}></div>
+                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.2s'}}></div>
+                              <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.7s'}}></div>
+                              <div className="h-8 bg-green-300 rounded animate-fade-in" style={{animationDelay: '2.2s'}}></div>
                             </div>
                           </div>
                           
                           {/* Poster 3 */}
                           <div className="relative w-20 h-28 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg shadow-md border-2 border-purple-300 animate-pulse">
                             <div className="absolute inset-2 space-y-1">
-                              <div className="h-2 bg-purple-300 rounded animate-fade-in" style={{
-                              animationDelay: '0.9s'
-                            }}></div>
-                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{
-                              animationDelay: '1.4s'
-                            }}></div>
-                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{
-                              animationDelay: '1.9s'
-                            }}></div>
-                              <div className="h-8 bg-purple-300 rounded animate-fade-in" style={{
-                              animationDelay: '2.4s'
-                            }}></div>
+                              <div className="h-2 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '0.9s'}}></div>
+                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.4s'}}></div>
+                              <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.9s'}}></div>
+                              <div className="h-8 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '2.4s'}}></div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>}
+                    </div>
+                  )}
 
                   <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                     <Button className="flex items-center gap-2">
@@ -479,18 +565,21 @@ const ActionRoom = () => {
                       {t('actionRoom.exportCampaign')}
                     </Button>
                   </div>
-                </CardContent>}
+                </CardContent>
+              )}
               </Card>
 
               {/* History Container - Desktop: to the right, Mobile: below */}
-              {showHistory && <Card className={`animate-fade-in ${showHistory ? 'md:w-2/3 w-full' : ''}`}>
+              {showHistory && (
+                <Card className={`animate-fade-in ${showHistory ? 'md:w-2/3 w-full' : ''}`}>
                   <CardHeader>
                     <CardTitle>{t('actionRoom.history')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {/* History content will be added here */}
                   </CardContent>
-                </Card>}
+                </Card>
+              )}
             </div>
           </div>
 
@@ -506,15 +595,19 @@ const ActionRoom = () => {
               <div className="space-y-3">
                 <p>
                   {t('actionRoom.weHaveIdentified')}{' '}
-                  <span className={`font-bold ${highRiskCount === 0 ? 'text-green-600' : 'text-red-600 animate-pulse'}`}>
+                  <span 
+                    className={`font-bold ${
+                      highRiskCount === 0 
+                        ? 'text-green-600' 
+                        : 'text-red-600 animate-pulse'
+                    }`}
+                  >
                     {highRiskCount}
                   </span>{' '}
                   {t('actionRoom.highRiskEmployees')}
                 </p>
                 <p>
-                  {t('actionRoom.letsHelpThem', {
-                    name: userProfile?.first_name || t('actionRoom.there')
-                  })}{' '}
+                  {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
                   <Select value={invitationType} onValueChange={setInvitationType}>
                     <SelectTrigger className="w-20 inline-flex">
                       <SelectValue placeholder={t('actionRoom.type')} />
@@ -561,9 +654,7 @@ const ActionRoom = () => {
               <div className="bg-muted/50 p-4 rounded-lg">
                 <p className="font-medium mb-2">{t('actionRoom.reminderWindow')}</p>
                 <div className="space-y-2 text-sm">
-                  <p>{t('actionRoom.helloReminderGreeting', {
-                      name: userProfile?.first_name || t('actionRoom.there')
-                    })}</p>
+                  <p>{t('actionRoom.helloReminderGreeting', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
                   <p>{t('actionRoom.rotationReminderText')}</p>
                   <p>{t('actionRoom.letsImplementPlan')}</p>
                   <ol className="list-decimal list-inside space-y-1 ml-4">
