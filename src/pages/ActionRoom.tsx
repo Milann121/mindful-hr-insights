@@ -307,9 +307,9 @@ const ActionRoom = () => {
                   <button
                     onClick={handleSendMessage}
                     disabled={isAnimating}
-                    className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 rounded-full p-1.5 transition-colors disabled:opacity-50"
+                    className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors disabled:opacity-50"
                   >
-                    <ArrowUp size={16} className="text-white" />
+                    <ArrowUp size={16} className="text-blue-500" />
                   </button>
                 </div>
               </div>
