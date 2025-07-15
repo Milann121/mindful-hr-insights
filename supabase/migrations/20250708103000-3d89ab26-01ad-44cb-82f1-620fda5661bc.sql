@@ -7,45 +7,48 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  IF NEW.employee_id IS NULL THEN
-    RETURN NEW;
-  END IF;
+  -- Find existing employee by employee_id or user_id
+  PERFORM 1 FROM public.b2b_employees
+   WHERE employee_id = NEW.employee_id OR user_id = NEW.user_id
+   LIMIT 1;
 
-  INSERT INTO public.b2b_employees (
-    id,
-    b2b_partner_id,
-    b2b_partner_name,
-    user_id,
-    employee_id,
-    first_name,
-    last_name,
-    email,
-    state,
-    created_at,
-    updated_at
-  )
-  VALUES (
-    gen_random_uuid(),
-    NEW.b2b_partner_id,
-    NEW.b2b_partner_name,
-    NEW.user_id,
-    NEW.employee_id,
-    NEW.first_name,
-    NEW.last_name,
-    NEW.email,
-    'active',
-    now(),
-    now()
-  )
-  ON CONFLICT (employee_id)
-  DO UPDATE SET
-    user_id = EXCLUDED.user_id,
-    first_name = EXCLUDED.first_name,
-    last_name = EXCLUDED.last_name,
-    email = EXCLUDED.email,
-    b2b_partner_id = EXCLUDED.b2b_partner_id,
-    b2b_partner_name = EXCLUDED.b2b_partner_name,
-    updated_at = now();
+  IF NOT FOUND THEN
+    INSERT INTO public.b2b_employees (
+      id,
+      b2b_partner_id,
+      b2b_partner_name,
+      user_id,
+      employee_id,
+      first_name,
+      last_name,
+      email,
+      state,
+      created_at,
+      updated_at
+    ) VALUES (
+      gen_random_uuid(),
+      NEW.b2b_partner_id,
+      NEW.b2b_partner_name,
+      NEW.user_id,
+      NEW.employee_id,
+      NEW.first_name,
+      NEW.last_name,
+      NEW.email,
+      'active',
+      now(),
+      now()
+    );
+  ELSE
+    UPDATE public.b2b_employees
+      SET employee_id = NEW.employee_id,
+          first_name = NEW.first_name,
+          last_name = NEW.last_name,
+          email = NEW.email,
+          b2b_partner_id = NEW.b2b_partner_id,
+          b2b_partner_name = NEW.b2b_partner_name,
+          updated_at = now()
+      WHERE employee_id = NEW.employee_id OR user_id = NEW.user_id;
+  END IF;
 
   RETURN NEW;
 END;
@@ -76,8 +79,9 @@ SELECT
   now(),
   now()
 FROM public.user_profiles up
-LEFT JOIN public.b2b_employees be ON be.employee_id = up.employee_id
-WHERE up.employee_id IS NOT NULL AND be.id IS NULL;
+LEFT JOIN public.b2b_employees be
+  ON be.employee_id = up.employee_id OR be.user_id = up.user_id
+WHERE be.id IS NULL;
 
 -- Replace policy to also check user_id
 DROP POLICY IF EXISTS "HR managers can view their company's employee profiles" ON public.user_profiles;
