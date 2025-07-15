@@ -148,7 +148,9 @@ const RiskAnalysisTable = () => {
               };
             }
 
-            const employeeUserIds = deptEmployees?.map(emp => emp.user_id) || [];
+            const employeeUserIds = deptEmployees
+              ?.map(emp => emp.user_id)
+              .filter((id): id is string => Boolean(id)) || [];
             console.log(`Found ${employeeUserIds.length} employees in ${dept.department_name}:`, employeeUserIds);
             
             if (employeeUserIds.length === 0) {
@@ -165,7 +167,7 @@ const RiskAnalysisTable = () => {
             }
 
             // Get the latest OREBRO response for each employee
-            const latestRiskLevels = await Promise.all(
+            const latestRiskLevels = (await Promise.all(
               employeeUserIds.map(async (userId) => {
                 console.log(`Fetching OREBRO response for user: ${userId}`);
                 const { data: latestResponse, error } = await supabase
@@ -189,16 +191,18 @@ const RiskAnalysisTable = () => {
                 console.log(`User ${userId} latest risk level:`, latestResponse.risk_level);
                 return latestResponse.risk_level;
               })
-            );
+            )).filter(level => level !== null);
 
             console.log(`Raw risk levels for ${dept.department_name}:`, latestRiskLevels);
 
-            // Filter out null responses and count high risk
-            const validRiskLevels = latestRiskLevels.filter(level => level !== null);
+            // Filter out invalid responses and ensure only valid strings
+            const validRiskLevels = latestRiskLevels.filter(level =>
+              typeof level === 'string' && level.trim().length > 0
+            );
             console.log(`Valid risk levels for ${dept.department_name}:`, validRiskLevels);
             
             const highRiskCount = validRiskLevels.filter(level => {
-              const isHigh = level && String(level).toLowerCase().trim() === 'high';
+              const isHigh = level?.toLowerCase().trim() === 'high';
               console.log(`Risk level "${level}" is high: ${isHigh}`);
               return isHigh;
             }).length;
