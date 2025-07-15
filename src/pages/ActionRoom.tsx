@@ -328,7 +328,7 @@ const ActionRoom = () => {
                     <>
                       {/* Credits Dashboard */}
                       <div className="flex items-center justify-between mb-4">
-                        <div className="flex flex-col gap-1 md:flex-row md:gap-4">
+                        <div className="flex flex-col gap-1 md:flex-row md:gap-2">
                           <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
                             {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
                           </Badge>
@@ -349,7 +349,7 @@ const ActionRoom = () => {
                       </div>
                       
                       {/* History button - mobile/tablet below credits */}
-                      <div className="md:hidden mb-4">
+                      <div className="md:hidden mb-6">
                         <Button
                           onClick={() => setShowHistory(!showHistory)}
                           variant="outline"
