@@ -43,6 +43,7 @@ const ActionRoom = () => {
   const [showSecondBlueBubble, setShowSecondBlueBubble] = useState<boolean>(false);
   const [showSecondTypingDots, setShowSecondTypingDots] = useState<boolean>(false);
   const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
+  const [showThirdGreyBubble, setShowThirdGreyBubble] = useState<boolean>(false);
   const campaignTypes = ['poster', 'email', 'billboard', 'sms', 'social media'];
   const differentials = ['back pain', 'neck pain', 'shoulder pain', 'wrist pain', 'knee pain'];
   const invitationTypes = ['email', 'sms'];
@@ -248,6 +249,10 @@ const ActionRoom = () => {
       setSecondBubbleFocusAreas(secondBubbleFocusAreas.filter(f => f !== area));
     }
   };
+
+  const handleConfirmCampaign = () => {
+    setShowThirdGreyBubble(true);
+  };
   return <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
         <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
@@ -298,39 +303,46 @@ const ActionRoom = () => {
               <div className="flex justify-end mb-4">
                 <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
                   <p className="mb-2">Hey Pebee,</p>
-                  <div className="flex flex-wrap items-center gap-2 text-sm">
-                    <span>create a new</span>
-                    <Select value={campaignType} onValueChange={setCampaignType}>
-                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                        <SelectValue placeholder="type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <span>campaign for our</span>
-                    <Select value={targetDepartment} onValueChange={setTargetDepartment}>
-                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                        <SelectValue placeholder="dept" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All</SelectItem>
-                        {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
-                            {dept.department_name}
-                          </SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <span>colleagues about</span>
-                    <Select value={campaignTopic} onValueChange={setCampaignTopic}>
-                      <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                        <SelectValue placeholder="topic" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                    <span>.</span>
-                  </div>
+                   <div className="flex flex-wrap items-center gap-2 text-sm">
+                     <span>create a new</span>
+                     <Select value={campaignType} onValueChange={setCampaignType}>
+                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                         <SelectValue placeholder="type" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                       </SelectContent>
+                     </Select>
+                     <span>campaign for our</span>
+                     <Select value={targetDepartment} onValueChange={setTargetDepartment}>
+                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                         <SelectValue placeholder="dept" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="all">All</SelectItem>
+                         {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
+                             {dept.department_name}
+                           </SelectItem>)}
+                       </SelectContent>
+                     </Select>
+                     <span>colleagues about</span>
+                     <Select value={campaignTopic} onValueChange={setCampaignTopic}>
+                       <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
+                         <SelectValue placeholder="topic" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
+                       </SelectContent>
+                     </Select>
+                     <span>.</span>
+                   </div>
+                   
+                   {/* Full text display when all selections are made */}
+                   {campaignType && targetDepartment && campaignTopic && (
+                     <div className="mt-3 p-3 bg-blue-600 rounded-md text-sm">
+                       <p>create a new {campaignType} campaign for our {targetDepartment} colleagues about {campaignTopic}.</p>
+                     </div>
+                   )}
                   
                   {/* Send Icon - positioned in bottom right corner */}
                   <button
@@ -415,7 +427,57 @@ const ActionRoom = () => {
                 <div className="flex justify-start mb-4">
                   <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
                     <p className="mb-2">Sure, let's do this {userProfile?.first_name || ''}.</p>
-                    <p className="text-sm">Give me a few seconds to prepare a nice and functional campaign for you. When created, preview the campaign and let me know if you are satisfied or ready to download and distribute.</p>
+                    <p className="text-sm mb-4">Give me a few seconds to prepare a nice and functional campaign for you. When created, preview the campaign and let me know if you are satisfied or ready to download and distribute.</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm">Please, confirm to create the campaign.</p>
+                      <Button 
+                        onClick={handleConfirmCampaign}
+                        size="sm"
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        Confirm
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Third Grey Bubble - appears after confirm is clicked */}
+              {showThirdGreyBubble && (
+                <div className="flex justify-start mb-4">
+                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                    <p className="mb-4 text-sm">Creating your campaign...</p>
+                    <div className="flex gap-4 justify-center">
+                      {/* Poster 1 */}
+                      <div className="relative w-20 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-md border-2 border-blue-300 animate-pulse">
+                        <div className="absolute inset-2 space-y-1">
+                          <div className="h-2 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '0.5s'}}></div>
+                          <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1s'}}></div>
+                          <div className="h-1 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '1.5s'}}></div>
+                          <div className="h-8 bg-blue-300 rounded animate-fade-in" style={{animationDelay: '2s'}}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Poster 2 */}
+                      <div className="relative w-20 h-28 bg-gradient-to-br from-green-100 to-green-200 rounded-lg shadow-md border-2 border-green-300 animate-pulse">
+                        <div className="absolute inset-2 space-y-1">
+                          <div className="h-2 bg-green-300 rounded animate-fade-in" style={{animationDelay: '0.7s'}}></div>
+                          <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.2s'}}></div>
+                          <div className="h-1 bg-green-300 rounded animate-fade-in" style={{animationDelay: '1.7s'}}></div>
+                          <div className="h-8 bg-green-300 rounded animate-fade-in" style={{animationDelay: '2.2s'}}></div>
+                        </div>
+                      </div>
+                      
+                      {/* Poster 3 */}
+                      <div className="relative w-20 h-28 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg shadow-md border-2 border-purple-300 animate-pulse">
+                        <div className="absolute inset-2 space-y-1">
+                          <div className="h-2 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '0.9s'}}></div>
+                          <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.4s'}}></div>
+                          <div className="h-1 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '1.9s'}}></div>
+                          <div className="h-8 bg-purple-300 rounded animate-fade-in" style={{animationDelay: '2.4s'}}></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
