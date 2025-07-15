@@ -318,38 +318,53 @@ const ActionRoom = () => {
 
 
           {/* Container 1: Custom Campaign */}
-          <div className="flex gap-4">
-            <Card className={`transition-all duration-300 ${showHistory ? 'w-1/3' : 'w-full'}`}>
-              <CardHeader>
-                <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
-                
-                {!showHistory && (
-                  <>
-                    {/* Credits Dashboard */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex flex-col gap-1 md:flex-row md:gap-4">
-                        <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
-                          {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
-                        </Badge>
-                        <Badge variant="outline" className="px-4 py-2 my-[25px]">
-                          {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
-                        </Badge>
+          <div className="space-y-4">
+            <div className={`flex gap-4 ${showHistory ? 'md:flex-row flex-col' : ''}`}>
+              <Card className={`transition-all duration-300 ${showHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
+                <CardHeader>
+                  <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
+                  
+                  {!showHistory && (
+                    <>
+                      {/* Credits Dashboard */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col gap-1 md:flex-row md:gap-4">
+                          <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
+                            {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
+                          </Badge>
+                          <Badge variant="outline" className="px-4 py-2 my-[25px]">
+                            {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
+                          </Badge>
+                        </div>
+                        {/* History button - desktop only */}
+                        <div className="hidden md:block">
+                          <Button
+                            onClick={() => setShowHistory(!showHistory)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            {t('actionRoom.history')}
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        onClick={() => setShowHistory(!showHistory)}
-                        variant="outline"
-                        size="sm"
-                      >
-                        {t('actionRoom.history')}
-                      </Button>
-                    </div>
-                    
-                    <p className="text-zinc-950 text-lg font-thin">
-                      {t('actionRoom.createCampaignDescription')}
-                    </p>
-                  </>
-                )}
-              </CardHeader>
+                      
+                      {/* History button - mobile/tablet below credits */}
+                      <div className="md:hidden mb-4">
+                        <Button
+                          onClick={() => setShowHistory(!showHistory)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          {t('actionRoom.history')}
+                        </Button>
+                      </div>
+                      
+                      <p className="text-zinc-950 text-lg font-thin">
+                        {t('actionRoom.createCampaignDescription')}
+                      </p>
+                    </>
+                  )}
+                </CardHeader>
               
               {showHistory ? (
                 <CardContent className="flex items-center justify-center">
@@ -552,19 +567,20 @@ const ActionRoom = () => {
                   </div>
                 </CardContent>
               )}
-            </Card>
-
-            {/* History Container */}
-            {showHistory && (
-              <Card className="w-2/3 animate-fade-in">
-                <CardHeader>
-                  <CardTitle>{t('actionRoom.history')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* History content will be added here */}
-                </CardContent>
               </Card>
-            )}
+
+              {/* History Container - Desktop: to the right, Mobile: below */}
+              {showHistory && (
+                <Card className={`animate-fade-in ${showHistory ? 'md:w-2/3 w-full' : ''}`}>
+                  <CardHeader>
+                    <CardTitle>{t('actionRoom.history')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {/* History content will be added here */}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
 
           {/* Container 2: Help High Risk Employees */}
