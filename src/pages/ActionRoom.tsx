@@ -171,9 +171,11 @@ const ActionRoom = () => {
   // Function to trigger green animation for campaign container
   const triggerCampaignGreenAnimation = () => {
     if (showCampaignAnimation) {
+      setShowCampaignAnimation(false); // Stop red animation
       setShowCampaignGreenAnimation(true);
       setTimeout(() => {
         setShowCampaignGreenAnimation(false);
+        // Red animation remains stopped after green ends
       }, 3000);
     }
   };
@@ -181,9 +183,11 @@ const ActionRoom = () => {
   // Function to trigger green animation for high-risk container
   const triggerHighRiskGreenAnimation = () => {
     if (showHighRiskAnimation) {
+      setShowHighRiskAnimation(false); // Stop red animation
       setShowHighRiskGreenAnimation(true);
       setTimeout(() => {
         setShowHighRiskGreenAnimation(false);
+        // Red animation remains stopped after green ends
       }, 3000);
     }
   };
