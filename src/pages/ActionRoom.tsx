@@ -39,6 +39,7 @@ const ActionRoom = () => {
   const [showGreyBubble, setShowGreyBubble] = useState<boolean>(false);
   const [showTypingDots, setShowTypingDots] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [showSecondBlueBubble, setShowSecondBlueBubble] = useState<boolean>(false);
   const campaignTypes = ['poster', 'email', 'billboard', 'sms', 'social media'];
   const differentials = ['back pain', 'neck pain', 'shoulder pain', 'wrist pain', 'knee pain'];
   const invitationTypes = ['email', 'sms'];
@@ -217,7 +218,17 @@ const ActionRoom = () => {
       setShowTypingDots(false);
       setShowGreyBubble(true);
       setIsAnimating(false);
+      
+      // Start timer for second blue bubble
+      setTimeout(() => {
+        setShowSecondBlueBubble(true);
+      }, 3000);
     }, 2000);
+  };
+
+  const handleSecondSendMessage = () => {
+    // Add functionality for the second send button if needed
+    console.log('Second blue bubble send clicked');
   };
   return <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
@@ -333,15 +344,30 @@ const ActionRoom = () => {
                   <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
                     <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
                     <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
-                    <div>
-                      <p className="mb-3 text-sm">What do you want me to focus on (multi-choice):</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {focusOptions.map(option => <div key={option} className="flex items-center space-x-2">
-                            <Checkbox id={option} checked={focusAreas.includes(option)} onCheckedChange={checked => handleFocusAreaChange(option, checked as boolean)} />
-                            <label htmlFor={option} className="text-xs">{option}</label>
-                          </div>)}
-                      </div>
+                    <p className="text-sm">What topics do you want me to focus on?</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Second Blue Bubble - appears after 3 seconds */}
+              {showSecondBlueBubble && (
+                <div className="flex justify-end mb-4">
+                  <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                    <p className="mb-2">Pebee, I want you to focus on:</p>
+                    <div className="text-sm space-y-1">
+                      <p>→ problem definitions;</p>
+                      <p>→ exercises (check window);</p>
+                      <p>→ symptoms (check window);</p>
+                      <p>→ behavioural tips (check window);</p>
                     </div>
+                    
+                    {/* Send Icon - positioned in bottom right corner */}
+                    <button
+                      onClick={handleSecondSendMessage}
+                      className="absolute bottom-2 right-2 bg-white hover:bg-gray-100 rounded-full p-1.5 transition-colors"
+                    >
+                      <ArrowUp size={16} className="text-blue-500" />
+                    </button>
                   </div>
                 </div>
               )}
