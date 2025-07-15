@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { DateFilterProvider } from '@/contexts/DateFilterContext';
 import PageHeader from '@/components/layout/PageHeader';
@@ -51,6 +51,9 @@ const ActionRoom = () => {
   const [showHighRiskBubble, setShowHighRiskBubble] = useState<boolean>(false);
   const [showHighRiskHistory, setShowHighRiskHistory] = useState<boolean>(false);
   const [showEnvelopeAnimation, setShowEnvelopeAnimation] = useState<boolean>(false);
+  const [envelopePosition, setEnvelopePosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const sendButtonRef = useRef<HTMLButtonElement>(null);
+  const historyButtonRef = useRef<HTMLButtonElement>(null);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -291,8 +294,40 @@ const ActionRoom = () => {
     setShowThirdGreyBubble(true);
   };
 
-  const handleSendInvitation = () => {
+  const handleSendInvitation = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log('Send Invitation clicked');
+    
+    // Get the button position
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    const startX = buttonRect.right - 20; // Start from right side of button
+    const startY = buttonRect.top + (buttonRect.height / 2);
+    
+    // Get the history button position (if it exists)
+    const historyButton = document.querySelector('[data-history-button]') as HTMLElement;
+    let endX = startX + 400; // Default fallback
+    let endY = startY - 50;
+    
+    if (historyButton) {
+      const historyRect = historyButton.getBoundingClientRect();
+      endX = historyRect.left + (historyRect.width / 2);
+      endY = historyRect.top + (historyRect.height / 2);
+    }
+    
+    // Calculate the animation path relative to the starting position
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const midX = deltaX * 0.5;
+    const midY = (deltaY * 0.5) - 100; // Arc upward relative to starting point
+    
+    // Update CSS custom properties for animation (relative to starting position)
+    document.documentElement.style.setProperty('--envelope-mid-x', `${midX}px`);
+    document.documentElement.style.setProperty('--envelope-mid-y', `${midY}px`);
+    document.documentElement.style.setProperty('--envelope-end-x', `${deltaX}px`);
+    document.documentElement.style.setProperty('--envelope-end-y', `${deltaY}px`);
+    
+    setEnvelopePosition({ x: startX, y: startY });
     setShowEnvelopeAnimation(true);
+    
     // Hide animation after 1 second
     setTimeout(() => {
       setShowEnvelopeAnimation(false);
@@ -308,11 +343,11 @@ const ActionRoom = () => {
             opacity: 1;
           }
           50% {
-            transform: translate(200px, -100px) scale(0.8);
+            transform: translate(var(--envelope-mid-x, 200px), var(--envelope-mid-y, -100px)) scale(0.8);
             opacity: 0.9;
           }
           100% {
-            transform: translate(400px, -50px) scale(0.3);
+            transform: translate(var(--envelope-end-x, 400px), var(--envelope-end-y, -50px)) scale(0.3);
             opacity: 0;
           }
         }
@@ -331,8 +366,8 @@ const ActionRoom = () => {
             className="envelope-animation text-blue-600" 
             style={{ 
               position: 'absolute',
-              top: '50%',
-              left: '50%',
+              top: `${envelopePosition.y}px`,
+              left: `${envelopePosition.x}px`,
               transform: 'translate(-50%, -50%)'
             }} 
           />
@@ -392,25 +427,27 @@ const ActionRoom = () => {
                         </div>
                         {/* History button - desktop only */}
                         <div className="hidden md:block">
-                          <Button
-                            onClick={() => setShowHistory(!showHistory)}
-                            variant="outline"
-                            size="sm"
-                          >
-                            {t('actionRoom.history')}
-                          </Button>
+                      <Button
+                        onClick={() => setShowHistory(!showHistory)}
+                        variant="outline"
+                        size="sm"
+                        data-history-button
+                      >
+                        {t('actionRoom.history')}
+                      </Button>
                         </div>
                       </div>
                       
                       {/* History button - mobile/tablet below credits */}
                       <div className="md:hidden mb-6">
-                        <Button
-                          onClick={() => setShowHistory(!showHistory)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          {t('actionRoom.history')}
-                        </Button>
+                    <Button
+                      onClick={() => setShowHistory(!showHistory)}
+                      variant="outline"
+                      size="sm"
+                      data-history-button
+                    >
+                      {t('actionRoom.history')}
+                    </Button>
                       </div>
                       
                       <p className="text-zinc-950 text-lg font-thin">
@@ -654,6 +691,7 @@ const ActionRoom = () => {
                         onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
                         variant="outline"
                         size="sm"
+                        data-history-button
                       >
                         {t('actionRoom.history')}
                       </Button>
@@ -672,6 +710,7 @@ const ActionRoom = () => {
                         onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
                         variant="outline"
                         size="sm"
+                        data-history-button
                       >
                         {t('actionRoom.history')}
                       </Button>
