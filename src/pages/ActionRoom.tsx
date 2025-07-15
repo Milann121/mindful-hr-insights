@@ -302,8 +302,8 @@ const ActionRoom = () => {
     const startX = buttonRect.right - 20; // Start from right side of button
     const startY = buttonRect.top + (buttonRect.height / 2);
     
-    // Get the history button position (if it exists)
-    const historyButton = document.querySelector('[data-history-button]') as HTMLElement;
+    // Get the history button position specifically from Help High Risk Employees container
+    const historyButton = document.querySelector('[data-high-risk-history-button]') as HTMLElement;
     let endX = startX + 400; // Default fallback
     let endY = startY - 50;
     
@@ -328,10 +328,10 @@ const ActionRoom = () => {
     setEnvelopePosition({ x: startX, y: startY });
     setShowEnvelopeAnimation(true);
     
-    // Hide animation after 1 second
+    // Hide animation after 2 seconds
     setTimeout(() => {
       setShowEnvelopeAnimation(false);
-    }, 1000);
+    }, 2000);
   };
 
   return <DateFilterProvider>
@@ -353,7 +353,7 @@ const ActionRoom = () => {
         }
         
         .envelope-animation {
-          animation: envelope-fly 1s ease-out forwards;
+          animation: envelope-fly 2s ease-out forwards;
         }
         `}
       </style>
@@ -362,7 +362,7 @@ const ActionRoom = () => {
       {showEnvelopeAnimation && (
         <div className="fixed z-50 pointer-events-none">
           <Mail 
-            size={20} 
+            size={60} 
             className="envelope-animation text-blue-600" 
             style={{ 
               position: 'absolute',
@@ -691,7 +691,7 @@ const ActionRoom = () => {
                         onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
                         variant="outline"
                         size="sm"
-                        data-history-button
+                        data-high-risk-history-button
                       >
                         {t('actionRoom.history')}
                       </Button>
@@ -710,7 +710,7 @@ const ActionRoom = () => {
                         onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
                         variant="outline"
                         size="sm"
-                        data-history-button
+                        data-high-risk-history-button
                       >
                         {t('actionRoom.history')}
                       </Button>
