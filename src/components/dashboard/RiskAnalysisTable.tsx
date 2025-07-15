@@ -148,7 +148,22 @@ const RiskAnalysisTable = () => {
             validEmployees.map(async (employee) => {
               console.log(`Fetching OREBRO for employee: ${employee.first_name} ${employee.last_name} (ID: ${employee.user_id})`);
               
-              // First try to get the latest OREBRO response with more comprehensive query
+              // Debug: Check if user exists in OREBRO table at all
+              console.log(`Checking OREBRO for user_id: ${employee.user_id}`);
+              
+              // First, let's try a broader query to see if any records exist
+              const { data: allOrebro, error: allError } = await supabase
+                .from('orebro_responses')
+                .select('*')
+                .eq('user_id', employee.user_id);
+
+              console.log(`ALL OREBRO records for ${employee.first_name} ${employee.last_name}:`, { data: allOrebro, error: allError });
+
+              // Check the current user's auth context
+              const { data: currentUser } = await supabase.auth.getUser();
+              console.log(`Current user for OREBRO query: ${currentUser.user?.id}`);
+
+              // Now try the specific query
               const { data: orebro, error } = await supabase
                 .from('orebro_responses')
                 .select('risk_level, updated_at, user_id, total_score')
