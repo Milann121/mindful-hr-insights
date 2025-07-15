@@ -204,6 +204,7 @@ const RiskAnalysisTable = () => {
         const departmentsWithHighRisk = await Promise.all(
           deptData.map(async (dept: any) => {
             console.log(`\n=== PROCESSING DEPARTMENT: ${dept.department_name} (ID: ${dept.department_id}) ===`);
+            console.log(`Department data from function:`, dept);
             
             // Get all employees in this department
             const { data: deptEmployees, error: deptError } = await supabase
@@ -212,7 +213,11 @@ const RiskAnalysisTable = () => {
               .eq('department_id', dept.department_id)
               .not('user_id', 'is', null);
 
-            console.log(`Raw employee query result for ${dept.department_name}:`, { deptEmployees, deptError });
+            console.log(`Employee query for ${dept.department_name}:`, { 
+              query: `department_id = ${dept.department_id}`,
+              result: deptEmployees, 
+              error: deptError 
+            });
 
             if (deptError) {
               console.error(`Error fetching employees for department ${dept.department_name}:`, deptError);
@@ -233,11 +238,13 @@ const RiskAnalysisTable = () => {
               return createEmptyDepartmentResult(dept, trendData);
             }
 
-            // Calculate High Risk percentage
+            // Calculate High Risk percentage - THIS IS THE IMPORTANT CALL
+            console.log(`About to calculate High Risk for ${dept.department_name} with ${validEmployees.length} employees`);
             const highRiskResult = await calculateHighRiskPercentage(validEmployees, dept.department_name);
+            console.log(`High Risk calculation result for ${dept.department_name}:`, highRiskResult);
             
             const trend = trendData?.find((t: any) => t.department_id === dept.department_id);
-            return {
+            const finalResult = {
               id: dept.department_id,
               department_name: dept.department_name,
               department_headcount: dept.employee_count || 0,
@@ -247,6 +254,9 @@ const RiskAnalysisTable = () => {
               trend_direction: trend?.trend_direction || null,
               high_risk_percentage: highRiskResult.percentage
             };
+            
+            console.log(`Final result for ${dept.department_name}:`, finalResult);
+            return finalResult;
           })
         );
 
