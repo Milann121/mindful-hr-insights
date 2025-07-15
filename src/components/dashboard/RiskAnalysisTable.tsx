@@ -137,6 +137,7 @@ const RiskAnalysisTable = () => {
         const calculateHighRiskPercentage = async (validEmployees: any[], departmentName: string) => {
           console.log(`\n=== CALCULATING HIGH RISK FOR ${departmentName} ===`);
           console.log(`Processing ${validEmployees.length} total employees`);
+          console.log(`Employees data:`, validEmployees);
 
           if (validEmployees.length === 0) {
             console.log(`No employees in department ${departmentName}`);
@@ -155,9 +156,11 @@ const RiskAnalysisTable = () => {
                 .limit(1)
                 .maybeSingle();
 
+              console.log(`OREBRO query result for ${employee.first_name} ${employee.last_name}:`, { data: orebro, error });
+
               if (error) {
                 console.error(`Error fetching OREBRO for ${employee.user_id}:`, error);
-                return null;
+                return 'low'; // Treat as low risk on error
               }
 
               if (!orebro) {
@@ -170,25 +173,29 @@ const RiskAnalysisTable = () => {
             })
           );
 
+          console.log(`All risk levels for ${departmentName}:`, riskLevels);
+
           // Filter out null values and ensure we have valid risk levels
           const validRiskLevels = riskLevels.filter(level => level !== null && typeof level === 'string' && level.trim() !== '');
           
-          console.log(`Risk levels for all employees in ${departmentName}:`, validRiskLevels);
+          console.log(`Valid risk levels for ${departmentName}:`, validRiskLevels);
 
           // Count high risk cases (case-insensitive)
-          const highRiskCount = validRiskLevels.filter(level => 
-            level.toLowerCase().trim() === 'high'
-          ).length;
+          const highRiskCount = validRiskLevels.filter(level => {
+            const isHigh = level.toLowerCase().trim() === 'high';
+            console.log(`Risk level "${level}" -> isHigh: ${isHigh}`);
+            return isHigh;
+          }).length;
 
           // Business logic: (high risk employees / ALL employees in department) * 100
           const percentage = Math.round((highRiskCount / validEmployees.length) * 100);
           
-          console.log(`HIGH RISK CALCULATION FOR ${departmentName}:`);
+          console.log(`\n=== HIGH RISK CALCULATION RESULT FOR ${departmentName} ===`);
           console.log(`- Total employees in department: ${validEmployees.length}`);
-          console.log(`- Employees with OREBRO responses: ${validRiskLevels.length}`);
-          console.log(`- Employees without OREBRO (treated as low risk): ${validEmployees.length - validRiskLevels.length}`);
+          console.log(`- Employees with valid risk levels: ${validRiskLevels.length}`);
           console.log(`- High risk count: ${highRiskCount}`);
           console.log(`- Calculation: (${highRiskCount} / ${validEmployees.length}) * 100 = ${percentage}%`);
+          console.log(`- Final result: ${percentage}% (${highRiskCount}/${validEmployees.length})`);
 
           return { percentage, details: `${highRiskCount}/${validEmployees.length}` };
         };
