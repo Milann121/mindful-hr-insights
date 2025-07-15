@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Download, Send, Users, Calendar, ArrowUp, ChevronRight } from 'lucide-react';
+import { Download, Send, Users, Calendar, ArrowUp, ChevronRight, Mail } from 'lucide-react';
 interface Department {
   id: string;
   department_name: string;
@@ -50,6 +50,7 @@ const ActionRoom = () => {
   // High Risk Employee Message State
   const [showHighRiskBubble, setShowHighRiskBubble] = useState<boolean>(false);
   const [showHighRiskHistory, setShowHighRiskHistory] = useState<boolean>(false);
+  const [showEnvelopeAnimation, setShowEnvelopeAnimation] = useState<boolean>(false);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -289,7 +290,54 @@ const ActionRoom = () => {
   const handleConfirmCampaign = () => {
     setShowThirdGreyBubble(true);
   };
+
+  const handleSendInvitation = () => {
+    setShowEnvelopeAnimation(true);
+    // Hide animation after 1 second
+    setTimeout(() => {
+      setShowEnvelopeAnimation(false);
+    }, 1000);
+  };
+
   return <DateFilterProvider>
+      <style>
+        {`
+        @keyframes envelope-fly {
+          0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: translate(200px, -100px) scale(0.8);
+            opacity: 0.9;
+          }
+          100% {
+            transform: translate(400px, -50px) scale(0.3);
+            opacity: 0;
+          }
+        }
+        
+        .envelope-animation {
+          animation: envelope-fly 1s ease-out forwards;
+        }
+        `}
+      </style>
+      
+      {/* Envelope Animation */}
+      {showEnvelopeAnimation && (
+        <div className="fixed z-50 pointer-events-none">
+          <Mail 
+            size={20} 
+            className="envelope-animation text-blue-600" 
+            style={{ 
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }} 
+          />
+        </div>
+      )}
       <div className="min-h-screen bg-gray-50">
         <div className="flex justify-between items-center gap-4 p-4 border-b bg-white">
           {/* Mobile Navigation - left aligned */}
@@ -693,7 +741,10 @@ const ActionRoom = () => {
                             {t('actionRoom.helpHighRiskMessage.footer')}
                           </p>
                         </div>
-                        <Button className="flex items-center gap-2">
+                        <Button 
+                          onClick={handleSendInvitation}
+                          className="flex items-center gap-2 relative"
+                        >
                           <Send size={16} />
                           {t('actionRoom.sendInvitation')}
                         </Button>
@@ -702,7 +753,10 @@ const ActionRoom = () => {
                     
                     {/* Send Invitation Button - when bubble is not shown */}
                     {!showHighRiskBubble && (
-                      <Button className="flex items-center gap-2">
+                      <Button 
+                        onClick={handleSendInvitation}
+                        className="flex items-center gap-2 relative"
+                      >
                         <Send size={16} />
                         {t('actionRoom.sendInvitation')}
                       </Button>
