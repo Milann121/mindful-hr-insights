@@ -44,12 +44,42 @@ const ActionRoom = () => {
   const [showSecondTypingDots, setShowSecondTypingDots] = useState<boolean>(false);
   const [showSecondGreyBubble, setShowSecondGreyBubble] = useState<boolean>(false);
   const [showThirdGreyBubble, setShowThirdGreyBubble] = useState<boolean>(false);
-  const campaignTypes = ['poster', 'email', 'billboard', 'sms', 'social media'];
-  const differentials = ['back pain', 'neck pain', 'shoulder pain', 'wrist pain', 'knee pain'];
-  const invitationTypes = ['email', 'sms'];
-  const rotationPeriods = ['3 months', '6 months', '9 months', '12 months'];
-  const focusOptions = ['definition', 'symptoms', 'exercises', 'behavioural tips'];
-  const secondBubbleFocusOptions = ['problem description', 'exercises', 'symptoms', 'behavioural tips'];
+  const campaignTypes = [
+    t('actionRoom.campaignTypes.poster'),
+    t('actionRoom.campaignTypes.email'),
+    t('actionRoom.campaignTypes.billboard'),
+    t('actionRoom.campaignTypes.sms'),
+    t('actionRoom.campaignTypes.socialMedia')
+  ];
+  const differentials = [
+    t('actionRoom.differentials.backPain'),
+    t('actionRoom.differentials.neckPain'),
+    t('actionRoom.differentials.shoulderPain'),
+    t('actionRoom.differentials.wristPain'),
+    t('actionRoom.differentials.kneePain')
+  ];
+  const invitationTypes = [
+    t('actionRoom.invitationTypes.email'),
+    t('actionRoom.invitationTypes.sms')
+  ];
+  const rotationPeriods = [
+    t('actionRoom.rotationPeriods.threeMonths'),
+    t('actionRoom.rotationPeriods.sixMonths'),
+    t('actionRoom.rotationPeriods.nineMonths'),
+    t('actionRoom.rotationPeriods.twelveMonths')
+  ];
+  const focusOptions = [
+    t('actionRoom.focusOptions.definition'),
+    t('actionRoom.focusOptions.symptoms'),
+    t('actionRoom.focusOptions.exercises'),
+    t('actionRoom.focusOptions.behaviouralTips')
+  ];
+  const secondBubbleFocusOptions = [
+    t('actionRoom.secondBubbleFocusOptions.problemDescription'),
+    t('actionRoom.secondBubbleFocusOptions.exercises'),
+    t('actionRoom.secondBubbleFocusOptions.symptoms'),
+    t('actionRoom.secondBubbleFocusOptions.behaviouralTips')
+  ];
   useEffect(() => {
     fetchUserProfile();
     fetchDepartments();
@@ -264,13 +294,13 @@ const ActionRoom = () => {
           <div className="space-y-6">
             {/* Department Filter */}
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-            <label className="text-sm font-medium">Select Departments:</label>
+            <label className="text-sm font-medium">{t('actionRoom.selectDepartments')}</label>
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
               <SelectTrigger className="w-full md:w-64">
-                <SelectValue placeholder="Choose department..." />
+                <SelectValue placeholder={t('actionRoom.chooseDepartment')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="all">{t('actionRoom.all')}</SelectItem>
                 {departments.map(dept => <SelectItem key={dept.id} value={dept.id}>
                     {dept.department_name}
                   </SelectItem>)}
@@ -282,53 +312,53 @@ const ActionRoom = () => {
           {/* Container 1: Custom Campaign */}
           <Card>
             <CardHeader>
-              <CardTitle>Our {userProfile?.b2b_partner_name || 'Company'} Campaigns</CardTitle>
+              <CardTitle>{t('actionRoom.ourCampaigns', { company: userProfile?.b2b_partner_name || t('actionRoom.company') })}</CardTitle>
               
               {/* Credits Dashboard */}
               <div className="flex flex-col gap-1 md:flex-row md:gap-4 mb-4">
                 <Badge variant="outline" className="px-4 py-2 mx-0 my-[25px]">
-                  Credits used this month: <span className="font-bold ml-1">1,240</span>
+                  {t('actionRoom.creditsUsedThisMonth')}: <span className="font-bold ml-1">1,240</span>
                 </Badge>
                 <Badge variant="outline" className="px-4 py-2 my-[25px]">
-                  Free monthly credits: <span className="font-bold ml-1">800/2,000</span> (free)
+                  {t('actionRoom.freeMonthlyCredits')}: <span className="font-bold ml-1">800/2,000</span> (free)
                 </Badge>
               </div>
               
               <p className="text-zinc-950 text-lg font-thin">
-                Create a custom campaign and increase the health awareness of your workforce.
+                {t('actionRoom.createCampaignDescription')}
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* User Message - Blue bubble from right */}
               <div className="flex justify-end mb-4">
                 <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
-                  <p className="mb-2">Hey Pebee,</p>
+                  <p className="mb-2">{t('actionRoom.heyPebee')}</p>
                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                     <span>create a new</span>
+                     <span>{t('actionRoom.createANew')}</span>
                      <Select value={campaignType} onValueChange={setCampaignType}>
                        <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder="type" />
+                         <SelectValue placeholder={t('actionRoom.type')} />
                        </SelectTrigger>
                        <SelectContent>
                          {campaignTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
                        </SelectContent>
                      </Select>
-                     <span>campaign for our</span>
+                     <span>{t('actionRoom.campaignForOur')}</span>
                      <Select value={targetDepartment} onValueChange={setTargetDepartment}>
                        <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder="dept" />
+                         <SelectValue placeholder={t('actionRoom.dept')} />
                        </SelectTrigger>
                        <SelectContent>
-                         <SelectItem value="all">All</SelectItem>
+                         <SelectItem value="all">{t('actionRoom.all')}</SelectItem>
                          {departments.map(dept => <SelectItem key={dept.id} value={dept.department_name}>
                              {dept.department_name}
                            </SelectItem>)}
                        </SelectContent>
                      </Select>
-                     <span>colleagues about</span>
+                     <span>{t('actionRoom.colleaguesAbout')}</span>
                      <Select value={campaignTopic} onValueChange={setCampaignTopic}>
                        <SelectTrigger className="w-20 h-6 text-xs bg-blue-600 border-blue-400 text-white">
-                         <SelectValue placeholder="topic" />
+                         <SelectValue placeholder={t('actionRoom.topic')} />
                        </SelectTrigger>
                        <SelectContent>
                          {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
@@ -365,9 +395,9 @@ const ActionRoom = () => {
               {showGreyBubble && (
                 <div className="flex justify-start mb-4">
                   <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
-                    <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
-                    <p className="text-sm">What topics do you want me to focus on?</p>
+                    <p className="mb-2">{t('actionRoom.hello', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
+                    <p className="mb-3">{t('actionRoom.happyToPrepare')}</p>
+                    <p className="text-sm">{t('actionRoom.whatTopics')}</p>
                   </div>
                 </div>
               )}
@@ -376,7 +406,7 @@ const ActionRoom = () => {
               {showSecondBlueBubble && (
                 <div className="flex justify-end mb-4">
                   <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-3">Pebee, I want you to focus on:</p>
+                    <p className="mb-3">{t('actionRoom.pebeeIWantYou')}</p>
                     <div className="space-y-2 mb-6">
                       {secondBubbleFocusOptions.map(option => (
                         <div key={option} className="flex items-center space-x-2">
@@ -419,16 +449,16 @@ const ActionRoom = () => {
               {showSecondGreyBubble && (
                 <div className="flex justify-start mb-4">
                   <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-2">Sure, let's do this {userProfile?.first_name || ''}.</p>
-                    <p className="text-sm mb-4">Give me a few seconds to prepare a nice and functional campaign for you. When created, preview the campaign and let me know if you are satisfied or ready to download and distribute.</p>
+                    <p className="mb-2">{t('actionRoom.sureLetsDo', { name: userProfile?.first_name || '' })}</p>
+                    <p className="text-sm mb-4">{t('actionRoom.giveMeSeconds')}</p>
                     <div className="flex items-center justify-between">
-                      <p className="text-sm">Please, confirm to create the campaign.</p>
+                      <p className="text-sm">{t('actionRoom.pleaseConfirm')}</p>
                       <Button 
                         onClick={handleConfirmCampaign}
                         size="sm"
                         className="bg-blue-500 hover:bg-blue-600 text-white"
                       >
-                        Confirm
+                        {t('actionRoom.confirm')}
                       </Button>
                     </div>
                   </div>
@@ -439,7 +469,7 @@ const ActionRoom = () => {
               {showThirdGreyBubble && (
                 <div className="flex justify-start mb-4">
                   <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-4 text-sm">Creating your campaign...</p>
+                    <p className="mb-4 text-sm">{t('actionRoom.creatingCampaign')}</p>
                     <div className="flex gap-4 justify-center">
                       {/* Poster 1 */}
                       <div className="relative w-20 h-28 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg shadow-md border-2 border-blue-300 animate-pulse">
@@ -478,11 +508,11 @@ const ActionRoom = () => {
               <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                 <Button className="flex items-center gap-2">
                   <Download size={16} />
-                  Download Campaign
+                  {t('actionRoom.downloadCampaign')}
                 </Button>
                 <Button variant="outline" className="flex items-center gap-2">
                   <Send size={16} />
-                  Export Campaign
+                  {t('actionRoom.exportCampaign')}
                 </Button>
               </div>
             </CardContent>
@@ -493,13 +523,13 @@ const ActionRoom = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users size={20} />
-                Help High Risk Employees
+                {t('actionRoom.helpHighRiskEmployees')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <p>
-                  We have been able to identify{' '}
+                  {t('actionRoom.weHaveIdentified')}{' '}
                   <span 
                     className={`font-bold ${
                       highRiskCount === 0 
@@ -509,24 +539,24 @@ const ActionRoom = () => {
                   >
                     {highRiskCount}
                   </span>{' '}
-                  high risk employees.
+                  {t('actionRoom.highRiskEmployees')}
                 </p>
                 <p>
-                  Let's help them, {userProfile?.first_name || 'there'}! Send{' '}
+                  {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
                   <Select value={invitationType} onValueChange={setInvitationType}>
                     <SelectTrigger className="w-20 inline-flex">
-                      <SelectValue placeholder="type" />
+                      <SelectValue placeholder={t('actionRoom.type')} />
                     </SelectTrigger>
                     <SelectContent>
                       {invitationTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  {' '}invitation to all high risk employees and ask them what they need.
+                  {' '}{t('actionRoom.invitationToAll')}
                 </p>
               </div>
               <Button className="flex items-center gap-2">
                 <Send size={16} />
-                Send Invitation
+                {t('actionRoom.sendInvitation')}
               </Button>
             </CardContent>
           </Card>
@@ -536,20 +566,19 @@ const ActionRoom = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar size={20} />
-                Rotation Reminder
+                {t('actionRoom.rotationReminder')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>
-                Utilize the power of one of the most effective prevention pain and disability actions: workspace rotation.
-                Set a regular workplace circulation reminder, so you can consult the possible rotation with your HSE and Manufacturing managers.
+                {t('actionRoom.utilizePowerDescription')}
               </p>
               
               <div className="flex items-center gap-2">
-                <span>Reminder in</span>
+                <span>{t('actionRoom.reminderIn')}</span>
                 <Select value={rotationPeriod} onValueChange={setRotationPeriod}>
                   <SelectTrigger className="w-32">
-                    <SelectValue placeholder="period" />
+                    <SelectValue placeholder={t('actionRoom.period')} />
                   </SelectTrigger>
                   <SelectContent>
                     {rotationPeriods.map(period => <SelectItem key={period} value={period}>{period}</SelectItem>)}
@@ -558,16 +587,16 @@ const ActionRoom = () => {
               </div>
 
               <div className="bg-muted/50 p-4 rounded-lg">
-                <p className="font-medium mb-2">Reminder window:</p>
+                <p className="font-medium mb-2">{t('actionRoom.reminderWindow')}</p>
                 <div className="space-y-2 text-sm">
-                  <p>Hello {userProfile?.first_name || 'there'},</p>
-                  <p>this is a rotation reminder. The rotation date is upcoming in [days_to_rotation] days.</p>
-                  <p>Let's implement the plan:</p>
+                  <p>{t('actionRoom.helloReminderGreeting', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
+                  <p>{t('actionRoom.rotationReminderText')}</p>
+                  <p>{t('actionRoom.letsImplementPlan')}</p>
                   <ol className="list-decimal list-inside space-y-1 ml-4">
-                    <li>Review current workstation assignments</li>
-                    <li>Identify employees for rotation</li>
-                    <li>Coordinate with HSE and Manufacturing managers</li>
-                    <li>Schedule and implement the rotation plan</li>
+                    <li>{t('actionRoom.reviewWorkstations')}</li>
+                    <li>{t('actionRoom.identifyEmployees')}</li>
+                    <li>{t('actionRoom.coordinateManagers')}</li>
+                    <li>{t('actionRoom.scheduleImplement')}</li>
                   </ol>
                 </div>
               </div>
