@@ -18,8 +18,6 @@ async function syncEmployees() {
   if (!profiles) return;
 
   for (const profile of profiles) {
-    if (!profile.employee_id) continue;
-
     const { data: exists, error: existsError } = await supabase
       .from('b2b_employees')
       .select('id')
@@ -43,9 +41,24 @@ async function syncEmployees() {
         state: 'active'
       });
       if (insertError) {
-        console.error('Error inserting employee', profile.employee_id, insertError);
+        console.error('Error inserting employee', profile.employee_id || profile.user_id, insertError);
       } else {
-        console.log('Inserted employee', profile.employee_id);
+        console.log('Inserted employee', profile.employee_id || profile.user_id);
+      }
+    } else {
+      const { error: updateError } = await supabase.from('b2b_employees')
+        .update({
+          employee_id: profile.employee_id,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          email: profile.email,
+          b2b_partner_id: profile.b2b_partner_id,
+          b2b_partner_name: profile.b2b_partner_name,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', exists.id);
+      if (updateError) {
+        console.error('Error updating employee', profile.employee_id || profile.user_id, updateError);
       }
     }
   }
