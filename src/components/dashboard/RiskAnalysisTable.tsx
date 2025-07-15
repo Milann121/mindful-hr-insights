@@ -121,116 +121,127 @@ const RiskAnalysisTable = () => {
 
         console.log('Trend data received:', trendData);
 
+        // Helper function to create empty department result
+        const createEmptyDepartmentResult = (dept: any, trendData: any) => ({
+          id: dept.department_id,
+          department_name: dept.department_name,
+          department_headcount: dept.employee_count || 0,
+          job_type: '',
+          employee_count: 0,
+          avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
+          trend_direction: trendData?.find((t: any) => t.department_id === dept.department_id)?.trend_direction || null,
+          high_risk_percentage: null
+        });
+
+        // Helper function to calculate high risk percentage
+        const calculateHighRiskPercentage = async (validEmployees: any[], departmentName: string) => {
+          console.log(`\n=== CALCULATING HIGH RISK FOR ${departmentName} ===`);
+          console.log(`Processing ${validEmployees.length} employees`);
+
+          const riskLevels = await Promise.all(
+            validEmployees.map(async (employee) => {
+              console.log(`Fetching OREBRO for employee: ${employee.first_name} ${employee.last_name} (ID: ${employee.user_id})`);
+              
+              const { data: orebro, error } = await supabase
+                .from('orebro_responses')
+                .select('risk_level, updated_at, user_id')
+                .eq('user_id', employee.user_id)
+                .order('updated_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+              if (error) {
+                console.error(`Error fetching OREBRO for ${employee.user_id}:`, error);
+                return null;
+              }
+
+              if (!orebro) {
+                console.log(`No OREBRO response found for ${employee.first_name} ${employee.last_name}`);
+                return null;
+              }
+
+              console.log(`${employee.first_name} ${employee.last_name} risk level: "${orebro.risk_level}"`);
+              return orebro.risk_level;
+            })
+          );
+
+          // Filter out null values and ensure we have valid risk levels
+          const validRiskLevels = riskLevels.filter(level => level !== null && typeof level === 'string' && level.trim() !== '');
+          
+          console.log(`Valid risk levels found for ${departmentName}:`, validRiskLevels);
+
+          if (validRiskLevels.length === 0) {
+            console.log(`No valid OREBRO responses found for ${departmentName}`);
+            return { percentage: null, details: 'No OREBRO responses' };
+          }
+
+          // Count high risk cases (case-insensitive)
+          const highRiskCount = validRiskLevels.filter(level => 
+            level.toLowerCase().trim() === 'high'
+          ).length;
+
+          const percentage = Math.round((highRiskCount / validRiskLevels.length) * 100);
+          
+          console.log(`HIGH RISK CALCULATION FOR ${departmentName}:`);
+          console.log(`- Total employees: ${validEmployees.length}`);
+          console.log(`- With OREBRO responses: ${validRiskLevels.length}`);
+          console.log(`- High risk count: ${highRiskCount}`);
+          console.log(`- Percentage: ${percentage}%`);
+
+          return { percentage, details: `${highRiskCount}/${validRiskLevels.length}` };
+        };
+
         // Get high risk percentages for each department
         const departmentsWithHighRisk = await Promise.all(
           deptData.map(async (dept: any) => {
-            console.log(`\n=== Processing department: ${dept.department_name} (ID: ${dept.department_id}) ===`);
+            console.log(`\n=== PROCESSING DEPARTMENT: ${dept.department_name} (ID: ${dept.department_id}) ===`);
             
             // Get all employees in this department
             const { data: deptEmployees, error: deptError } = await supabase
               .from('user_profiles')
-              .select('user_id, first_name, last_name, department_id')
-              .eq('department_id', dept.department_id);
+              .select('user_id, first_name, last_name, department_id, employee_id')
+              .eq('department_id', dept.department_id)
+              .not('user_id', 'is', null);
 
-            console.log(`Query result for department ${dept.department_name}:`, { deptEmployees, deptError });
+            console.log(`Raw employee query result for ${dept.department_name}:`, { deptEmployees, deptError });
 
             if (deptError) {
-              console.error('Error fetching department employees:', dept.department_id, deptError);
-              return {
-                id: dept.department_id,
-                department_name: dept.department_name,
-                department_headcount: 0,
-                job_type: '',
-                employee_count: 0,
-                avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
-                trend_direction: trendData?.find(t => t.department_id === dept.department_id)?.trend_direction || null,
-                high_risk_percentage: 0
-              };
+              console.error(`Error fetching employees for department ${dept.department_name}:`, deptError);
+              return createEmptyDepartmentResult(dept, trendData);
             }
 
-            const employeeUserIds = deptEmployees
-              ?.map(emp => emp.user_id)
-              .filter((id): id is string => Boolean(id)) || [];
-            console.log(`Found ${employeeUserIds.length} employees in ${dept.department_name}:`, employeeUserIds);
-            
-            if (employeeUserIds.length === 0) {
-              return {
-                id: dept.department_id,
-                department_name: dept.department_name,
-                department_headcount: 0,
-                job_type: '',
-                employee_count: 0,
-                avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
-                trend_direction: trendData?.find(t => t.department_id === dept.department_id)?.trend_direction || null,
-                high_risk_percentage: 0
-              };
+            if (!deptEmployees || deptEmployees.length === 0) {
+              console.log(`No employees found for department ${dept.department_name}`);
+              return createEmptyDepartmentResult(dept, trendData);
             }
 
-            // Get the latest OREBRO response for each employee
-            const latestRiskLevels = (await Promise.all(
-              employeeUserIds.map(async (userId) => {
-                console.log(`Fetching OREBRO response for user: ${userId}`);
-                const { data: latestResponse, error } = await supabase
-                  .from('orebro_responses')
-                  .select('risk_level, updated_at')
-                  .eq('user_id', userId)
-                  .order('updated_at', { ascending: false })
-                  .limit(1)
-                  .maybeSingle();
+            // Filter and validate user IDs
+            const validEmployees = deptEmployees.filter(emp => emp.user_id && emp.user_id.trim() !== '');
+            console.log(`Valid employees in ${dept.department_name}:`, validEmployees);
 
-                if (error) {
-                  console.error(`Error fetching OREBRO response for user ${userId}:`, error);
-                  return null;
-                }
+            if (validEmployees.length === 0) {
+              console.log(`No valid user IDs found for department ${dept.department_name}`);
+              return createEmptyDepartmentResult(dept, trendData);
+            }
 
-                if (!latestResponse) {
-                  console.log(`No OREBRO response found for user ${userId}`);
-                  return null;
-                }
-
-                console.log(`User ${userId} latest risk level:`, latestResponse.risk_level);
-                return latestResponse.risk_level;
-              })
-            )).filter(level => level !== null);
-
-            console.log(`Raw risk levels for ${dept.department_name}:`, latestRiskLevels);
-
-            // Filter out invalid responses and ensure only valid strings
-            const validRiskLevels = latestRiskLevels.filter(level =>
-              typeof level === 'string' && level.trim().length > 0
-            );
-            console.log(`Valid risk levels for ${dept.department_name}:`, validRiskLevels);
+            // Calculate High Risk percentage
+            const highRiskResult = await calculateHighRiskPercentage(validEmployees, dept.department_name);
             
-            const highRiskCount = validRiskLevels.filter(level => {
-              const isHigh = level?.toLowerCase().trim() === 'high';
-              console.log(`Risk level "${level}" is high: ${isHigh}`);
-              return isHigh;
-            }).length;
-
-            console.log(`Department ${dept.department_name}: ${highRiskCount} high risk out of ${validRiskLevels.length} with responses`);
-            
-            // Calculate percentage based on employees with OREBRO responses
-            const highRiskPercentage = validRiskLevels.length > 0 
-              ? Math.round((highRiskCount / validRiskLevels.length) * 100) 
-              : 0;
-
-            console.log(`Final high risk percentage for ${dept.department_name}: ${highRiskPercentage}%`);
-
-            const trend = trendData?.find(t => t.department_id === dept.department_id);
+            const trend = trendData?.find((t: any) => t.department_id === dept.department_id);
             return {
               id: dept.department_id,
               department_name: dept.department_name,
-              department_headcount: 0,
+              department_headcount: dept.employee_count || 0,
               job_type: '',
-              employee_count: employeeUserIds.length,
+              employee_count: validEmployees.length,
               avg_pain_level: dept.avg_pain_level ? Number(dept.avg_pain_level) : null,
               trend_direction: trend?.trend_direction || null,
-              high_risk_percentage: highRiskPercentage
+              high_risk_percentage: highRiskResult.percentage
             };
           })
         );
 
-        console.log('Final departments data:', departmentsWithHighRisk);
+        console.log('=== FINAL DEPARTMENTS DATA ===', departmentsWithHighRisk);
         setDepartments(departmentsWithHighRisk);
       } else {
         console.log('No department data found');
