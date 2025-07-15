@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Download, Send, Users, Calendar } from 'lucide-react';
+import { Download, Send, Users, Calendar, ArrowUp } from 'lucide-react';
 interface Department {
   id: string;
   department_name: string;
@@ -34,6 +34,11 @@ const ActionRoom = () => {
   const [invitationType, setInvitationType] = useState<string>('');
   const [rotationPeriod, setRotationPeriod] = useState<string>('');
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
+  
+  // Chat bubble animation states
+  const [showGreyBubble, setShowGreyBubble] = useState<boolean>(false);
+  const [showTypingDots, setShowTypingDots] = useState<boolean>(false);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const campaignTypes = ['poster', 'email', 'billboard', 'sms', 'social media'];
   const differentials = ['back pain', 'neck pain', 'shoulder pain', 'wrist pain', 'knee pain'];
   const invitationTypes = ['email', 'sms'];
@@ -201,6 +206,19 @@ const ActionRoom = () => {
       setFocusAreas(focusAreas.filter(f => f !== area));
     }
   };
+
+  const handleSendMessage = () => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setShowTypingDots(true);
+    
+    setTimeout(() => {
+      setShowTypingDots(false);
+      setShowGreyBubble(true);
+      setIsAnimating(false);
+    }, 2000);
+  };
   return <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
         <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
@@ -249,7 +267,7 @@ const ActionRoom = () => {
             <CardContent className="space-y-6">
               {/* User Message - Blue bubble from right */}
               <div className="flex justify-end mb-4">
-                <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
+                <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
                   <p className="mb-2">Hey Pebee,</p>
                   <div className="flex flex-wrap items-center gap-2 text-sm">
                     <span>create a new</span>
@@ -282,26 +300,51 @@ const ActionRoom = () => {
                         {differentials.map(diff => <SelectItem key={diff} value={diff}>{diff}</SelectItem>)}
                       </SelectContent>
                     </Select>
+                    <span>.</span>
                   </div>
+                  
+                  {/* Send Icon - positioned in bottom right corner */}
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={isAnimating}
+                    className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 rounded-full p-1.5 transition-colors disabled:opacity-50"
+                  >
+                    <ArrowUp size={16} className="text-white" />
+                  </button>
                 </div>
               </div>
 
-              {/* Bot Response - Grey bubble from left */}
-              <div className="flex justify-start mb-4">
-                <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm">
-                  <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
-                  <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
-                  <div>
-                    <p className="mb-3 text-sm">What do you want me to focus on (multi-choice):</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {focusOptions.map(option => <div key={option} className="flex items-center space-x-2">
-                          <Checkbox id={option} checked={focusAreas.includes(option)} onCheckedChange={checked => handleFocusAreaChange(option, checked as boolean)} />
-                          <label htmlFor={option} className="text-xs">{option}</label>
-                        </div>)}
+              {/* Typing Dots Animation */}
+              {showTypingDots && (
+                <div className="flex justify-start mb-4">
+                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-fit shadow-sm">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                      <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {/* Bot Response - Grey bubble from left */}
+              {showGreyBubble && (
+                <div className="flex justify-start mb-4">
+                  <div className="bg-gray-200 text-gray-900 p-4 rounded-2xl rounded-bl-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
+                    <p className="mb-2">Hello {userProfile?.first_name || 'there'},</p>
+                    <p className="mb-3">sure, I'll be happy to prepare the campaign for you!</p>
+                    <div>
+                      <p className="mb-3 text-sm">What do you want me to focus on (multi-choice):</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {focusOptions.map(option => <div key={option} className="flex items-center space-x-2">
+                            <Checkbox id={option} checked={focusAreas.includes(option)} onCheckedChange={checked => handleFocusAreaChange(option, checked as boolean)} />
+                            <label htmlFor={option} className="text-xs">{option}</label>
+                          </div>)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2 md:flex-row md:gap-3">
                 <Button className="flex items-center gap-2">
