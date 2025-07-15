@@ -49,6 +49,7 @@ const ActionRoom = () => {
   
   // High Risk Employee Message State
   const [showHighRiskBubble, setShowHighRiskBubble] = useState<boolean>(false);
+  const [showHighRiskHistory, setShowHighRiskHistory] = useState<boolean>(false);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -589,79 +590,136 @@ const ActionRoom = () => {
           </div>
 
           {/* Container 2: Help High Risk Employees */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users size={20} />
-                {t('actionRoom.helpHighRiskEmployees')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <p>
-                  {t('actionRoom.weHaveIdentified')}{' '}
-                  <span 
-                    className={`font-bold ${
-                      highRiskCount === 0 
-                        ? 'text-green-600' 
-                        : 'text-red-600 animate-pulse'
-                    }`}
-                  >
-                    {highRiskCount}
-                  </span>{' '}
-                  {t('actionRoom.highRiskEmployees')}
-                </p>
-                <p>
-                  {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
-                  <Select value={invitationType} onValueChange={(value) => {
-                    setInvitationType(value);
-                    if (value) {
-                      setShowHighRiskBubble(true);
-                    }
-                  }}>
-                    <SelectTrigger className="w-20 inline-flex">
-                      <SelectValue placeholder={t('actionRoom.type')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {invitationTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  {' '}{t('actionRoom.invitationToAll')}
-                </p>
-              </div>
+          <div className="space-y-4">
+            <div className={`flex gap-4 ${showHighRiskHistory ? 'md:flex-row flex-col' : ''}`}>
+              <Card className={`transition-all duration-300 ${showHighRiskHistory ? 'md:w-1/3 w-full' : 'w-full'}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users size={20} />
+                    {t('actionRoom.helpHighRiskEmployees')}
+                  </CardTitle>
+                  
+                  {!showHighRiskHistory && (
+                    <>
+                      {/* History button - desktop only */}
+                      <div className="hidden md:block">
+                        <Button
+                          onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
+                          variant="outline"
+                          size="sm"
+                          className="mb-4"
+                        >
+                          {t('actionRoom.history')}
+                        </Button>
+                      </div>
+                      
+                      {/* History button - mobile/tablet below title */}
+                      <div className="md:hidden mb-6">
+                        <Button
+                          onClick={() => setShowHighRiskHistory(!showHighRiskHistory)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          {t('actionRoom.history')}
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </CardHeader>
               
-              {/* Preview and Blue Chat Bubble - High Risk Message */}
-              {showHighRiskBubble && (
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-gray-700">{t('actionRoom.preview')}</p>
-                  <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-bl-md shadow-sm max-w-md animate-fade-in">
-                    <h3 className="font-bold mb-3">{t('actionRoom.helpHighRiskMessage.title')}</h3>
-                    <p className="text-sm leading-relaxed mb-3 whitespace-pre-line">
-                      {t('actionRoom.helpHighRiskMessage.body', { 
-                        firstName: userProfile?.first_name || '',
-                        lastName: 'Smith'  // Using placeholder last name as requested
-                      })}
-                    </p>
-                    <p className="text-xs opacity-80 italic">
-                      {t('actionRoom.helpHighRiskMessage.footer')}
-                    </p>
-                  </div>
-                  <Button className="flex items-center gap-2">
-                    <Send size={16} />
-                    {t('actionRoom.sendInvitation')}
-                  </Button>
-                </div>
-              )}
+                {showHighRiskHistory ? (
+                  <CardContent className="flex items-center justify-center">
+                    <Button
+                      onClick={() => setShowHighRiskHistory(false)}
+                      variant="ghost"
+                      size="sm"
+                      className="w-8 h-8 rounded-full bg-black hover:bg-gray-800 text-white flex items-center justify-center p-0"
+                    >
+                      <ChevronRight size={16} />
+                    </Button>
+                  </CardContent>
+                ) : (
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <p>
+                        {t('actionRoom.weHaveIdentified')}{' '}
+                        <span 
+                          className={`font-bold ${
+                            highRiskCount === 0 
+                              ? 'text-green-600' 
+                              : 'text-red-600 animate-pulse'
+                          }`}
+                        >
+                          {highRiskCount}
+                        </span>{' '}
+                        {t('actionRoom.highRiskEmployees')}
+                      </p>
+                      <p>
+                        {t('actionRoom.letsHelpThem', { name: userProfile?.first_name || t('actionRoom.there') })}{' '}
+                        <Select value={invitationType} onValueChange={(value) => {
+                          setInvitationType(value);
+                          if (value) {
+                            setShowHighRiskBubble(true);
+                          }
+                        }}>
+                          <SelectTrigger className="w-20 inline-flex">
+                            <SelectValue placeholder={t('actionRoom.type')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {invitationTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                          </SelectContent>
+                        </Select>
+                        {' '}{t('actionRoom.invitationToAll')}
+                      </p>
+                    </div>
+                    
+                    {/* Preview and Blue Chat Bubble - High Risk Message */}
+                    {showHighRiskBubble && (
+                      <div className="space-y-3">
+                        <p className="text-sm font-medium text-gray-700">{t('actionRoom.preview')}</p>
+                        <div className="bg-blue-500 text-white p-4 rounded-2xl rounded-bl-md shadow-sm max-w-md animate-fade-in">
+                          <h3 className="font-bold mb-3">{t('actionRoom.helpHighRiskMessage.title')}</h3>
+                          <p className="text-sm leading-relaxed mb-3 whitespace-pre-line">
+                            {t('actionRoom.helpHighRiskMessage.body', { 
+                              firstName: userProfile?.first_name || '',
+                              lastName: 'Smith'  // Using placeholder last name as requested
+                            })}
+                          </p>
+                          <p className="text-xs opacity-80 italic">
+                            {t('actionRoom.helpHighRiskMessage.footer')}
+                          </p>
+                        </div>
+                        <Button className="flex items-center gap-2">
+                          <Send size={16} />
+                          {t('actionRoom.sendInvitation')}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {/* Send Invitation Button - when bubble is not shown */}
+                    {!showHighRiskBubble && (
+                      <Button className="flex items-center gap-2">
+                        <Send size={16} />
+                        {t('actionRoom.sendInvitation')}
+                      </Button>
+                    )}
+                  </CardContent>
+                )}
+              </Card>
               
-              {/* Send Invitation Button - when bubble is not shown */}
-              {!showHighRiskBubble && (
-                <Button className="flex items-center gap-2">
-                  <Send size={16} />
-                  {t('actionRoom.sendInvitation')}
-                </Button>
+              {/* History Panel for High Risk Employees */}
+              {showHighRiskHistory && (
+                <Card className="md:w-2/3 w-full transition-all duration-300">
+                  <CardHeader>
+                    <CardTitle>{t('actionRoom.history')} - {t('actionRoom.helpHighRiskEmployees')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-500">History content will be displayed here...</p>
+                  </CardContent>
+                </Card>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Container 3: Rotation Reminder */}
           <Card>
