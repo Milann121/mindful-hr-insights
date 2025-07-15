@@ -34,6 +34,7 @@ const ActionRoom = () => {
   const [invitationType, setInvitationType] = useState<string>('');
   const [rotationPeriod, setRotationPeriod] = useState<string>('');
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
+  const [secondBubbleFocusAreas, setSecondBubbleFocusAreas] = useState<string[]>([]);
   
   // Chat bubble animation states
   const [showGreyBubble, setShowGreyBubble] = useState<boolean>(false);
@@ -45,6 +46,7 @@ const ActionRoom = () => {
   const invitationTypes = ['email', 'sms'];
   const rotationPeriods = ['3 months', '6 months', '9 months', '12 months'];
   const focusOptions = ['definition', 'symptoms', 'exercises', 'behavioural tips'];
+  const secondBubbleFocusOptions = ['problem definitions', 'exercises', 'symptoms', 'behavioural tips'];
   useEffect(() => {
     fetchUserProfile();
     fetchDepartments();
@@ -230,6 +232,14 @@ const ActionRoom = () => {
     // Add functionality for the second send button if needed
     console.log('Second blue bubble send clicked');
   };
+
+  const handleSecondBubbleFocusAreaChange = (area: string, checked: boolean) => {
+    if (checked) {
+      setSecondBubbleFocusAreas([...secondBubbleFocusAreas, area]);
+    } else {
+      setSecondBubbleFocusAreas(secondBubbleFocusAreas.filter(f => f !== area));
+    }
+  };
   return <DateFilterProvider>
       <div className="min-h-screen bg-gray-50">
         <div className="flex justify-end items-center gap-4 p-4 border-b bg-white">
@@ -353,12 +363,19 @@ const ActionRoom = () => {
               {showSecondBlueBubble && (
                 <div className="flex justify-end mb-4">
                   <div className="relative bg-blue-500 text-white p-4 rounded-2xl rounded-br-md w-full sm:w-full md:w-full lg:max-w-2xl lg:w-1/2 shadow-sm animate-fade-in">
-                    <p className="mb-2">Pebee, I want you to focus on:</p>
-                    <div className="text-sm space-y-1">
-                      <p>→ problem definitions;</p>
-                      <p>→ exercises (check window);</p>
-                      <p>→ symptoms (check window);</p>
-                      <p>→ behavioural tips (check window);</p>
+                    <p className="mb-3">Pebee, I want you to focus on:</p>
+                    <div className="space-y-2 mb-6">
+                      {secondBubbleFocusOptions.map(option => (
+                        <div key={option} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`second-${option}`}
+                            checked={secondBubbleFocusAreas.includes(option)}
+                            onCheckedChange={(checked) => handleSecondBubbleFocusAreaChange(option, checked as boolean)}
+                            className="border-white data-[state=checked]:bg-white data-[state=checked]:text-blue-500"
+                          />
+                          <label htmlFor={`second-${option}`} className="text-sm">{option}</label>
+                        </div>
+                      ))}
                     </div>
                     
                     {/* Send Icon - positioned in bottom right corner */}
