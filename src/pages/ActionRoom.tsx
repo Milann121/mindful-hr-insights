@@ -569,7 +569,7 @@ const ActionRoom = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
+              <div className="space-y-3">
                 <p>
                   {t('actionRoom.weHaveIdentified')}{' '}
                   <span 
