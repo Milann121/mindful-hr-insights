@@ -119,11 +119,26 @@ export const useFitnessEngagementData = () => {
         // Get popular programs data
         const { data: programsData, error: programsError } = await supabase
           .from('secondary_programs')
-          .select('secondary_program')
+          .select('secondary_program, user_id')
           .in('user_id', employeeUserIds);
 
         console.log('Programs data:', programsData);
         console.log('Programs error:', programsError);
+
+        // Also query all secondary_programs to see what user_ids exist
+        const { data: allPrograms } = await supabase
+          .from('secondary_programs')
+          .select('user_id')
+          .limit(10);
+
+        console.log('Sample of all program user_ids:', allPrograms?.map(p => p.user_id));
+
+        // Let's also check what happens if we query without filtering by user_id
+        const { count: totalProgramsCount } = await supabase
+          .from('secondary_programs')
+          .select('*', { count: 'exact', head: true });
+
+        console.log('Total programs in database:', totalProgramsCount);
 
         // Count programs by type
         const programCounts: { [key: string]: number } = {};
