@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Download, Send, Users, Calendar, ArrowUp, ChevronRight, Mail } from 'lucide-react';
+import { differenceInDays, addMonths } from 'date-fns';
+import { toast } from '@/hooks/use-toast';
 interface Department {
   id: string;
   department_name: string;
@@ -61,6 +63,15 @@ const ActionRoom = () => {
   const [envelopePosition, setEnvelopePosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const sendButtonRef = useRef<HTMLButtonElement>(null);
   const historyButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Rotation Reminder State
+  const [rotationReminder, setRotationReminder] = useState<{
+    id: string;
+    reminder_at: string;
+    created_at: string;
+  } | null>(null);
+  const [managerId, setManagerId] = useState<string | null>(null);
+  const [daysToRotation, setDaysToRotation] = useState<number | null>(null);
   const campaignTypes = [
     t('actionRoom.campaignTypes.poster'),
     t('actionRoom.campaignTypes.email'),
@@ -101,6 +112,7 @@ const ActionRoom = () => {
     fetchUserProfile();
     fetchDepartments();
     fetchHighRiskCount();
+    fetchManagerId();
     
     // Handle URL parameters for department pre-selection
     const departmentParam = searchParams.get('department');
@@ -132,6 +144,18 @@ const ActionRoom = () => {
       }
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (managerId) {
+      fetchRotationReminder();
+    }
+  }, [managerId]);
+
+  useEffect(() => {
+    if (rotationReminder) {
+      calculateDaysToRotation();
+    }
+  }, [rotationReminder]);
 
   // Refetch high risk count when department selection changes
   useEffect(() => {
@@ -398,6 +422,121 @@ const ActionRoom = () => {
     setTimeout(() => {
       setShowEnvelopeAnimation(false);
     }, 2000);
+  };
+
+  // Rotation Reminder Functions
+  const fetchManagerId = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('user_type, hr_manager_id')
+        .eq('id', user.id)
+        .single();
+
+      if (userRecord?.user_type === 'hr_manager' && userRecord.hr_manager_id) {
+        const { data: hrManager } = await supabase
+          .from('hr_managers')
+          .select('manager_id')
+          .eq('id', userRecord.hr_manager_id)
+          .single();
+
+        if (hrManager?.manager_id) {
+          setManagerId(hrManager.manager_id);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching manager ID:', error);
+    }
+  };
+
+  const fetchRotationReminder = async () => {
+    if (!managerId) return;
+
+    try {
+      const { data } = await supabase
+        .from('rotation_reminder')
+        .select('*')
+        .eq('manager_id', managerId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (data) {
+        setRotationReminder(data);
+      }
+    } catch (error) {
+      console.error('Error fetching rotation reminder:', error);
+    }
+  };
+
+  const calculateDaysToRotation = () => {
+    if (!rotationReminder) return;
+
+    const reminderDate = new Date(rotationReminder.reminder_at);
+    const currentDate = new Date();
+    const days = differenceInDays(reminderDate, currentDate);
+
+    setDaysToRotation(days > 0 ? days : 0);
+  };
+
+  const handleSetReminder = async () => {
+    if (!managerId || !rotationPeriod) {
+      toast({
+        title: "Error",
+        description: "Please select a reminder period first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Convert period to months
+      const monthsMap: { [key: string]: number } = {
+        [t('actionRoom.rotationPeriods.threeMonths')]: 3,
+        [t('actionRoom.rotationPeriods.sixMonths')]: 6,
+        [t('actionRoom.rotationPeriods.nineMonths')]: 9,
+        [t('actionRoom.rotationPeriods.twelveMonths')]: 12,
+      };
+
+      const months = monthsMap[rotationPeriod];
+      if (!months) {
+        toast({
+          title: "Error",
+          description: "Invalid period selected.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const reminderDate = addMonths(new Date(), months);
+
+      const { data, error } = await supabase
+        .from('rotation_reminder')
+        .insert({
+          manager_id: managerId,
+          reminder_at: reminderDate.toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setRotationReminder(data);
+      toast({
+        title: "Success",
+        description: "Rotation reminder has been set successfully.",
+      });
+    } catch (error) {
+      console.error('Error setting rotation reminder:', error);
+      toast({
+        title: "Error",
+        description: "Failed to set rotation reminder.",
+        variant: "destructive"
+      });
+    }
   };
 
   return <DateFilterProvider>
@@ -962,13 +1101,36 @@ const ActionRoom = () => {
                     {rotationPeriods.map(period => <SelectItem key={period} value={period}>{period}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <Button 
+                  onClick={handleSetReminder}
+                  disabled={!rotationPeriod}
+                  size="sm"
+                  className="ml-2"
+                >
+                  Set Reminder
+                </Button>
               </div>
+
+              {/* Display countdown if reminder is set */}
+              {rotationReminder && daysToRotation !== null && (
+                <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+                  <p className="text-green-800 font-medium mb-2">
+                    Rotation Reminder Set
+                  </p>
+                  <p className="text-green-700 text-sm">
+                    Reminder in <span className="font-bold">{daysToRotation}</span> days
+                  </p>
+                </div>
+              )}
 
               <div className="bg-muted/50 p-4 rounded-lg">
                 <p className="font-medium mb-2">{t('actionRoom.reminderWindow')}</p>
                 <div className="space-y-2 text-sm">
                   <p>{t('actionRoom.helloReminderGreeting', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
-                  <p>{t('actionRoom.rotationReminderText')}</p>
+                  <p>
+                    this is a rotation reminder. The rotation date is upcoming in{' '}
+                    {daysToRotation !== null ? `${daysToRotation}` : '[days_to_rotation]'} days.
+                  </p>
                   <p>{t('actionRoom.letsImplementPlan')}</p>
                   <ol className="list-decimal list-inside space-y-1 ml-4">
                     <li>{t('actionRoom.reviewWorkstations')}</li>

@@ -460,6 +460,7 @@ export type Database = {
           email: string
           "full name": string | null
           id: string
+          manager_id: string
           password_hash: string | null
         }
         Insert: {
@@ -467,6 +468,7 @@ export type Database = {
           email: string
           "full name"?: string | null
           id?: string
+          manager_id: string
           password_hash?: string | null
         }
         Update: {
@@ -474,6 +476,7 @@ export type Database = {
           email?: string
           "full name"?: string | null
           id?: string
+          manager_id?: string
           password_hash?: string | null
         }
         Relationships: [
@@ -639,6 +642,38 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      rotation_reminder: {
+        Row: {
+          created_at: string
+          id: string
+          manager_id: string
+          reminder_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          manager_id: string
+          reminder_at: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          manager_id?: string
+          reminder_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_rotation_reminder_manager"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "hr_managers"
+            referencedColumns: ["manager_id"]
+          },
+        ]
       }
       secondary_programs: {
         Row: {
