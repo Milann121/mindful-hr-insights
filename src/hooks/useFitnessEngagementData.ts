@@ -108,12 +108,13 @@ export const useFitnessEngagementData = () => {
         }
 
         // Count started programs for company employees
-        const { count: startedProgramsCount, error: countError } = await supabase
+        const { data: startedProgramsData, error: countError } = await supabase
           .from('secondary_programs')
-          .select('*', { count: 'exact', head: true })
+          .select('*')
           .in('user_id', employeeUserIds);
 
-        console.log('Started programs count:', startedProgramsCount);
+        console.log('Started programs data:', startedProgramsData);
+        console.log('Started programs count:', startedProgramsData?.length || 0);
         console.log('Count error:', countError);
 
         // Get popular programs data
@@ -166,7 +167,7 @@ export const useFitnessEngagementData = () => {
 
         setData({
           startedPrograms: {
-            count: startedProgramsCount || 0
+            count: startedProgramsData?.length || 0
           },
           popularPrograms
         });
