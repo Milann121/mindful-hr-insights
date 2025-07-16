@@ -31,9 +31,12 @@ export const useFitnessEngagementData = () => {
         // Get current user
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
+          console.log('No user found');
           setLoading(false);
           return;
         }
+
+        console.log('Current user:', user.id);
 
         // First, get the user's B2B partner ID
         const { data: userData } = await supabase
@@ -42,7 +45,10 @@ export const useFitnessEngagementData = () => {
           .eq('id', user.id)
           .single();
 
+        console.log('User data:', userData);
+
         if (!userData) {
+          console.log('No user data found');
           setLoading(false);
           return;
         }
@@ -58,6 +64,7 @@ export const useFitnessEngagementData = () => {
             .single();
           
           b2bPartnerId = hrData?.b2b_partner || null;
+          console.log('HR manager B2B partner ID:', b2bPartnerId);
         } else if (userData.user_type === 'employee' && userData.b2b_employee_id) {
           // Get B2B partner ID from employee
           const { data: employeeData } = await supabase
@@ -67,9 +74,11 @@ export const useFitnessEngagementData = () => {
             .single();
           
           b2bPartnerId = employeeData?.b2b_partner_id || null;
+          console.log('Employee B2B partner ID:', b2bPartnerId);
         }
 
         if (!b2bPartnerId) {
+          console.log('No B2B partner ID found');
           setLoading(false);
           return;
         }
@@ -81,24 +90,40 @@ export const useFitnessEngagementData = () => {
           .eq('b2b_partner_id', b2bPartnerId)
           .not('user_id', 'is', null);
 
+        console.log('Company employees:', companyEmployees);
+
         const employeeUserIds = companyEmployees?.map(emp => emp.user_id).filter(Boolean) || [];
+        console.log('Employee user IDs:', employeeUserIds);
 
         if (employeeUserIds.length === 0) {
+          console.log('No employee user IDs found');
+          setData({
+            startedPrograms: {
+              count: 0
+            },
+            popularPrograms: []
+          });
           setLoading(false);
           return;
         }
 
         // Count started programs for company employees
-        const { count: startedProgramsCount } = await supabase
+        const { count: startedProgramsCount, error: countError } = await supabase
           .from('secondary_programs')
           .select('*', { count: 'exact', head: true })
           .in('user_id', employeeUserIds);
 
+        console.log('Started programs count:', startedProgramsCount);
+        console.log('Count error:', countError);
+
         // Get popular programs data
-        const { data: programsData } = await supabase
+        const { data: programsData, error: programsError } = await supabase
           .from('secondary_programs')
           .select('secondary_program')
           .in('user_id', employeeUserIds);
+
+        console.log('Programs data:', programsData);
+        console.log('Programs error:', programsError);
 
         // Count programs by type
         const programCounts: { [key: string]: number } = {};
@@ -106,6 +131,8 @@ export const useFitnessEngagementData = () => {
           const programType = program.secondary_program;
           programCounts[programType] = (programCounts[programType] || 0) + 1;
         });
+
+        console.log('Program counts:', programCounts);
 
         // Sort by count and get top 5
         const sortedPrograms = Object.entries(programCounts)
@@ -119,6 +146,8 @@ export const useFitnessEngagementData = () => {
           value: count,
           percentage: Math.round((count / maxCount) * 100)
         }));
+
+        console.log('Popular programs:', popularPrograms);
 
         setData({
           startedPrograms: {
