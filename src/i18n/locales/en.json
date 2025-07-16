@@ -309,6 +309,19 @@
       "title": "WE WANT TO HELP YOU",
       "body": "Based on the results of the completed OREBRO questionnaire, we have been notified that you are at high risk of absenteeism and musculoskeletal disorders.\n\nWe value your health, so if you want to look for solutions to your condition with us, we will be happy if you contact the HR department and we will work together to find optimal solutions to your condition.\n\nThank you for being part of our company.\n{{firstName}} {{lastName}}.",
       "footer": "*This message is encrypted and sent from the Pebee therapist application. The employer cannot track your data and the message is completely anonymous."
+    },
+    "rotationReminder": {
+      "error": "Error",
+      "success": "Success",
+      "selectPeriodFirst": "Please select a reminder period first.",
+      "invalidPeriod": "Invalid period selected.",
+      "setSuccessfully": "Rotation reminder has been set successfully.",
+      "failedToSet": "Failed to set rotation reminder.",
+      "setReminder": "Set Reminder",
+      "reminderSet": "Rotation Reminder Set",
+      "reminderIn": "Reminder in",
+      "days": "days",
+      "reminderText": "this is a rotation reminder. The rotation date is upcoming in"
     }
   },
   "common": {

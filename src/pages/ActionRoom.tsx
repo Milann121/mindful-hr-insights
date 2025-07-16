@@ -485,9 +485,10 @@ const ActionRoom = () => {
   const handleSetReminder = async () => {
     if (!managerId || !rotationPeriod) {
       toast({
-        title: "Error",
-        description: "Please select a reminder period first.",
-        variant: "destructive"
+        title: t('actionRoom.rotationReminder.error'),
+        description: t('actionRoom.rotationReminder.selectPeriodFirst'),
+        variant: "destructive",
+        duration: 5000
       });
       return;
     }
@@ -504,9 +505,10 @@ const ActionRoom = () => {
       const months = monthsMap[rotationPeriod];
       if (!months) {
         toast({
-          title: "Error",
-          description: "Invalid period selected.",
-          variant: "destructive"
+          title: t('actionRoom.rotationReminder.error'),
+          description: t('actionRoom.rotationReminder.invalidPeriod'),
+          variant: "destructive",
+          duration: 5000
         });
         return;
       }
@@ -526,15 +528,17 @@ const ActionRoom = () => {
 
       setRotationReminder(data);
       toast({
-        title: "Success",
-        description: "Rotation reminder has been set successfully.",
+        title: t('actionRoom.rotationReminder.success'),
+        description: t('actionRoom.rotationReminder.setSuccessfully'),
+        duration: 5000
       });
     } catch (error) {
       console.error('Error setting rotation reminder:', error);
       toast({
-        title: "Error",
-        description: "Failed to set rotation reminder.",
-        variant: "destructive"
+        title: t('actionRoom.rotationReminder.error'),
+        description: t('actionRoom.rotationReminder.failedToSet'),
+        variant: "destructive",
+        duration: 5000
       });
     }
   };
@@ -1107,7 +1111,7 @@ const ActionRoom = () => {
                   size="sm"
                   className="ml-2"
                 >
-                  Set Reminder
+                  {t('actionRoom.rotationReminder.setReminder')}
                 </Button>
               </div>
 
@@ -1115,10 +1119,10 @@ const ActionRoom = () => {
               {rotationReminder && daysToRotation !== null && (
                 <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
                   <p className="text-green-800 font-medium mb-2">
-                    Rotation Reminder Set
+                    {t('actionRoom.rotationReminder.reminderSet')}
                   </p>
                   <p className="text-green-700 text-sm">
-                    Reminder in <span className="font-bold">{daysToRotation}</span> days
+                    {t('actionRoom.rotationReminder.reminderIn')} <span className="font-bold">{daysToRotation}</span> {t('actionRoom.rotationReminder.days')}
                   </p>
                 </div>
               )}
@@ -1128,8 +1132,7 @@ const ActionRoom = () => {
                 <div className="space-y-2 text-sm">
                   <p>{t('actionRoom.helloReminderGreeting', { name: userProfile?.first_name || t('actionRoom.there') })}</p>
                   <p>
-                    this is a rotation reminder. The rotation date is upcoming in{' '}
-                    {daysToRotation !== null ? `${daysToRotation}` : '[days_to_rotation]'} days.
+                    {t('actionRoom.rotationReminder.reminderText')} <span className="font-bold">{daysToRotation !== null ? `${daysToRotation}` : '[days_to_rotation]'}</span> {t('actionRoom.rotationReminder.days')}.
                   </p>
                   <p>{t('actionRoom.letsImplementPlan')}</p>
                   <ol className="list-decimal list-inside space-y-1 ml-4">

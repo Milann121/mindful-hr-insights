@@ -308,6 +308,19 @@
       "title": "CHCEME VÁM POMÔCŤ",
       "body": "Na základe výsledkov vyplneného OREBRO dotazníka sme boli notifikovaní, že ste vo vysokom riziku absentizmu a postihnutia poruchami pohybového systému.\n\nVaše zdravie si vážime, preto v prípade, že chcete s nami hľadať riešenia vášho stavu, budeme radi ak sa ohlásite na HR oddelenie a budeme spoločne hľadať optimálne riešenia vášho stavu.\n\nĎakujeme, že ste súčasťou našej spoločnosti.\n{{firstName}} {{lastName}}.",
       "footer": "*táto správa je šifrovaná a odoslaná z aplikácie Pebee terapeut. Zamestnávateľ nedokáže vystopovať vaše údaje a správa je plne anonýmna."
+    },
+    "rotationReminder": {
+      "error": "Chyba",
+      "success": "Úspech",
+      "selectPeriodFirst": "Prosím vyberte najprv obdobie pripomienky.",
+      "invalidPeriod": "Bolo vybrané neplatné obdobie.",
+      "setSuccessfully": "Pripomienka rotácie bola úspešne nastavená.",
+      "failedToSet": "Nepodarilo sa nastaviť pripomienku rotácie.",
+      "setReminder": "Nastaviť pripomienku",
+      "reminderSet": "Pripomienka rotácie nastavená",
+      "reminderIn": "Pripomienka za",
+      "days": "dní",
+      "reminderText": "toto je pripomienka rotácie. Dátum rotácie sa blíži za"
     }
   },
   "common": {
