@@ -132,6 +132,22 @@
       "weeklyGoals": "Splnené týždenné ciele",
       "weeklyGoalsDescription": "Tento ukazovateľ zobrazuje dokončené týždenné ciele vs. aktívne ciele za dané obdobie. Údaje sa aktualizujú v reálnom čase."
     },
+    "fitnessEngagement": {
+      "title": "Zapojenie do fitness a wellness",
+      "startedPrograms": "Spustené programy",
+      "startedProgramsDescription": "Spustené programy zobrazujú koľko wellness programov zamestnanci spustili. Poskytuje pohľad na zapojenie zamestnancov do preventívnych wellness aktivít.",
+      "mostPopularPrograms": "Najpopulárnejšie programy",
+      "mostPopularProgramsDescription": "Zobrazuje najpopulárnejšie sekundárne wellness programy podľa toho, koľkokrát zamestnanci spustili každý typ programu.",
+      "sendReminder": "Odoslať pripomienku",
+      "scheduleWellbeingCampaign": "Naplánovať wellness kampaň",
+      "programs": {
+        "yoga": "Jóga",
+        "stretching": "Natiahnutie",
+        "strength": "Silový tréning",
+        "cardio": "Kardio",
+        "pilates": "Pilates"
+      }
+    },
     "filters": {
       "allDepartments": "Všetky oddelenia",
       "periods": {

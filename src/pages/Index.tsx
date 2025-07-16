@@ -12,6 +12,7 @@ import TrendsChart from '@/components/dashboard/TrendsChart';
 import RiskAnalysisTable from '@/components/dashboard/RiskAnalysisTable';
 import TopIssuesChart from '@/components/dashboard/TopIssuesChart';
 import ExerciseEngagementCard from '@/components/dashboard/ExerciseEngagementCard';
+import FitnessEngagementCard from '@/components/dashboard/FitnessEngagementCard';
 
 import { LanguageSwitcher } from '@/components/auth/LanguageSwitcher';
 import { Button } from "@/components/ui/button";
@@ -95,12 +96,7 @@ const Index = () => {
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ExerciseEngagementCard />
-              <div className="col-span-1">
-                {/* Placeholder for additional content */}
-                <div className="h-64 bg-white rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center">
-                  <p className="text-gray-500">{t('common.noData')}</p>
-                </div>
-              </div>
+              <FitnessEngagementCard />
             </div>
           </div>
 

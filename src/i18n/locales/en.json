@@ -133,6 +133,22 @@
       "weeklyGoals": "Weekly Goals Met",
       "weeklyGoalsDescription": "This progress bar displays completed weekly goals vs. active goals for this period. The data updates in a real time."
     },
+    "fitnessEngagement": {
+      "title": "Fitness & Wellbeing Engagement",
+      "startedPrograms": "Started Programs",
+      "startedProgramsDescription": "The Started Programs displays how many wellness programs employees have initiated. This provides insights into employee engagement with preventive wellness activities.",
+      "mostPopularPrograms": "Most Popular Programs",
+      "mostPopularProgramsDescription": "Shows the most popular secondary wellness programs based on how many times employees have started each program type.",
+      "sendReminder": "Send Reminder",
+      "scheduleWellbeingCampaign": "Schedule Wellbeing Campaign",
+      "programs": {
+        "yoga": "Yoga",
+        "stretching": "Stretching",
+        "strength": "Strength Training",
+        "cardio": "Cardio",
+        "pilates": "Pilates"
+      }
+    },
     "filters": {
       "allDepartments": "All Departments",
       "periods": {
