@@ -33,7 +33,10 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
 
   console.log('Users with weekly goals found:', usersWithGoals?.length);
   console.log('Users with goals data:', usersWithGoals);
-  if (goalsError) console.error('Error fetching user goals:', goalsError);
+  if (goalsError) {
+    console.error('Error fetching user goals:', goalsError);
+    console.error('RLS may be blocking access to user_goals table');
+  }
 
   const totalUsersWithGoals = usersWithGoals?.length || 0;
 
