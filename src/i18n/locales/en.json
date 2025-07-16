@@ -136,6 +136,7 @@
     "fitnessEngagement": {
       "title": "Fitness & Wellbeing Engagement",
       "startedPrograms": "Started Programs",
+      "totalStarted": "programs started",
       "startedProgramsDescription": "The Started Programs displays how many wellness programs employees have initiated. This provides insights into employee engagement with preventive wellness activities.",
       "mostPopularPrograms": "Most Popular Programs",
       "mostPopularProgramsDescription": "Shows the most popular secondary wellness programs based on how many times employees have started each program type.",

@@ -135,6 +135,7 @@
     "fitnessEngagement": {
       "title": "Zapojení do fitness a wellness",
       "startedPrograms": "Zahájené programy",
+      "totalStarted": "programů zahájeno",
       "startedProgramsDescription": "Zahájené programy zobrazují kolik wellness programů zaměstnanci spustili. Poskytuje náhled na zapojení zaměstnanců do preventivních wellness aktivit.",
       "mostPopularPrograms": "Nejpopulárnější programy",
       "mostPopularProgramsDescription": "Zobrazuje nejpopulárnější sekundární wellness programy podle toho, kolikrát zaměstnanci spustili každý typ programu.",

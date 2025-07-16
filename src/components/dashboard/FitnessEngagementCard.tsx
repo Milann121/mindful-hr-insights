@@ -22,7 +22,7 @@ const FitnessEngagementCard = () => {
           </div>
         ) : (
           <>
-            {/* Started Programs Progress Bar */}
+            {/* Started Programs Count */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -42,13 +42,16 @@ const FitnessEngagementCard = () => {
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {data.startedPrograms.started}/{data.startedPrograms.total}
-                </span>
               </div>
-              <Progress value={data.startedPrograms.percentage} className="h-2" />
-              <div className="text-right">
-                <span className="text-xs text-gray-400">{data.startedPrograms.percentage}%</span>
+              <div className="flex items-center justify-center py-4">
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-primary">
+                    {data.startedPrograms.count}
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {t('dashboard.fitnessEngagement.totalStarted')}
+                  </div>
+                </div>
               </div>
             </div>
 

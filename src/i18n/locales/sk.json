@@ -135,6 +135,7 @@
     "fitnessEngagement": {
       "title": "Zapojenie do fitness a wellness",
       "startedPrograms": "Spustené programy",
+      "totalStarted": "programov spustených",
       "startedProgramsDescription": "Spustené programy zobrazujú koľko wellness programov zamestnanci spustili. Poskytuje pohľad na zapojenie zamestnancov do preventívnych wellness aktivít.",
       "mostPopularPrograms": "Najpopulárnejšie programy",
       "mostPopularProgramsDescription": "Zobrazuje najpopulárnejšie sekundárne wellness programy podľa toho, koľkokrát zamestnanci spustili každý typ programu.",
