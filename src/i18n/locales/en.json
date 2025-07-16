@@ -125,7 +125,7 @@
       "other": "Other"
     },
     "exerciseEngagement": {
-      "title": "Exercise Engagement",
+      "title": "Pain Program Engagement",
       "completedExercises": "Completed Exercises",
       "completedExercisesDescription": "The Completed Exercises displays how many exercises employees clicked as \"exercised\" in a given period. This provides clues about employee exercise adherence and suggest if they need some push (e.g. campaign, motivation, help).",
       "completedPrograms": "Completed Programs",
