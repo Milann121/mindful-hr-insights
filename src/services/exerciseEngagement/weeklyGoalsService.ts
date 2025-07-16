@@ -76,9 +76,9 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
   console.log('Weekly completions data:', weeklyCompletions);
   if (completionsError) console.error('Error fetching weekly completions:', completionsError);
 
-  // Count users who met their goals in any week during the period
-  const usersWhoMetGoals = new Set();
-  let totalGoalMetRecords = 0;
+  // Count total weekly goals and how many were met across all weeks in the period
+  let totalWeeklyGoals = 0;
+  let totalWeeklyGoalsMet = 0;
   
   weeklyCompletions?.forEach(completion => {
     console.log('Processing completion:', {
@@ -90,26 +90,26 @@ export const getWeeklyGoalsData = async (userIds: string[], startDate: Date, end
       completed: completion.exercises_completed
     });
     
+    // Each completion record represents one weekly goal
+    totalWeeklyGoals++;
+    
     if (completion.goal_met) {
-      usersWhoMetGoals.add(completion.user_id);
-      totalGoalMetRecords++;
+      totalWeeklyGoalsMet++;
     }
   });
 
-  const usersWithMetGoals = usersWhoMetGoals.size;
-  const weeklyGoalsPercentage = totalUsersWithGoals > 0 ? 
-    Math.round((usersWithMetGoals / totalUsersWithGoals) * 100) : 0;
+  const weeklyGoalsPercentage = totalWeeklyGoals > 0 ? 
+    Math.round((totalWeeklyGoalsMet / totalWeeklyGoals) * 100) : 0;
 
   console.log('FINAL RESULTS:');
-  console.log('- Total users with goals:', totalUsersWithGoals);
-  console.log('- Users who met goals:', usersWithMetGoals);
-  console.log('- Total goal_met=true records:', totalGoalMetRecords);
+  console.log('- Total weekly goals in period:', totalWeeklyGoals);
+  console.log('- Weekly goals met:', totalWeeklyGoalsMet);
   console.log('- Percentage:', weeklyGoalsPercentage);
   console.log('=== END WEEKLY GOALS DEBUG ===');
 
   return {
-    met: usersWithMetGoals,
-    total: totalUsersWithGoals,
+    met: totalWeeklyGoalsMet,
+    total: totalWeeklyGoals,
     percentage: weeklyGoalsPercentage
   };
 };
