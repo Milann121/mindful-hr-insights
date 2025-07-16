@@ -8,7 +8,7 @@ import { getWeeklyGoalsData } from '@/services/exerciseEngagement/weeklyGoalsSer
 import { useExerciseEngagementRealtime } from '@/hooks/useExerciseEngagementRealtime';
 
 export const useExerciseEngagementData = () => {
-  const { getDateRange } = useDateFilter();
+  const { getDateRange, selectedPeriod } = useDateFilter();
   const [data, setData] = useState<ExerciseEngagementData>({
     completedExercises: { completed: 0, total: 0, percentage: 0 },
     completedPrograms: { completed: 0, total: 0, percentage: 0 },
@@ -37,7 +37,7 @@ export const useExerciseEngagementData = () => {
       const [completedExercises, completedPrograms, weeklyGoals] = await Promise.all([
         getExerciseCompletionData(userIds, start, end),
         getProgramCompletionData(employeeIds, start, end),
-        getWeeklyGoalsData(userIds, start, end)
+        getWeeklyGoalsData(userIds, start, end, selectedPeriod)
       ]);
 
       setData({
@@ -51,7 +51,7 @@ export const useExerciseEngagementData = () => {
     } finally {
       setLoading(false);
     }
-  }, [getDateRange]);
+  }, [getDateRange, selectedPeriod]);
 
   useEffect(() => {
     fetchEngagementData();
