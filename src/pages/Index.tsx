@@ -108,6 +108,7 @@ const Index = () => {
             <PainLevelChart />
             <RiskAnalysisTable />
             <ExerciseEngagementCard />
+            <FitnessEngagementCard />
           </div>
         </div>
       </div>
