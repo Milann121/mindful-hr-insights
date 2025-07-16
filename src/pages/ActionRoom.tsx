@@ -1087,7 +1087,7 @@ const ActionRoom = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar size={20} />
-                {t('actionRoom.rotationReminder')}
+                {t('actionRoom.rotationReminderTitle')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
